@@ -1,0 +1,16 @@
+/* FactorFinance — minimal custom CSS (Tailwind handles most styling) */
+
+html { scroll-behavior: smooth; }
+
+::selection {
+    background: #CFE5DA;
+    color: #14231B;
+}
+
+/* Subtle hero grid background */
+#hero-grid {
+    background-image:
+        linear-gradient(rgba(31,93,67,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31,93,67,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+}

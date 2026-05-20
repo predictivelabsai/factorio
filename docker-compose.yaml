@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    ports:
+      - "${PORT:-5055}:${PORT:-5055}"
+    env_file: .env
+    restart: unless-stopped

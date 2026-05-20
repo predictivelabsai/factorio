@@ -1,0 +1,184 @@
+-- FactorFinance schema — invoice financing platform
+-- All tables live in the factorfinance.* schema.
+
+CREATE SCHEMA IF NOT EXISTS factorfinance;
+
+-- ── Users ──────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.users (
+    id          BIGSERIAL PRIMARY KEY,
+    email       TEXT UNIQUE NOT NULL,
+    username    TEXT NOT NULL DEFAULT '',
+    role        TEXT NOT NULL DEFAULT 'investor' CHECK (role IN ('investor', 'seller', 'admin')),
+    phone       TEXT NOT NULL DEFAULT '',
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── Companies (seller businesses) ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.companies (
+    id                  BIGSERIAL PRIMARY KEY,
+    name                TEXT NOT NULL,
+    registration_number TEXT UNIQUE NOT NULL,
+    sector              TEXT NOT NULL DEFAULT 'other',
+    country             TEXT NOT NULL DEFAULT 'EE',
+    address             TEXT NOT NULL DEFAULT '',
+    annual_turnover     NUMERIC(15,2) NOT NULL DEFAULT 0,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS companies_sector_idx ON factorfinance.companies(sector);
+
+-- ── Invoices (core financeable asset) ──────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.invoices (
+    id                      BIGSERIAL PRIMARY KEY,
+    invoice_number          TEXT UNIQUE NOT NULL,
+    seller_id               BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    company_id              BIGINT NOT NULL REFERENCES factorfinance.companies(id) ON DELETE CASCADE,
+    debtor_name             TEXT NOT NULL,
+    debtor_registration     TEXT NOT NULL DEFAULT '',
+    description             TEXT NOT NULL DEFAULT '',
+    sector                  TEXT NOT NULL DEFAULT 'other',
+    amount                  NUMERIC(15,2) NOT NULL,
+    currency                TEXT NOT NULL DEFAULT 'EUR',
+    issue_date              DATE NOT NULL,
+    due_date                DATE NOT NULL,
+    payment_terms_days      INT NOT NULL DEFAULT 30,
+    status                  TEXT NOT NULL DEFAULT 'submitted' CHECK (status IN ('submitted', 'verified', 'funding', 'funded', 'settled', 'defaulted', 'cancelled')),
+    risk_grade              TEXT NOT NULL DEFAULT 'B' CHECK (risk_grade IN ('A', 'B', 'C', 'D')),
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS invoices_status_idx ON factorfinance.invoices(status);
+CREATE INDEX IF NOT EXISTS invoices_seller_idx ON factorfinance.invoices(seller_id);
+CREATE INDEX IF NOT EXISTS invoices_company_idx ON factorfinance.invoices(company_id);
+CREATE INDEX IF NOT EXISTS invoices_due_date_idx ON factorfinance.invoices(due_date);
+
+-- ── Invoice Funding (funding round per invoice) ────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.invoice_funding (
+    id                          BIGSERIAL PRIMARY KEY,
+    invoice_id                  BIGINT NOT NULL REFERENCES factorfinance.invoices(id) ON DELETE CASCADE,
+    name                        TEXT NOT NULL,
+    description                 TEXT NOT NULL DEFAULT '',
+    funding_goal                NUMERIC(15,2) NOT NULL,
+    amount_raised               NUMERIC(15,2) NOT NULL DEFAULT 0,
+    minimum_investment          NUMERIC(15,2) NOT NULL DEFAULT 50,
+    advance_rate_pct            NUMERIC(5,2) NOT NULL DEFAULT 85.00,
+    fee_pct_per_30d             NUMERIC(5,2) NOT NULL DEFAULT 2.00,
+    estimated_return_pct        NUMERIC(5,2) NOT NULL DEFAULT 8.00,
+    risk_grade                  TEXT NOT NULL DEFAULT 'B',
+    funding_status              TEXT NOT NULL DEFAULT 'open' CHECK (funding_status IN ('open', 'closed', 'funded', 'settled', 'defaulted')),
+    start_date                  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    end_date                    TIMESTAMPTZ,
+    target_hold_days            INT NOT NULL DEFAULT 30,
+    show_in_marketplace         BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at                  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS funding_invoice_idx ON factorfinance.invoice_funding(invoice_id);
+CREATE INDEX IF NOT EXISTS funding_status_idx ON factorfinance.invoice_funding(funding_status);
+
+-- ── Investments (investor ↔ funding link) ──────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.investments (
+    id                      BIGSERIAL PRIMARY KEY,
+    funding_id              BIGINT NOT NULL REFERENCES factorfinance.invoice_funding(id) ON DELETE CASCADE,
+    investor_id             BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    investment_amount       NUMERIC(15,2) NOT NULL,
+    ownership_pct           NUMERIC(5,2) NOT NULL DEFAULT 0,
+    expected_return_amount  NUMERIC(15,2) NOT NULL DEFAULT 0,
+    status                  TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'settled', 'defaulted')),
+    investment_date         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (funding_id, investor_id)
+);
+CREATE INDEX IF NOT EXISTS investments_investor_idx ON factorfinance.investments(investor_id);
+
+-- ── Invoice Updates (status timeline) ──────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.invoice_updates (
+    id          BIGSERIAL PRIMARY KEY,
+    invoice_id  BIGINT NOT NULL REFERENCES factorfinance.invoices(id) ON DELETE CASCADE,
+    title       TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    update_type TEXT NOT NULL DEFAULT 'status_update',
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── Notifications ──────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.notifications (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    title       TEXT NOT NULL,
+    message     TEXT NOT NULL DEFAULT '',
+    type        TEXT NOT NULL DEFAULT 'general',
+    is_read     BOOLEAN NOT NULL DEFAULT FALSE,
+    data_id     BIGINT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS notifications_user_idx ON factorfinance.notifications(user_id);
+
+-- ── Settlements (when debtor pays) ─────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.settlements (
+    id                  BIGSERIAL PRIMARY KEY,
+    funding_id          BIGINT NOT NULL REFERENCES factorfinance.invoice_funding(id) ON DELETE CASCADE,
+    settlement_amount   NUMERIC(15,2) NOT NULL,
+    settlement_date     TIMESTAMPTZ NOT NULL,
+    settlement_terms    TEXT NOT NULL DEFAULT '',
+    is_approved         BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── Dividends (returns to investors) ───────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.dividends (
+    id              BIGSERIAL PRIMARY KEY,
+    investor_id     BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    funding_id      BIGINT NOT NULL REFERENCES factorfinance.invoice_funding(id) ON DELETE CASCADE,
+    amount          NUMERIC(15,2) NOT NULL,
+    invested_amount NUMERIC(15,2) NOT NULL,
+    is_paid         BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── Payments (investor payment records) ────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.payments (
+    id                  BIGSERIAL PRIMARY KEY,
+    investor_id         BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    investment_id       BIGINT NOT NULL REFERENCES factorfinance.investments(id) ON DELETE CASCADE,
+    amount              NUMERIC(15,2) NOT NULL,
+    payment_status      TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed', 'refunded')),
+    payment_date        TIMESTAMPTZ,
+    transaction_id      TEXT UNIQUE NOT NULL,
+    reference_number    TEXT NOT NULL DEFAULT '',
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    completed_at        TIMESTAMPTZ
+);
+
+-- ── Secondary Market ───────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.secondary_market (
+    id              BIGSERIAL PRIMARY KEY,
+    investor_id     BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    investment_id   BIGINT NOT NULL REFERENCES factorfinance.investments(id) ON DELETE CASCADE,
+    listing_price   NUMERIC(15,2) NOT NULL,
+    status          TEXT NOT NULL DEFAULT 'listed' CHECK (status IN ('listed', 'sold', 'cancelled')),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── Auto-Invest Preferences ───────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.auto_invest (
+    id                  BIGSERIAL PRIMARY KEY,
+    investor_id         BIGINT NOT NULL REFERENCES factorfinance.users(id) ON DELETE CASCADE,
+    max_amount_per_invoice  NUMERIC(15,2) NOT NULL DEFAULT 500,
+    min_risk_grade      TEXT NOT NULL DEFAULT 'B',
+    preferred_sectors   TEXT NOT NULL DEFAULT '',
+    is_active           BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ── FAQ ────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorfinance.faq (
+    id          BIGSERIAL PRIMARY KEY,
+    question    TEXT NOT NULL,
+    answer      TEXT NOT NULL,
+    sort_order  INT NOT NULL DEFAULT 0,
+    is_active   BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
