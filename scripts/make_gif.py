@@ -12,7 +12,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SHOTS = ROOT / "screenshots"
-OUT_GIF = ROOT / "docs" / "factorfinance.gif"
+OUT_GIF = ROOT / "docs" / "factorio.gif"
 
 FRAMES = [
     ("01-home-en.png",              2800),

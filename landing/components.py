@@ -1,4 +1,4 @@
-"""Landing-page components for FactorFinance — i18n-aware (EN / UZ / RU)."""
+"""Landing-page components for Factorio — i18n-aware (EN / UZ / RU)."""
 
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ from fasthtml.common import (
 
 from utils.i18n import t, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
 
-SITE_NAME = "FactorFinance"
-CONTACT_EMAIL = "hello@factorfinance.io"
+SITE_NAME = "Factorio"
+CONTACT_EMAIL = "hello@factorio.io"
 
 SECTOR_ICONS = {
     "manufacturing": "&#9881;",
@@ -163,7 +163,7 @@ def _footer(lang: str = DEFAULT_LANG):
                 cls="grid grid-cols-2 md:grid-cols-3 gap-10",
             ),
             Div(
-                Div(f"© {__import__('datetime').datetime.now().year} FactorFinance.",
+                Div(f"© {__import__('datetime').datetime.now().year} Factorio.",
                     cls="text-ink-dim text-xs"),
                 A(CONTACT_EMAIL, href=f"mailto:{CONTACT_EMAIL}",
                   cls="text-ink-dim text-xs hover:text-accent"),

@@ -25,8 +25,8 @@ def _apply(sql: str) -> None:
 
 def migrate(drop: bool = False) -> None:
     if drop:
-        print("[migrate] dropping schema factorfinance ...")
-        _apply("DROP SCHEMA IF EXISTS factorfinance CASCADE;")
+        print("[migrate] dropping schema factorio ...")
+        _apply("DROP SCHEMA IF EXISTS factorio CASCADE;")
 
     for fname in SCHEMA_FILES:
         path = SCHEMA_DIR / fname

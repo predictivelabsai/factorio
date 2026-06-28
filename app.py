@@ -32,6 +32,9 @@ def set_lang(req, lang: str = DEFAULT_LANG):
 
 
 from landing import routes as _landing_routes  # noqa: E402,F401
+from app_routes import _shared as _app_shared  # noqa: E402,F401
 from app_routes import dashboard as _dashboard_routes  # noqa: E402,F401
 from app_routes import marketplace as _marketplace_routes  # noqa: E402,F401
 from app_routes import portfolio as _portfolio_routes  # noqa: E402,F401
+from app_routes import statement as _statement_routes  # noqa: E402,F401
+from app_routes import autoinvest as _autoinvest_routes  # noqa: E402,F401

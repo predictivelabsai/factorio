@@ -1,12 +1,20 @@
-"""Marketplace route: /app/marketplace — browse fundable invoices."""
+"""Marketplace route: /app/marketplace — browse fundable invoices.
+
+Adds a filter bar (sector / risk grade / max term / min return, via GET query
+params) and a debtor-company profile block on the detail page. Uses the shared
+`app_page` so the investor sub-nav + switcher appear here too.
+"""
 
 from __future__ import annotations
 
-from fasthtml.common import Div, H3, P, Span, A, Article, Ul, Li, Table, Thead, Tbody, Tr, Th, Td, NotStr
+from fasthtml.common import (
+    Div, H3, P, Span, A, Article, Form, Input, Select, Option, Button, Label, NotStr,
+)
 
 from app import rt
 from utils.i18n import t, get_lang
-from landing.components import page, Eyebrow, Heading, Section_, Pill
+from landing.components import Eyebrow, Heading, Section_
+from app_routes._shared import app_page, list_investors, current_investor
 
 try:
     from db import fetch_all
@@ -14,8 +22,51 @@ try:
 except Exception:
     _HAS_DB = False
 
+_GRADES = ["A", "B", "C", "D"]
+_INPUT = ("w-full bg-bg-elevated border border-line rounded-lg px-3 py-2 text-sm "
+          "text-ink focus:outline-none focus:border-accent")
 
-def _load_marketplace() -> list[dict]:
+
+def _parse_filters(req) -> dict:
+    q = req.query_params
+
+    def _s(key):
+        v = (q.get(key) or "").strip()
+        return v or None
+
+    def _n(key):
+        v = _s(key)
+        try:
+            return float(v) if v else None
+        except ValueError:
+            return None
+
+    grade = _s("risk")
+    if grade not in _GRADES:
+        grade = None
+    return {
+        "sector": _s("sector"),
+        "risk": grade,
+        "max_term": _n("max_term"),
+        "min_return": _n("min_return"),
+        "_raw": {k: (q.get(k) or "") for k in ("sector", "risk", "max_term", "min_return")},
+    }
+
+
+def _sectors() -> list[str]:
+    if not _HAS_DB:
+        return []
+    try:
+        rows = fetch_all(
+            "SELECT DISTINCT sector FROM factorio.invoices "
+            "WHERE sector IS NOT NULL AND sector <> '' ORDER BY sector"
+        )
+        return [r["sector"] for r in rows]
+    except Exception:
+        return []
+
+
+def _load_marketplace(fl: dict) -> list[dict]:
     if not _HAS_DB:
         return []
     try:
@@ -36,12 +87,17 @@ def _load_marketplace() -> list[dict]:
                 f.estimated_return_pct,
                 f.target_hold_days,
                 c.name AS seller_company
-            FROM factorfinance.invoice_funding f
-            JOIN factorfinance.invoices i ON i.id = f.invoice_id
-            JOIN factorfinance.companies c ON c.id = i.company_id
+            FROM factorio.invoice_funding f
+            JOIN factorio.invoices i ON i.id = f.invoice_id
+            JOIN factorio.companies c ON c.id = i.company_id
             WHERE f.funding_status = 'open' AND f.show_in_marketplace = TRUE
+              AND (%(sector)s::text IS NULL OR i.sector = %(sector)s::text)
+              AND (%(risk)s::text IS NULL OR i.risk_grade = %(risk)s::text)
+              AND (%(max_term)s::int IS NULL OR f.target_hold_days <= %(max_term)s::int)
+              AND (%(min_return)s::numeric IS NULL OR f.estimated_return_pct >= %(min_return)s::numeric)
             ORDER BY f.created_at DESC
-        """)
+        """, {"sector": fl["sector"], "risk": fl["risk"],
+              "max_term": fl["max_term"], "min_return": fl["min_return"]})
     except Exception:
         return []
 
@@ -59,6 +115,41 @@ def _progress_pct(raised: float, goal: float) -> int:
 def _cur(currency: str, amount: float) -> str:
     sym = {"EUR": "€", "UZS": "UZS ", "USD": "$", "GBP": "£"}.get(currency, currency + " ")
     return f"{sym}{amount:,.0f}"
+
+
+def _field(label, control):
+    return Div(Label(label, cls="block text-[11px] font-mono uppercase tracking-widest text-ink-dim mb-1"),
+               control)
+
+
+def _filter_form(fl: dict, sectors: list[str], lang: str):
+    raw = fl["_raw"]
+    sector_opts = [Option(t("mkt_all", lang), value="", selected=not raw["sector"])]
+    for s in sectors:
+        sector_opts.append(Option(s.title(), value=s, selected=raw["sector"] == s))
+    risk_opts = [Option(t("mkt_all", lang), value="", selected=not raw["risk"])]
+    for g in _GRADES:
+        risk_opts.append(Option(g, value=g, selected=raw["risk"] == g))
+    return Form(
+        Div(
+            _field(t("mkt_sector", lang), Select(*sector_opts, name="sector", cls=_INPUT)),
+            _field(t("mkt_risk", lang), Select(*risk_opts, name="risk", cls=_INPUT)),
+            _field(t("mkt_max_term", lang),
+                   Input(type="number", name="max_term", min="0", value=raw["max_term"], cls=_INPUT)),
+            _field(t("mkt_min_return", lang),
+                   Input(type="number", name="min_return", min="0", step="any", value=raw["min_return"], cls=_INPUT)),
+            cls="grid grid-cols-2 md:grid-cols-4 gap-3",
+        ),
+        Div(
+            Button(t("mkt_apply", lang), type="submit",
+                   cls="inline-flex items-center px-5 py-2 rounded-full text-sm font-medium bg-accent text-bg hover:bg-ink transition-all"),
+            A(t("mkt_clear", lang), href="/app/marketplace",
+              cls="inline-flex items-center px-5 py-2 rounded-full text-sm font-medium border border-line-bright text-ink hover:border-accent hover:text-accent transition-all"),
+            cls="flex items-center gap-3 mt-4",
+        ),
+        method="get", action="/app/marketplace",
+        cls="p-6 rounded-2xl bg-bg-elevated border border-line mb-8",
+    )
 
 
 def _invoice_card(row: dict, lang: str):
@@ -113,7 +204,10 @@ def _invoice_card(row: dict, lang: str):
 @rt("/app/marketplace")
 def marketplace(req):
     lang = get_lang(req)
-    listings = _load_marketplace()
+    investors = list_investors()
+    investor = current_investor(req, investors)
+    fl = _parse_filters(req)
+    listings = _load_marketplace(fl)
 
     empty = Div(
         P(t("mkt_empty", lang), cls="text-ink-muted text-lg"),
@@ -125,7 +219,7 @@ def marketplace(req):
         cls="grid sm:grid-cols-2 lg:grid-cols-3 gap-4",
     ) if listings else None
 
-    return page(
+    return app_page(
         t("mkt_eyebrow", lang),
         Section_(
             Eyebrow(t("mkt_eyebrow", lang)),
@@ -134,17 +228,20 @@ def marketplace(req):
               cls="mt-4 text-ink-muted text-lg"),
             cls="border-t border-line",
         ),
-        Section_(grid or empty, cls="border-t border-line"),
-        current_path="/app/marketplace",
-        lang=lang,
+        Section_(_filter_form(fl, _sectors(), lang), grid or empty, cls="border-t border-line"),
+        current_path="/app/marketplace", lang=lang, investor=investor, investors=investors,
     )
 
 
 @rt("/app/marketplace/{funding_id}")
 def marketplace_detail(req, funding_id: int):
     lang = get_lang(req)
+    investors = list_investors()
+    investor = current_investor(req, investors)
     if not _HAS_DB:
-        return page("Not found", Section_(P("Database not configured.")), current_path="/app/marketplace", lang=lang)
+        return app_page("Not found", Section_(P("Database not configured.")),
+                        current_path="/app/marketplace", lang=lang,
+                        investor=investor, investors=investors)
 
     try:
         row = fetch_all("""
@@ -153,19 +250,20 @@ def marketplace_detail(req, funding_id: int):
                 i.description, i.sector, i.amount AS invoice_amount, i.currency,
                 i.issue_date, i.due_date, i.payment_terms_days, i.risk_grade,
                 c.name AS seller_company, c.registration_number AS seller_reg,
-                c.sector AS seller_sector, c.country AS seller_country
-            FROM factorfinance.invoice_funding f
-            JOIN factorfinance.invoices i ON i.id = f.invoice_id
-            JOIN factorfinance.companies c ON c.id = i.company_id
+                c.sector AS seller_sector, c.country AS seller_country,
+                c.annual_turnover AS seller_turnover
+            FROM factorio.invoice_funding f
+            JOIN factorio.invoices i ON i.id = f.invoice_id
+            JOIN factorio.companies c ON c.id = i.company_id
             WHERE f.id = %s
         """, (funding_id,))
     except Exception:
         row = []
 
     if not row:
-        return page("Not found", Section_(
+        return app_page("Not found", Section_(
             Heading(1, "Invoice not found.", cls="mt-4"),
-        ), current_path="/app/marketplace", lang=lang)
+        ), current_path="/app/marketplace", lang=lang, investor=investor, investors=investors)
 
     r = row[0]
     pct = _progress_pct(float(r["amount_raised"]), float(r["funding_goal"]))
@@ -177,7 +275,21 @@ def marketplace_detail(req, funding_id: int):
             P(str(value), cls="text-ink font-medium"),
         )
 
-    return page(
+    debtor_profile = Div(
+        P(t("mkt_debtor_profile", lang), cls="text-[11px] font-mono tracking-widest uppercase text-ink-dim mb-4"),
+        Div(
+            _detail(t("mkt_seller", lang), r["seller_company"]),
+            _detail(t("mkt_registration", lang), r["seller_reg"] or "—"),
+            _detail(t("mkt_sector", lang), (r["seller_sector"] or "—").title()),
+            _detail(t("mkt_country", lang), r["seller_country"] or "—"),
+            _detail(t("mkt_turnover", lang),
+                    _cur(cur, float(r["seller_turnover"])) if r["seller_turnover"] else "—"),
+            cls="grid grid-cols-2 gap-4",
+        ),
+        cls="p-6 rounded-2xl bg-bg-elevated border border-line",
+    )
+
+    return app_page(
         f"{r['debtor_name']}",
         Section_(
             A(NotStr("&larr; " + t("mkt_back", lang)), href="/app/marketplace", cls="text-ink-dim text-xs hover:text-accent mb-6 inline-block"),
@@ -212,20 +324,10 @@ def marketplace_detail(req, funding_id: int):
                     ),
                     cls="md:col-span-2",
                 ),
-                Div(
-                    Div(
-                        _detail(t("port_debtor", lang), r["debtor_name"]),
-                        _detail(t("mkt_seller", lang), r["seller_company"]),
-                        _detail(t("port_grade", lang), r["risk_grade"]),
-                        _detail(t("port_due", lang), str(r["due_date"])),
-                        cls="grid grid-cols-2 gap-4",
-                    ),
-                    cls="p-6 rounded-2xl bg-bg-elevated border border-line",
-                ),
+                debtor_profile,
                 cls="grid md:grid-cols-3 gap-8",
             ),
             cls="border-t border-line",
         ),
-        current_path="/app/marketplace",
-        lang=lang,
+        current_path="/app/marketplace", lang=lang, investor=investor, investors=investors,
     )

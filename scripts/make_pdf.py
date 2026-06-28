@@ -1,6 +1,6 @@
 """Generate a FactorFinance product tour PDF from the demo screenshots.
 
-Output: docs/factorfinance-product-tour.pdf
+Output: docs/factorio-product-tour.pdf
 
 Slide-deck format (landscape, 16:9).
 
@@ -26,7 +26,7 @@ from reportlab.platypus import (
 
 ROOT = Path(__file__).resolve().parents[1]
 SHOTS = ROOT / "screenshots"
-OUT = ROOT / "docs" / "factorfinance-product-tour.pdf"
+OUT = ROOT / "docs" / "factorio-product-tour.pdf"
 
 SLIDE = (33.87 * cm, 19.05 * cm)
 
@@ -195,7 +195,7 @@ def _closing_slide(styles):
         ),
         Spacer(1, 10 * mm),
         Paragraph(
-            "<b>hello@factorfinance.io</b> &nbsp;·&nbsp; factorfinance.io/contact",
+            "<b>hello@factorio.io</b> &nbsp;·&nbsp; factorio.io/contact",
             cta_meta,
         ),
         PageBreak(),
