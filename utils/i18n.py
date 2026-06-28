@@ -49,12 +49,12 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "stat_days":            {"en": "from submission to funding",
                              "uz": "topshirishdan moliyalashtirishgacha",
                              "ru": "от подачи до финансирования"},
-    "stat_sectors":         {"en": "sectors actively funded",
-                             "uz": "faol moliyalashtirilayotgan sektorlar",
-                             "ru": "секторов активно финансируются"},
-    "stat_total":           {"en": "invoices funded to date",
-                             "uz": "bugungi kunga qadar moliyalashtirilgan",
-                             "ru": "профинансировано счетов на сегодня"},
+    "stat_sectors":         {"en": "industry sectors supported",
+                             "uz": "qoʻllab-quvvatlanadigan sohalar",
+                             "ru": "поддерживаемых отраслей"},
+    "stat_total":           {"en": "languages — fully localizable",
+                             "uz": "til — toʻliq moslashtiriladigan",
+                             "ru": "языка — полностью локализуемо"},
 
     # ── How it works ────────────────────────────────────────────────
     "how_eyebrow":          {"en": "How it works",       "uz": "Qanday ishlaydi",      "ru": "Как это работает"},

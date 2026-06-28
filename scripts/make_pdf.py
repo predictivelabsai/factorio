@@ -225,7 +225,7 @@ def build() -> None:
         title="Invoice financing for growing businesses",
         subtitle="Turn unpaid invoices into working capital in days, not months.",
         bullets=[
-            "Hero with key stats: 85% advance rate, 1–3 day turnaround, 5 sectors, 100B+ UZS funded.",
+            "Hero with key stats: 85% advance rate, 1–3 day turnaround, 5 sectors supported, 3 languages.",
             "Four-step process: Submit → Verify → Fund → Settle.",
             "Sector-specific cards for manufacturing, wholesale, construction, logistics, services.",
             "Trilingual: English, O’zbekcha, Russian — switch with one click in the navbar.",

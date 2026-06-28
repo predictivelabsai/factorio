@@ -251,7 +251,7 @@ def Hero(lang: str = DEFAULT_LANG):
                 _StatCell("1–3 " + ("kun" if lang == "uz" else "дня" if lang == "ru" else "days"),
                           t("stat_days", lang)),
                 _StatCell("5", t("stat_sectors", lang)),
-                _StatCell("100B+ UZS", t("stat_total", lang)),
+                _StatCell("3", t("stat_total", lang)),
                 cls="max-w-7xl mx-auto px-5 md:px-6 py-5 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-6",
             ),
             cls="border-y border-line bg-bg-elevated/60",

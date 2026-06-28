@@ -16,7 +16,7 @@ The homepage introduces FactorFinance with key stats and a clear value propositi
 
 **Key elements:**
 - Hero section: "Turn unpaid invoices into working capital"
-- Stats strip: 85% advance rate, 1–3 day turnaround, 5 sectors, 100B+ UZS funded
+- Stats strip: 85% advance rate, 1–3 day turnaround, 5 sectors supported, 3 languages (fully localizable)
 - Four-step process: Submit → Verify → Fund → Settle
 - Sector cards: manufacturing, wholesale, construction, logistics, services
 - Benefits strip with investor return targets (8–12% p.a.)
