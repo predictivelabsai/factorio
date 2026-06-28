@@ -1,0 +1,103 @@
+/* Factorio user-guide — landscape slide deck (markdown -> HTML -> WeasyPrint PDF).
+   Each markdown "---" becomes a slide (page break).
+   Brand: parchment #F7F6F1, deep-green #1F5D43, ink #14231B, orange-rule accent. */
+
+@page {
+  size: A4 landscape;
+  margin: 1.1cm 1.5cm 1.3cm 1.5cm;
+  background: #F7F6F1;
+  @bottom-left  { content: "Factorio — User Guide"; font-size: 8pt; color: #7A867E; }
+  @bottom-right { content: "factorio.co.uk"; font-size: 8pt; color: #7A867E; }
+}
+
+html { font-size: 11.5pt; }
+body {
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, "DejaVu Sans", sans-serif;
+  color: #14231B;
+  line-height: 1.5;
+  margin: 0;
+  background: #F7F6F1;
+}
+
+/* every horizontal rule ends a slide */
+hr {
+  page-break-after: always;
+  border: 0; height: 0; margin: 0; visibility: hidden;
+}
+
+/* ---- title slide (first H1) ---- */
+h1 {
+  color: #1F5D43;
+  font-size: 32pt;
+  margin: 1.5cm 0 0.2cm;
+  letter-spacing: -0.5px;
+}
+h1 + h2 { /* subtitle on the title slide — plain, not a slide bar */
+  background: none; border: 0; border-left: 0; border-radius: 0; padding: 0;
+  color: #415046; font-size: 17pt; font-weight: 600; margin: .1cm 0 .6cm;
+}
+
+/* ---- slide titles ---- */
+h2 {
+  color: #ffffff;
+  background: #1F5D43;
+  font-size: 17pt;
+  margin: 0 0 .55cm;
+  padding: .28cm .5cm;
+  border-radius: 8px;
+  border-left: 7px solid #C8A24B;
+}
+h3 {
+  color: #1F5D43;
+  font-size: 13pt;
+  margin: .35cm 0 .15cm;
+}
+
+p { margin: .18cm 0; }
+strong { color: #1F5D43; }
+
+ul, ol { margin: .15cm 0 .2cm; padding-left: .85cm; }
+li { margin: .14cm 0; }
+
+a { color: #1F5D43; text-decoration: none; }
+code {
+  background: #ECEAE0; color: #1F5D43;
+  padding: .04cm .14cm; border-radius: 3px;
+  font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace; font-size: .88em;
+}
+
+blockquote {
+  margin: .35cm 0; padding: .25cm .55cm;
+  background: #EEEDE5; border-left: 4px solid #1F5D43;
+  color: #415046; font-style: italic;
+}
+
+/* the eyebrow line above a slide title (a leading **bold** mini-label) */
+.eyebrow {
+  text-transform: uppercase; letter-spacing: 1.5px;
+  font-size: 8.5pt; font-weight: 700; color: #C8A24B; margin: 0 0 .12cm;
+}
+
+/* screenshots — sit on the right of a slide, capped so the slide fits one page */
+img {
+  display: block;
+  float: right;
+  max-width: 15.5cm;
+  max-height: 13.4cm;
+  margin: 0 0 .3cm .8cm;
+  border: 1px solid #E3DFD2;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(20,35,27,.08);
+}
+
+/* tables */
+table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: .2cm 0; }
+th {
+  background: #1F5D43; color: #fff; text-align: left; font-weight: 600;
+  padding: 3px 8px; border: 1px solid #16432F;
+}
+td { padding: 3px 8px; border: 1px solid #E3DFD2; vertical-align: top; }
+tr:nth-child(even) td { background: #EEEDE5; }
+
+/* keep a slide's content together on its page */
+h2, h3, p, ul, ol, blockquote, img { page-break-inside: avoid; }
