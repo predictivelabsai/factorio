@@ -90,6 +90,19 @@ img {
   box-shadow: 0 1px 6px rgba(20,35,27,.08);
 }
 
+/* flow / journey diagrams — full-width, centred, not floated */
+img.diagram {
+  float: none;
+  display: block;
+  margin: .3cm auto .2cm;
+  max-width: 100%;
+  max-height: 9cm;
+  padding: .25cm;
+  background: #fff;
+  box-shadow: none;
+}
+.caption { text-align: center; color: #7A867E; font-size: 8.5pt; margin: 0 0 .2cm; }
+
 /* tables */
 table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: .2cm 0; }
 th {

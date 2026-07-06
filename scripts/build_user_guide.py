@@ -147,6 +147,66 @@ SLIDES = [
         },
     },
     {
+        "img": "15-money-flow",
+        "is_diagram": True,
+        "eyebrow": {"en": "How the money moves", "ru": "Как движутся деньги"},
+        "title": {"en": "Where every party's money comes from", "ru": "Откуда каждая сторона получает деньги"},
+        "caption": {"en": "Money & payment flow — seller, payer, platform, capital",
+                    "ru": "Поток денег и платежей — продавец, плательщик, платформа, капитал"},
+        "bullets": {
+            "en": [
+                "The **seller** delivers goods and issues a SoliqOnline e-invoice; the **payer (debtor)** owes the invoice amount.",
+                "The platform advances ~85% to the seller now, funded by the **capital source** — the bank's balance sheet, investors, or the DIFC SPV.",
+                "At maturity the **payer pays 100%** into the collection account; the seller receives the net balance, the capital source gets principal + return, and the platform keeps a volume-based fee.",
+                "The flow is identical whoever funds it — which is what makes the investor / SPV layer pluggable.",
+            ],
+            "ru": [
+                "**Продавец** поставляет товар и выставляет э-счёт в SoliqOnline; **плательщик (дебитор)** должен сумму счёта.",
+                "Платформа выдаёт продавцу ~85% сразу, за счёт **источника капитала** — баланса банка, инвесторов или SPV в DIFC.",
+                "В срок **плательщик платит 100%** на счёт сбора; продавец получает остаток, источник капитала — основную сумму и доход, платформа удерживает комиссию за объём.",
+                "Поток одинаков независимо от того, кто финансирует — именно поэтому слой инвесторов / SPV подключаемый.",
+            ],
+        },
+    },
+    {
+        "img": "16-origination-journey",
+        "is_diagram": True,
+        "eyebrow": {"en": "Journey · Borrower (origination)", "ru": "Путь · Заёмщик (origination)"},
+        "title": {"en": "The seller's journey, end to end", "ru": "Путь продавца, от начала до конца"},
+        "caption": {"en": "From sign-up to advance in 24–48 hours", "ru": "От регистрации до аванса за 24–48 часов"},
+        "bullets": {
+            "en": [
+                "Sign up (bank KYC) → invoice auto-imported from SoliqOnline → request financing in an AI-triage chat.",
+                "Debtor scoring returns indicative terms; the bank approves in one click; collateral is registered with the CBU in under an hour.",
+                "The advance lands in the seller's account in 24–48 hours — no branch visit, no paper.",
+            ],
+            "ru": [
+                "Регистрация (KYC банка) → счёт импортируется из SoliqOnline → запрос финансирования в чате AI-триажа.",
+                "Скоринг дебитора возвращает индикативные условия; банк одобряет в один клик; залог регистрируется в ЦБ менее чем за час.",
+                "Аванс поступает на счёт продавца за 24–48 часов — без визита в отделение и без бумаг.",
+            ],
+        },
+    },
+    {
+        "img": "17-investor-journey",
+        "is_diagram": True,
+        "eyebrow": {"en": "Journey · Investor", "ru": "Путь · Инвестор"},
+        "title": {"en": "The investor's journey, end to end", "ru": "Путь инвестора, от начала до конца"},
+        "caption": {"en": "From onboarding to distribution", "ru": "От онбординга до распределения дохода"},
+        "bullets": {
+            "en": [
+                "Onboard (KYC / accreditation) → commit capital via the marketplace or the SPV → auto-invest or pick invoices.",
+                "Hold the position with AI portfolio reporting on demand; when the debtor pays at maturity, principal + return are distributed.",
+                "**Decomposable:** the origination piece (bank-funded) can launch first; the investor marketplace and SPV plug in later, independently.",
+            ],
+            "ru": [
+                "Онбординг (KYC / аккредитация) → внесение капитала через маркетплейс или SPV → автоинвест или выбор счетов.",
+                "Позиция удерживается с AI-отчётностью по запросу; когда дебитор платит в срок, распределяются основная сумма и доход.",
+                "**Декомпозируемо:** часть origination (за счёт банка) можно запустить первой; маркетплейс инвесторов и SPV подключаются позже, независимо.",
+            ],
+        },
+    },
+    {
         "img": "05-pricing",
         "eyebrow": {"en": "Pricing", "ru": "Тарифы"},
         "title": {"en": "Transparent, per-invoice fees", "ru": "Прозрачные тарифы за каждый счёт"},
@@ -355,12 +415,12 @@ CLOSING = {
         "en": [
             "**Sellers** — submit an invoice and get an offer in 1–3 working days.",
             "**Investors** — browse the marketplace, build a portfolio, automate with auto-invest.",
-            f"Live at **{SITE}** · hello@factorio.io",
+            f"Live at **{SITE}** · hello@factorio.co.uk",
         ],
         "ru": [
             "**Продавцам** — подайте счёт и получите предложение за 1–3 рабочих дня.",
             "**Инвесторам** — изучайте маркетплейс, формируйте портфель, автоматизируйте через авто-инвестирование.",
-            f"Доступно на **{SITE}** · hello@factorio.io",
+            f"Доступно на **{SITE}** · hello@factorio.co.uk",
         ],
     },
 }
@@ -385,12 +445,18 @@ def build_markdown(lang: str) -> str:
         "",
     ]
     for s in SLIDES:
+        if s.get("is_diagram"):
+            # full-width, centred flow/journey diagram (not a floated screenshot)
+            img_md = (f'![{s["caption"][lang]}](img/{lang}-{s["img"]}.png){{: .diagram }}\n\n'
+                      f'<p class="caption">{s["caption"][lang]}</p>')
+        else:
+            img_md = f'![{s["caption"][lang]}](img/{lang}-{s["img"]}.png)'
         parts += [
             f'<p class="eyebrow">{s["eyebrow"][lang]}</p>',
             "",
             f'## {s["title"][lang]}',
             "",
-            f'![{s["caption"][lang]}](img/{lang}-{s["img"]}.png)',
+            img_md,
             "",
             _bullets_md(s["bullets"][lang]),
             "",
@@ -477,18 +543,28 @@ def build_pptx(lang: str, out: Path) -> None:
         br.font.size = Pt(22); br.font.bold = True; br.font.color.rgb = WHITE
 
         has_img = sl["img"] is not None
-        text_w = Inches(5.6) if has_img else Inches(11.9)
-        # bullets
-        _, tf = _textbox(s, Inches(0.7), Inches(2.0), text_w, Inches(5.0))
-        for i, b in enumerate(sl["bullets"][lang]):
-            p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-            p.space_after = Pt(10)
-            run = p.add_run(); run.text = "•  " + _strip_md(b)
-            run.font.size = Pt(15); run.font.color.rgb = INK
-        # image
-        if has_img:
-            img_path = IMG / f"{lang}-{sl['img']}.png"
-            if img_path.exists():
+        is_diagram = sl.get("is_diagram", False)
+        img_path = (IMG / f"{lang}-{sl['img']}.png") if has_img else None
+
+        if is_diagram:
+            # wide flow/journey diagram centred on top, bullets across the bottom
+            if img_path and img_path.exists():
+                s.shapes.add_picture(str(img_path), Inches(1.67), Inches(1.9), width=Inches(10.0))
+            _, tf = _textbox(s, Inches(0.7), Inches(5.1), Inches(11.9), Inches(2.2))
+            for i, b in enumerate(sl["bullets"][lang]):
+                p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+                p.space_after = Pt(6)
+                run = p.add_run(); run.text = "•  " + _strip_md(b)
+                run.font.size = Pt(13); run.font.color.rgb = INK
+        else:
+            text_w = Inches(5.6) if has_img else Inches(11.9)
+            _, tf = _textbox(s, Inches(0.7), Inches(2.0), text_w, Inches(5.0))
+            for i, b in enumerate(sl["bullets"][lang]):
+                p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+                p.space_after = Pt(10)
+                run = p.add_run(); run.text = "•  " + _strip_md(b)
+                run.font.size = Pt(15); run.font.color.rgb = INK
+            if img_path and img_path.exists():
                 s.shapes.add_picture(str(img_path), Inches(6.5), Inches(2.0), width=Inches(6.3))
 
     prs.save(str(out))
@@ -516,6 +592,9 @@ def build_lang(lang: str) -> None:
 
 def main() -> None:
     print(f"Building Factorio user guide ({DATE})")
+    print("Rendering flow/journey diagrams…")
+    from scripts.diagrams import render_bilingual
+    render_bilingual()
     for lang in ("en", "ru"):
         print(f"→ {lang}")
         build_lang(lang)

@@ -11,7 +11,7 @@ from fasthtml.common import (
 from utils.i18n import t, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
 
 SITE_NAME = "Factorio"
-CONTACT_EMAIL = "hello@factorio.io"
+CONTACT_EMAIL = "hello@factorio.co.uk"
 
 SECTOR_ICONS = {
     "manufacturing": "&#9881;",

@@ -195,7 +195,7 @@ def _closing_slide(styles):
         ),
         Spacer(1, 10 * mm),
         Paragraph(
-            "<b>hello@factorio.io</b> &nbsp;·&nbsp; factorio.io/contact",
+            "<b>hello@factorio.co.uk</b> &nbsp;·&nbsp; factorio.co.uk/contact",
             cta_meta,
         ),
         PageBreak(),

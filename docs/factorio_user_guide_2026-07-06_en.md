@@ -59,6 +59,49 @@ Factorio is an invoice-financing (factoring) marketplace. Businesses sell their 
 
 ---
 
+<p class="eyebrow">How the money moves</p>
+
+## Where every party's money comes from
+
+![Money & payment flow — seller, payer, platform, capital](img/en-15-money-flow.png){: .diagram }
+
+<p class="caption">Money & payment flow — seller, payer, platform, capital</p>
+
+- The **seller** delivers goods and issues a SoliqOnline e-invoice; the **payer (debtor)** owes the invoice amount.
+- The platform advances ~85% to the seller now, funded by the **capital source** — the bank's balance sheet, investors, or the DIFC SPV.
+- At maturity the **payer pays 100%** into the collection account; the seller receives the net balance, the capital source gets principal + return, and the platform keeps a volume-based fee.
+- The flow is identical whoever funds it — which is what makes the investor / SPV layer pluggable.
+
+---
+
+<p class="eyebrow">Journey · Borrower (origination)</p>
+
+## The seller's journey, end to end
+
+![From sign-up to advance in 24–48 hours](img/en-16-origination-journey.png){: .diagram }
+
+<p class="caption">From sign-up to advance in 24–48 hours</p>
+
+- Sign up (bank KYC) → invoice auto-imported from SoliqOnline → request financing in an AI-triage chat.
+- Debtor scoring returns indicative terms; the bank approves in one click; collateral is registered with the CBU in under an hour.
+- The advance lands in the seller's account in 24–48 hours — no branch visit, no paper.
+
+---
+
+<p class="eyebrow">Journey · Investor</p>
+
+## The investor's journey, end to end
+
+![From onboarding to distribution](img/en-17-investor-journey.png){: .diagram }
+
+<p class="caption">From onboarding to distribution</p>
+
+- Onboard (KYC / accreditation) → commit capital via the marketplace or the SPV → auto-invest or pick invoices.
+- Hold the position with AI portfolio reporting on demand; when the debtor pays at maturity, principal + return are distributed.
+- **Decomposable:** the origination piece (bank-funded) can launch first; the investor marketplace and SPV plug in later, independently.
+
+---
+
 <p class="eyebrow">Pricing</p>
 
 ## Transparent, per-invoice fees
@@ -195,4 +238,4 @@ Factorio is an invoice-financing (factoring) marketplace. Businesses sell their 
 
 - **Sellers** — submit an invoice and get an offer in 1–3 working days.
 - **Investors** — browse the marketplace, build a portfolio, automate with auto-invest.
-- Live at **factorio.co.uk** · hello@factorio.io
+- Live at **factorio.co.uk** · hello@factorio.co.uk

@@ -11,10 +11,11 @@ A proposal by **Consistente Ltd** to build and operate a next-generation, white-
 
 ## Three moves, one platform
 
-- **1 · A better platform.** Rebuild the OzPlanet-style bank factoring experience with an AI core, open-banking-style credit scoring, and a cleaner trilingual UX — priced on **financed volume only**, with no SaaS licence.
-- **2 · International capital.** Add an SPV module so global — and specifically Gulf — investors can fund Uzbek receivables, turning a domestic product into a cross-border one.
-- **3 · UAE entry.** Stand up a **DIFC SPV** and a phased Shariah programme (Murabaha → Wakala → Sukuk) to reach Dubai / DIFC Islamic capital.
-- A working AI prototype ships **today** — chat-based loan triage and chat-based investor reporting are already live in the app.
+- **The gap.** Every Uzbek bank *rents* its factoring product from OzPlanet or FinMakon — Universalbank included (OzPlanet cooperation agreement, Sept 2024). None *owns* the product, the customer relationship or the data.
+- **1 · Own the platform.** A white-label, AI-native platform Universalbank runs under its own brand — the bank owns the product, customers and data — priced on **financed volume only**.
+- **2 · International capital.** An SPV module lets global — and specifically Gulf — investors fund Uzbek receivables. OzPlanet and FinMakon take **no foreign or retail money**, so this is a clean, uncontested differentiator.
+- **3 · UAE entry.** A **DIFC SPV** and a phased Shariah programme (Murabaha → Wakala → Sukuk) to reach Dubai / DIFC Islamic capital.
+- **Decomposable & live today.** Deploy origination first, add the investor / SPV layer later — and the chat-based loan triage and investor reporting are **already running** in the app.
 
 ---
 
@@ -25,7 +26,7 @@ A proposal by **Consistente Ltd** to build and operate a next-generation, white-
 - **SoliqOnline** — the State Tax Committee's platform — has validated, timestamped and archived every B2B e-invoice in the country since **January 2020**.
 - **Didox** connects **350,000+ organisations** to it and integrates with 1C — a ready-made supplier base that already exchanges invoices electronically.
 - Every invoice is government-verified and buyer-confirmed on official record — **fraud and debtor-confirmation, factoring's hardest problems, are solved at source.**
-- The market is **~$2bn** addressable and **under 2.5% penetrated** — early, and growing fast.
+- The market is scaling fast: the **CBU reports ~10.6 trillion soums (~$835M) factored in Jan–Sep 2025**, about **half of it digital** — against a **~$2bn** addressable market that is still lightly penetrated.
 
 ---
 
@@ -40,20 +41,68 @@ A proposal by **Consistente Ltd** to build and operate a next-generation, white-
 
 ---
 
-<p class="eyebrow">The incumbent</p>
+<p class="eyebrow">The incumbents</p>
 
-## OzPlanet set the market — and left it beatable
+## OzPlanet & FinMakon own the market — as aggregators
 
-| Dimension | OzPlanet (incumbent) | Factorio by Consistente |
-| --- | --- | --- |
-| Commercial model | Bank SaaS licence / subscription | White-label, **volume-only** pricing — paid when the bank finances |
-| Credit scoring | Bank's own manual / internal review | **Open-banking-style** automated score (SoliqOnline + bank txn + CRIF) |
-| AI | — | **Chat triage + chat reporting (Grok)**, document intelligence |
-| Onboarding UX | Bank-led, form-heavy | Self-serve, trilingual, minutes |
-| International capital | Domestic banks only | **DIFC SPV** for global / Gulf investors |
-| Time to indicative decision | Days | **Seconds** (indicative) · hours (final) |
+| Dimension | OzPlanet | FinMakon | Factorio (Consistente) |
+| --- | --- | --- | --- |
+| Model | Aggregator; bank-set rates | Aggregator (Didox-backed) | **White-label marketplace** — bank owns it |
+| Digital share (Q3 2025) | 56% of digital volume | 44% of digital volume | New entrant — builds share |
+| Funding sources | Banks / MFOs only | Banks / factoring cos | **Banks + investors + retail + SPV** |
+| Foreign / retail capital | **No** | **No** | **Yes** — SPV + marketplace |
+| Bank owns product & data | No — OzPlanet does | No — FinMakon does | **Yes** — fully the bank's |
+| AI core | Rule-based; nascent | Nascent | **Grok chat triage + reporting**, doc intelligence |
+| Pricing to bank | Per-transaction commission | Per-transaction commission | **Volume-only bps** (no SaaS licence) |
 
-> OzPlanet reportedly carries ~52% of factoring routed through e-platforms and serves ~50% of banks — proof the demand is real, and that a sharper product wins share.
+> Universalbank already signed a cooperation agreement with OzPlanet (Sept 2024) — so it knows the model. The point of this proposal is not to rent a better aggregator, but to own the product outright. (Market data: CBU, Q3 2025.)
+
+---
+
+<p class="eyebrow">The strategic gap</p>
+
+## No Uzbek bank owns its factoring product
+
+- Today a bank connecting to OzPlanet or FinMakon is a **funding partner on someone else's platform** — the aggregator owns the brand, the customer relationship and the data.
+- That is a strategic dependency: the bank cannot differentiate, cannot cross-sell off its own data, and cannot switch without losing the clients.
+- **Factorio flips this.** Universalbank runs the platform under its **own brand**, owns **all customer and transaction data**, and can export and move it — no platform lock-in.
+- Same government rails (SoliqOnline, CBU registry), same speed — but the bank owns the asset instead of renting the rails. That ownership is the real product.
+
+---
+
+<p class="eyebrow">How it works</p>
+
+## How the money moves — and who gets paid
+
+```mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    SELLER["Seller (SME)<br/>supplier"]
+    PAYER["Payer / debtor<br/>the buyer who owes"]
+    CAP["Capital source<br/>bank balance sheet ·<br/>investors · DIFC SPV"]
+    subgraph PLAT["Factorio platform — Universalbank-branded"]
+        ADV["Advance &<br/>invoice assignment"]
+        COL["Collections &<br/>settlement"]
+        FEE["Platform fee<br/>(volume-based bps)"]
+    end
+    SELLER -->|"1 · goods + e-invoice"| PAYER
+    SELLER -->|"2 · assigns invoice"| ADV
+    CAP -->|"3 · funds the advance"| ADV
+    ADV -->|"4 · advance ~85% now"| SELLER
+    PAYER -->|"5 · pays 100% at maturity"| COL
+    COL -->|"6 · net balance (~15% − fee)"| SELLER
+    COL -->|"7 · principal + return"| CAP
+    COL -->|"8 · platform fee"| FEE
+    style CAP fill:#C8A24B,color:#14231B
+    style PAYER fill:#2563EB,color:#fff
+    style PLAT fill:#DCF3E8
+```
+
+*Money & payment flow — seller, payer (debtor), platform, capital*
+
+- The **payer (debtor)** is the anchor: a specific, buyer-confirmed obligation on the SoliqOnline record.
+- The platform advances ~85% now from the **capital source** (bank, investor or SPV); at maturity the payer settles 100% and the waterfall pays seller, capital and platform.
+- Because the flow is identical regardless of who funds it, the **capital layer is pluggable** — bank first, investors/SPV later.
 
 ---
 
@@ -65,6 +114,31 @@ A proposal by **Consistente Ltd** to build and operate a next-generation, white-
 - Built on a lean, server-rendered stack (FastHTML + PostgreSQL) — fast to change, cheap to run, easy to white-label under the bank's brand.
 - Trilingual by design (English · Oʻzbekcha · Russian); the AI answers in the user's language.
 - The next three slides detail the AI, the credit-scoring engine, and the commercial model.
+
+---
+
+<p class="eyebrow">Journey · Borrower (origination)</p>
+
+## The seller's journey — sign-up to cash in 24–48h
+
+```mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    O1["Seller signs up<br/>bank KYC"] --> O2["Invoice imported<br/>from SoliqOnline"]
+    O2 --> O3["Requests financing<br/>AI triage (chat)"]
+    O3 --> O4["Debtor scoring +<br/>indicative terms"]
+    O4 --> O5["Bank one-click<br/>approval"]
+    O5 --> O6["Collateral registered<br/>CBU · &lt; 60 min"]
+    O6 --> O7["Advance received<br/>24–48 h"]
+    style O3 fill:#DCF3E8
+    style O7 fill:#C8A24B,color:#14231B
+```
+
+*Origination: SoliqOnline import → AI triage → one-click approval → advance*
+
+- Manual bank involvement is a **single approval click** on a pre-populated screen; everything else is automated.
+- The invoice is imported and verified from SoliqOnline; the debtor is scored; collateral is registered with the CBU in **under 60 minutes**.
+- This is **Module A** — it stands alone and can go live first, funded entirely by the bank's balance sheet.
 
 ---
 
@@ -123,6 +197,24 @@ flowchart LR
 
 ---
 
+<p class="eyebrow">Economics</p>
+
+## What the bank earns on one invoice
+
+| Cash flow · $10,000 invoice · 85% · 60d · 5% | Amount | Direction | Day |
+| --- | --- | --- | --- |
+| Advance to seller (85%) | $8,500 | Platform → seller | Day 1 |
+| Payer (debtor) pays in full | $10,000 | Payer → collection | Day 60 |
+| Net balance released to seller | $1,500 | Platform → seller | Day 60 |
+| Discount income (gross) | $500 | Capital keeps | Day 60 |
+| Platform fee (volume-based) | ≈ $13 | Bank → Consistente | Day 60 |
+| **Net income on the invoice** | **≈ $487** | **Capital keeps** | **Day 60** |
+| **Annualised return on capital** | **≈ 30% p.a.** | — | — |
+
+> Illustrative, per the standard SoliqOnline-verified structure. ~30% annualised on deployed capital compares with 22–28% on unsecured SME lending — at lower risk: the invoice is government-verified, the payer has confirmed the obligation, and the bank holds a registered CBU priority claim. Bank stays profitable to a ~4% default rate.
+
+---
+
 <p class="eyebrow">Pillar 1 · Commercial model</p>
 
 ## Volume-only pricing — aligned with the bank
@@ -134,7 +226,7 @@ flowchart LR
 | UZS 200–500 bn | 70 bps |
 | Over UZS 500 bn | 55 bps |
 
-> Illustrative. No SaaS licence, no per-seat, no setup fee — Consistente is paid only when the bank finances an invoice. International SPV module: ~60 bps p.a. on invested AUM + a performance share above an agreed hurdle. Final figures to be set with Universalbank.
+> Illustrative. No SaaS licence, no per-seat, no setup fee — Consistente is paid only when the bank finances an invoice. Options on the table: a revenue-share alternative (a small % of the bank's discount income instead of bps), 12-month bank exclusivity in Uzbekistan, and a Year-3 deferred-equity option structured as new shares (non-dilutive, no board/veto rights). International SPV module: ~60 bps p.a. on invested AUM + a performance share above a hurdle. Final figures to be set with Universalbank.
 
 ---
 
@@ -170,6 +262,64 @@ flowchart TB
 - Universalbank remains **originator and servicer**; a bankruptcy-remote **SPV** holds the investor-facing interest and channels foreign capital into the invoice pool.
 - Two tracks off the **same asset base**: a **conventional** note/participation for institutional investors, and **Shariah** structures for Gulf capital.
 - Investors get the same grounded, AI-assisted reporting — in their language — plus statements and a clean audit trail.
+
+---
+
+<p class="eyebrow">Journey · Investor</p>
+
+## The investor's journey — onboarding to distribution
+
+```mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    V1["Investor onboards<br/>KYC / accreditation"] --> V2["Commits capital<br/>marketplace or SPV"]
+    V2 --> V3["Auto-invest or<br/>pick invoices"]
+    V3 --> V4["Position held<br/>AI reporting on demand"]
+    V4 --> V5["Debtor pays<br/>at maturity"]
+    V5 --> V6["Principal + return<br/>distributed"]
+    style V4 fill:#DCF3E8
+    style V6 fill:#C8A24B,color:#14231B
+```
+
+*Investor: onboard → commit capital → hold with AI reporting → get paid*
+
+- Retail, institutional and Gulf investors onboard once (KYC / accreditation), then fund via the **marketplace** or the **SPV**.
+- They hold positions with **on-demand AI portfolio reporting**; at maturity, principal + return are distributed automatically.
+- This is **Module B** — it plugs onto the same origination engine later, without changing anything a seller or the bank does.
+
+---
+
+<p class="eyebrow">Delivery · Decomposability</p>
+
+## Two modules — buy one, or both, in sequence
+
+```mermaid
+%%{init: {'theme':'neutral'}}%%
+flowchart LR
+    subgraph MA["Module A · Origination — deploy first"]
+        A1["Onboarding + SoliqOnline"]
+        A2["AI triage + scoring"]
+        A3["Bank approval + advance"]
+    end
+    CAP{{"Capital layer<br/>(pluggable)"}}
+    subgraph MB["Module B · Investors &amp; SPV — deploy later, independently"]
+        B1["Investor marketplace"]
+        B2["DIFC SPV · international capital"]
+        B3["Investor reporting + settlement"]
+    end
+    BANK["Bank balance sheet"] --> CAP
+    MA -->|"funded assets"| CAP
+    CAP --> MB
+    style MA fill:#DCF3E8
+    style MB fill:#FCEFC8
+    style CAP fill:#C8A24B,color:#14231B
+```
+
+*Origination (Module A) and Investors/SPV (Module B) are independently deployable*
+
+- **Module A — Origination** can be Universalbank's whole first phase: bank-funded factoring, live in weeks, immediately satisfying the Decree-106 mandate.
+- **Module B — Investors & SPV** adds the marketplace and DIFC/international capital later, over the same engine, with no rework.
+- The **capital layer is the seam**: swap or add funding sources without touching origination — de-risking the programme and the investment.
 
 ---
 

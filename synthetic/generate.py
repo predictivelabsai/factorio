@@ -73,7 +73,7 @@ def _seed_users(conn, rng: random.Random, fake: Faker) -> dict[str, int]:
     for role, count in [("admin", 2), ("seller", 10), ("investor", 20)]:
         for i in range(count):
             users.append({
-                "email": f"{role}{i+1}@factorio.io",
+                "email": f"{role}{i+1}@factorio.co.uk",
                 "username": f"{role}{i+1}",
                 "role": role,
                 "phone": fake.phone_number(),

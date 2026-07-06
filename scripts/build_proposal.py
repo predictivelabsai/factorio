@@ -28,6 +28,8 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 
+from scripts.diagrams import BILINGUAL, render_bilingual
+
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 IMG = DOCS / "img"
@@ -209,16 +211,18 @@ SECTIONS = [
      "title": {"en": "Three moves, one platform", "ru": "Три шага, одна платформа"},
      "bullets": {
         "en": [
-            "**1 · A better platform.** Rebuild the OzPlanet-style bank factoring experience with an AI core, open-banking-style credit scoring, and a cleaner trilingual UX — priced on **financed volume only**, with no SaaS licence.",
-            "**2 · International capital.** Add an SPV module so global — and specifically Gulf — investors can fund Uzbek receivables, turning a domestic product into a cross-border one.",
-            "**3 · UAE entry.** Stand up a **DIFC SPV** and a phased Shariah programme (Murabaha → Wakala → Sukuk) to reach Dubai / DIFC Islamic capital.",
-            "A working AI prototype ships **today** — chat-based loan triage and chat-based investor reporting are already live in the app.",
+            "**The gap.** Every Uzbek bank *rents* its factoring product from OzPlanet or FinMakon — Universalbank included (OzPlanet cooperation agreement, Sept 2024). None *owns* the product, the customer relationship or the data.",
+            "**1 · Own the platform.** A white-label, AI-native platform Universalbank runs under its own brand — the bank owns the product, customers and data — priced on **financed volume only**.",
+            "**2 · International capital.** An SPV module lets global — and specifically Gulf — investors fund Uzbek receivables. OzPlanet and FinMakon take **no foreign or retail money**, so this is a clean, uncontested differentiator.",
+            "**3 · UAE entry.** A **DIFC SPV** and a phased Shariah programme (Murabaha → Wakala → Sukuk) to reach Dubai / DIFC Islamic capital.",
+            "**Decomposable & live today.** Deploy origination first, add the investor / SPV layer later — and the chat-based loan triage and investor reporting are **already running** in the app.",
         ],
         "ru": [
-            "**1 · Лучшая платформа.** Переосмыслить банковский факторинг в стиле OzPlanet с ИИ-ядром, кредитным скорингом в духе open banking и понятным трёхъязычным UX — с оплатой **только за профинансированный объём**, без SaaS-лицензии.",
-            "**2 · Международный капитал.** Добавить модуль SPV, чтобы глобальные — и прежде всего инвесторы Залива — могли финансировать узбекскую дебиторку, превращая внутренний продукт в трансграничный.",
-            "**3 · Выход в ОАЭ.** Учредить **SPV в DIFC** и поэтапную исламскую программу (Мурабаха → Вакала → Сукук) для доступа к исламскому капиталу Дубая / DIFC.",
-            "Рабочий ИИ-прототип готов **уже сегодня** — триаж заявок в чате и отчётность для инвесторов в чате уже работают в приложении.",
+            "**Разрыв.** Каждый узбекский банк *арендует* факторинговый продукт у OzPlanet или FinMakon — включая Universalbank (соглашение с OzPlanet, сент. 2024). Никто не *владеет* продуктом, отношениями с клиентом и данными.",
+            "**1 · Владеть платформой.** White-label ИИ-платформа, которую Universalbank ведёт под своим брендом — банк владеет продуктом, клиентами и данными — с оплатой **только за профинансированный объём**.",
+            "**2 · Международный капитал.** Модуль SPV позволяет глобальным — и прежде всего инвесторам Залива — финансировать узбекскую дебиторку. OzPlanet и FinMakon **не принимают иностранные или розничные деньги**, поэтому это чистый, незанятый дифференциатор.",
+            "**3 · Выход в ОАЭ.** **SPV в DIFC** и поэтапная исламская программа (Мурабаха → Вакала → Сукук) для доступа к исламскому капиталу Дубая / DIFC.",
+            "**Декомпозируемо и уже работает.** Сначала запускаем origination, слой инвесторов / SPV добавляем позже — а триаж заявок и отчётность в чате **уже работают** в приложении.",
         ],
      }},
 
@@ -231,13 +235,13 @@ SECTIONS = [
             "**SoliqOnline** — the State Tax Committee's platform — has validated, timestamped and archived every B2B e-invoice in the country since **January 2020**.",
             "**Didox** connects **350,000+ organisations** to it and integrates with 1C — a ready-made supplier base that already exchanges invoices electronically.",
             "Every invoice is government-verified and buyer-confirmed on official record — **fraud and debtor-confirmation, factoring's hardest problems, are solved at source.**",
-            "The market is **~$2bn** addressable and **under 2.5% penetrated** — early, and growing fast.",
+            "The market is scaling fast: the **CBU reports ~10.6 trillion soums (~$835M) factored in Jan–Sep 2025**, about **half of it digital** — against a **~$2bn** addressable market that is still lightly penetrated.",
         ],
         "ru": [
             "**SoliqOnline** — платформа Государственного налогового комитета — с **января 2020 года** проверяет, фиксирует по времени и архивирует каждую B2B-электронную счёт-фактуру в стране.",
             "**Didox** подключает к ней **350 000+ организаций** и интегрируется с 1С — готовая база поставщиков, уже обменивающихся счетами в электронном виде.",
             "Каждый счёт проверен государством и подтверждён покупателем в официальном реестре — **мошенничество и подтверждение дебитора, самые сложные проблемы факторинга, решены у источника.**",
-            "Адресный рынок — **~$2 млрд**, проникновение — **менее 2,5%**: рано и быстро растёт.",
+            "Рынок быстро растёт: **ЦБ сообщает о ~10,6 трлн сум (~$835 млн) факторинга за янв–сен 2025**, около **половины — цифровой**, при адресном рынке **~$2 млрд** с всё ещё низким проникновением.",
         ],
      }},
 
@@ -260,35 +264,75 @@ SECTIONS = [
         ],
      }},
 
-    # 4 — The incumbent
+    # 4 — The incumbents
     {"type": "table",
-     "eyebrow": {"en": "The incumbent", "ru": "Действующий игрок"},
-     "title": {"en": "OzPlanet set the market — and left it beatable", "ru": "OzPlanet создал рынок — и оставил его уязвимым"},
+     "eyebrow": {"en": "The incumbents", "ru": "Действующие игроки"},
+     "title": {"en": "OzPlanet & FinMakon own the market — as aggregators", "ru": "OzPlanet и FinMakon владеют рынком — как агрегаторы"},
      "headers": {
-        "en": ["Dimension", "OzPlanet (incumbent)", "Factorio by Consistente"],
-        "ru": ["Параметр", "OzPlanet (действующий)", "Factorio от Consistente"],
+        "en": ["Dimension", "OzPlanet", "FinMakon", "Factorio (Consistente)"],
+        "ru": ["Параметр", "OzPlanet", "FinMakon", "Factorio (Consistente)"],
      },
      "rows": {
         "en": [
-            ["Commercial model", "Bank SaaS licence / subscription", "White-label, **volume-only** pricing — paid when the bank finances"],
-            ["Credit scoring", "Bank's own manual / internal review", "**Open-banking-style** automated score (SoliqOnline + bank txn + CRIF)"],
-            ["AI", "—", "**Chat triage + chat reporting (Grok)**, document intelligence"],
-            ["Onboarding UX", "Bank-led, form-heavy", "Self-serve, trilingual, minutes"],
-            ["International capital", "Domestic banks only", "**DIFC SPV** for global / Gulf investors"],
-            ["Time to indicative decision", "Days", "**Seconds** (indicative) · hours (final)"],
+            ["Model", "Aggregator; bank-set rates", "Aggregator (Didox-backed)", "**White-label marketplace** — bank owns it"],
+            ["Digital share (Q3 2025)", "56% of digital volume", "44% of digital volume", "New entrant — builds share"],
+            ["Funding sources", "Banks / MFOs only", "Banks / factoring cos", "**Banks + investors + retail + SPV**"],
+            ["Foreign / retail capital", "**No**", "**No**", "**Yes** — SPV + marketplace"],
+            ["Bank owns product & data", "No — OzPlanet does", "No — FinMakon does", "**Yes** — fully the bank's"],
+            ["AI core", "Rule-based; nascent", "Nascent", "**Grok chat triage + reporting**, doc intelligence"],
+            ["Pricing to bank", "Per-transaction commission", "Per-transaction commission", "**Volume-only bps** (no SaaS licence)"],
         ],
         "ru": [
-            ["Коммерческая модель", "SaaS-лицензия / подписка для банка", "White-label, оплата **только за объём** — когда банк финансирует"],
-            ["Кредитный скоринг", "Ручная / внутренняя проверка банка", "**Автоматический скоринг в духе open banking** (SoliqOnline + транзакции + CRIF)"],
-            ["ИИ", "—", "**Триаж и отчётность в чате (Grok)**, интеллектуальная обработка документов"],
-            ["UX онбординга", "Ведёт банк, много форм", "Самообслуживание, трёхъязычный, за минуты"],
-            ["Международный капитал", "Только местные банки", "**SPV в DIFC** для глобальных инвесторов и инвесторов Залива"],
-            ["Время до индикативного решения", "Дни", "**Секунды** (индикативно) · часы (финально)"],
+            ["Модель", "Агрегатор; ставки банка", "Агрегатор (при Didox)", "**White-label маркетплейс** — владеет банк"],
+            ["Доля в цифре (Q3 2025)", "56% цифрового объёма", "44% цифрового объёма", "Новичок — набирает долю"],
+            ["Источники капитала", "Только банки / МФО", "Банки / факторинг-компании", "**Банки + инвесторы + розница + SPV**"],
+            ["Иностр. / розн. капитал", "**Нет**", "**Нет**", "**Да** — SPV + маркетплейс"],
+            ["Банк владеет продуктом и данными", "Нет — владеет OzPlanet", "Нет — владеет FinMakon", "**Да** — полностью банка"],
+            ["ИИ-ядро", "Правила; зачаточно", "Зачаточно", "**Grok: триаж + отчётность**, обработка документов"],
+            ["Цена для банка", "Комиссия за транзакцию", "Комиссия за транзакцию", "**Только б.п. от объёма** (без SaaS)"],
         ],
      },
      "note": {
-        "en": "OzPlanet reportedly carries ~52% of factoring routed through e-platforms and serves ~50% of banks — proof the demand is real, and that a sharper product wins share.",
-        "ru": "По имеющимся данным, через OzPlanet проходит ~52% факторинга на электронных платформах, он обслуживает ~50% банков — доказательство реального спроса и того, что более совершенный продукт заберёт долю.",
+        "en": "Universalbank already signed a cooperation agreement with OzPlanet (Sept 2024) — so it knows the model. The point of this proposal is not to rent a better aggregator, but to own the product outright. (Market data: CBU, Q3 2025.)",
+        "ru": "Universalbank уже подписал соглашение о сотрудничестве с OzPlanet (сент. 2024) — то есть знает модель. Смысл этого предложения — не арендовать более удобный агрегатор, а владеть продуктом полностью. (Данные рынка: ЦБ, Q3 2025.)",
+     }},
+
+    # 5 — Own, don't rent (the key insight)
+    {"type": "text",
+     "eyebrow": {"en": "The strategic gap", "ru": "Стратегический разрыв"},
+     "title": {"en": "No Uzbek bank owns its factoring product", "ru": "Ни один узбекский банк не владеет своим факторингом"},
+     "bullets": {
+        "en": [
+            "Today a bank connecting to OzPlanet or FinMakon is a **funding partner on someone else's platform** — the aggregator owns the brand, the customer relationship and the data.",
+            "That is a strategic dependency: the bank cannot differentiate, cannot cross-sell off its own data, and cannot switch without losing the clients.",
+            "**Factorio flips this.** Universalbank runs the platform under its **own brand**, owns **all customer and transaction data**, and can export and move it — no platform lock-in.",
+            "Same government rails (SoliqOnline, CBU registry), same speed — but the bank owns the asset instead of renting the rails. That ownership is the real product.",
+        ],
+        "ru": [
+            "Сегодня банк, подключённый к OzPlanet или FinMakon, — это **партнёр по финансированию на чужой платформе**: агрегатор владеет брендом, отношениями с клиентом и данными.",
+            "Это стратегическая зависимость: банк не может дифференцироваться, не может продавать по своим данным и не может сменить поставщика, не потеряв клиентов.",
+            "**Factorio это переворачивает.** Universalbank ведёт платформу под **своим брендом**, владеет **всеми клиентскими и транзакционными данными** и может их выгрузить и перенести — без привязки к платформе.",
+            "Та же гос. инфраструктура (SoliqOnline, реестр ЦБ), та же скорость — но банк владеет активом, а не арендует рельсы. Именно это владение и есть продукт.",
+        ],
+     }},
+
+    # 6 — Money flow (bilingual diagram)
+    {"type": "diagram", "bilingual": True,
+     "eyebrow": {"en": "How it works", "ru": "Как это работает"},
+     "title": {"en": "How the money moves — and who gets paid", "ru": "Как движутся деньги — и кто получает оплату"},
+     "diagram": "15-money-flow",
+     "caption": {"en": "Money & payment flow — seller, payer (debtor), platform, capital", "ru": "Поток денег и платежей — продавец, плательщик (дебитор), платформа, капитал"},
+     "bullets": {
+        "en": [
+            "The **payer (debtor)** is the anchor: a specific, buyer-confirmed obligation on the SoliqOnline record.",
+            "The platform advances ~85% now from the **capital source** (bank, investor or SPV); at maturity the payer settles 100% and the waterfall pays seller, capital and platform.",
+            "Because the flow is identical regardless of who funds it, the **capital layer is pluggable** — bank first, investors/SPV later.",
+        ],
+        "ru": [
+            "**Плательщик (дебитор)** — якорь: конкретное, подтверждённое покупателем обязательство в реестре SoliqOnline.",
+            "Платформа выдаёт ~85% сразу из **источника капитала** (банк, инвестор или SPV); в срок плательщик гасит 100%, и водопад платит продавцу, капиталу и платформе.",
+            "Поскольку поток одинаков независимо от источника финансирования, **слой капитала подключаемый** — сначала банк, инвесторы/SPV позже.",
+        ],
      }},
 
     # 5 — Pillar 1 intro
@@ -307,6 +351,25 @@ SECTIONS = [
             "На лёгком серверном стеке (FastHTML + PostgreSQL) — быстро менять, дёшево эксплуатировать, легко брендировать под банк.",
             "Трёхъязычность заложена в дизайн (английский · узбекский · русский); ИИ отвечает на языке пользователя.",
             "Следующие три слайда раскрывают ИИ, движок кредитного скоринга и коммерческую модель.",
+        ],
+     }},
+
+    # Origination journey (bilingual diagram)
+    {"type": "diagram", "bilingual": True,
+     "eyebrow": {"en": "Journey · Borrower (origination)", "ru": "Путь · Заёмщик (origination)"},
+     "title": {"en": "The seller's journey — sign-up to cash in 24–48h", "ru": "Путь продавца — от регистрации до денег за 24–48 ч"},
+     "diagram": "16-origination-journey",
+     "caption": {"en": "Origination: SoliqOnline import → AI triage → one-click approval → advance", "ru": "Origination: импорт из SoliqOnline → AI-триаж → одобрение в один клик → аванс"},
+     "bullets": {
+        "en": [
+            "Manual bank involvement is a **single approval click** on a pre-populated screen; everything else is automated.",
+            "The invoice is imported and verified from SoliqOnline; the debtor is scored; collateral is registered with the CBU in **under 60 minutes**.",
+            "This is **Module A** — it stands alone and can go live first, funded entirely by the bank's balance sheet.",
+        ],
+        "ru": [
+            "Ручное участие банка — **один клик одобрения** на заранее заполненном экране; всё остальное автоматизировано.",
+            "Счёт импортируется и проверяется из SoliqOnline; дебитор скорится; залог регистрируется в ЦБ **менее чем за 60 минут**.",
+            "Это **Модуль A** — он самодостаточен и может быть запущен первым, полностью за счёт баланса банка.",
         ],
      }},
 
@@ -348,6 +411,39 @@ SECTIONS = [
         ],
      }},
 
+    # Economics of one invoice (table)
+    {"type": "table",
+     "eyebrow": {"en": "Economics", "ru": "Экономика"},
+     "title": {"en": "What the bank earns on one invoice", "ru": "Что банк зарабатывает на одном счёте"},
+     "headers": {
+        "en": ["Cash flow · $10,000 invoice · 85% · 60d · 5%", "Amount", "Direction", "Day"],
+        "ru": ["Поток · счёт $10 000 · 85% · 60 дн · 5%", "Сумма", "Направление", "День"],
+     },
+     "rows": {
+        "en": [
+            ["Advance to seller (85%)", "$8,500", "Platform → seller", "Day 1"],
+            ["Payer (debtor) pays in full", "$10,000", "Payer → collection", "Day 60"],
+            ["Net balance released to seller", "$1,500", "Platform → seller", "Day 60"],
+            ["Discount income (gross)", "$500", "Capital keeps", "Day 60"],
+            ["Platform fee (volume-based)", "≈ $13", "Bank → Consistente", "Day 60"],
+            ["**Net income on the invoice**", "**≈ $487**", "**Capital keeps**", "**Day 60**"],
+            ["**Annualised return on capital**", "**≈ 30% p.a.**", "—", "—"],
+        ],
+        "ru": [
+            ["Аванс продавцу (85%)", "$8 500", "Платформа → продавец", "День 1"],
+            ["Плательщик (дебитор) платит полностью", "$10 000", "Плательщик → сбор", "День 60"],
+            ["Остаток продавцу", "$1 500", "Платформа → продавец", "День 60"],
+            ["Дисконтный доход (брутто)", "$500", "Капитал удерживает", "День 60"],
+            ["Комиссия платформы (за объём)", "≈ $13", "Банк → Consistente", "День 60"],
+            ["**Чистый доход по счёту**", "**≈ $487**", "**Капитал удерживает**", "**День 60**"],
+            ["**Годовая доходность на капитал**", "**≈ 30% год.**", "—", "—"],
+        ],
+     },
+     "note": {
+        "en": "Illustrative, per the standard SoliqOnline-verified structure. ~30% annualised on deployed capital compares with 22–28% on unsecured SME lending — at lower risk: the invoice is government-verified, the payer has confirmed the obligation, and the bank holds a registered CBU priority claim. Bank stays profitable to a ~4% default rate.",
+        "ru": "Иллюстративно, по стандартной структуре с проверкой SoliqOnline. ~30% годовых на размещённый капитал против 22–28% по необеспеченному кредитованию МСБ — при меньшем риске: счёт проверен государством, плательщик подтвердил обязательство, банк держит зарегистрированный приоритет в ЦБ. Банк прибылен вплоть до ~4% дефолтов.",
+     }},
+
     # 8 — Pricing (table)
     {"type": "table",
      "eyebrow": {"en": "Pillar 1 · Commercial model", "ru": "Направление 1 · Коммерческая модель"},
@@ -371,8 +467,8 @@ SECTIONS = [
         ],
      },
      "note": {
-        "en": "Illustrative. No SaaS licence, no per-seat, no setup fee — Consistente is paid only when the bank finances an invoice. International SPV module: ~60 bps p.a. on invested AUM + a performance share above an agreed hurdle. Final figures to be set with Universalbank.",
-        "ru": "Иллюстративно. Без SaaS-лицензии, без оплаты за место, без платы за внедрение — Consistente получает вознаграждение только когда банк финансирует счёт. Модуль международного SPV: ~60 б.п. в год от инвестированных активов + доля от результата сверх согласованного порога. Итоговые цифры — по согласованию с Universalbank.",
+        "en": "Illustrative. No SaaS licence, no per-seat, no setup fee — Consistente is paid only when the bank finances an invoice. Options on the table: a revenue-share alternative (a small % of the bank's discount income instead of bps), 12-month bank exclusivity in Uzbekistan, and a Year-3 deferred-equity option structured as new shares (non-dilutive, no board/veto rights). International SPV module: ~60 bps p.a. on invested AUM + a performance share above a hurdle. Final figures to be set with Universalbank.",
+        "ru": "Иллюстративно. Без SaaS-лицензии, без оплаты за место, без платы за внедрение — Consistente получает вознаграждение только когда банк финансирует счёт. Опции на столе: альтернатива с revenue-share (небольшой % дисконтного дохода банка вместо б.п.), 12-месячная эксклюзивность для банка в Узбекистане и отложенный опцион на долю в Год 3 в виде новых акций (без размытия, без прав в совете/вето). Модуль международного SPV: ~60 б.п. в год от инвестированных активов + доля от результата сверх порога. Итоговые цифры — по согласованию с Universalbank.",
      }},
 
     # 9 — Pillar 2 intro (diagram)
@@ -391,6 +487,44 @@ SECTIONS = [
             "Universalbank остаётся **оригинатором и сервисером**; защищённое от банкротства **SPV** держит инвесторскую долю и направляет иностранный капитал в пул счетов.",
             "Два трека на **одной базе активов**: **конвенциональная** нота/участие для институционалов и **исламские** структуры для капитала Залива.",
             "Инвесторы получают ту же обоснованную ИИ-отчётность — на своём языке — плюс выписки и прозрачный аудиторский след.",
+        ],
+     }},
+
+    # Investor journey (bilingual diagram)
+    {"type": "diagram", "bilingual": True,
+     "eyebrow": {"en": "Journey · Investor", "ru": "Путь · Инвестор"},
+     "title": {"en": "The investor's journey — onboarding to distribution", "ru": "Путь инвестора — от онбординга до распределения"},
+     "diagram": "17-investor-journey",
+     "caption": {"en": "Investor: onboard → commit capital → hold with AI reporting → get paid", "ru": "Инвестор: онбординг → капитал → удержание с AI-отчётностью → выплата"},
+     "bullets": {
+        "en": [
+            "Retail, institutional and Gulf investors onboard once (KYC / accreditation), then fund via the **marketplace** or the **SPV**.",
+            "They hold positions with **on-demand AI portfolio reporting**; at maturity, principal + return are distributed automatically.",
+            "This is **Module B** — it plugs onto the same origination engine later, without changing anything a seller or the bank does.",
+        ],
+        "ru": [
+            "Розничные, институциональные и инвесторы Залива проходят онбординг один раз (KYC / аккредитация), затем финансируют через **маркетплейс** или **SPV**.",
+            "Они держат позиции с **AI-отчётностью по запросу**; в срок основная сумма и доход распределяются автоматически.",
+            "Это **Модуль B** — он подключается к тому же движку origination позже, ничего не меняя для продавца или банка.",
+        ],
+     }},
+
+    # Decomposition (bilingual diagram)
+    {"type": "diagram", "bilingual": True,
+     "eyebrow": {"en": "Delivery · Decomposability", "ru": "Реализация · Декомпозируемость"},
+     "title": {"en": "Two modules — buy one, or both, in sequence", "ru": "Два модуля — берите один или оба, последовательно"},
+     "diagram": "18-decomposition",
+     "caption": {"en": "Origination (Module A) and Investors/SPV (Module B) are independently deployable", "ru": "Origination (Модуль A) и Инвесторы/SPV (Модуль B) внедряются независимо"},
+     "bullets": {
+        "en": [
+            "**Module A — Origination** can be Universalbank's whole first phase: bank-funded factoring, live in weeks, immediately satisfying the Decree-106 mandate.",
+            "**Module B — Investors & SPV** adds the marketplace and DIFC/international capital later, over the same engine, with no rework.",
+            "The **capital layer is the seam**: swap or add funding sources without touching origination — de-risking the programme and the investment.",
+        ],
+        "ru": [
+            "**Модуль A — Origination** может стать всей первой фазой Universalbank: факторинг за счёт банка, запуск за недели, немедленное выполнение требований Указа № 106.",
+            "**Модуль B — Инвесторы и SPV** добавляет маркетплейс и капитал DIFC/международный позже, поверх того же движка, без переделок.",
+            "**Слой капитала — это стык**: меняйте или добавляйте источники финансирования, не трогая origination — снижая риск программы и инвестиций.",
         ],
      }},
 
@@ -566,11 +700,15 @@ def _slide_md(s, lang, *, for_html):
         if s.get("note"):
             parts += ["", f'> {s["note"][lang]}']
     elif t == "diagram":
+        key = s["diagram"]
+        bilingual = s.get("bilingual")
+        img_rel = f'img/{lang}-{key}.png' if bilingual else f'img/proposal/{key}.png'
+        src = BILINGUAL[key][lang] if bilingual else DIAGRAMS[key]
         if for_html:
-            parts += [f'![{s["caption"][lang]}](img/proposal/{s["diagram"]}.png)',
+            parts += [f'![{s["caption"][lang]}]({img_rel})',
                       "", f'<p class="caption">{s["caption"][lang]}</p>']
         else:
-            parts += ["```mermaid", DIAGRAMS[s["diagram"]].strip(), "```",
+            parts += ["```mermaid", src.strip(), "```",
                       "", f'*{s["caption"][lang]}*']
         if s.get("bullets"):
             parts += ["", _bullets_md(s["bullets"][lang])]
@@ -700,7 +838,10 @@ def build_pptx(lang, out):
         elif t in ("diagram", "shot"):
             has_bul = bool(sec.get("bullets"))
             if t == "diagram":
-                img_path = DIAG / f"{sec['diagram']}.png"
+                if sec.get("bilingual"):
+                    img_path = IMG / f"{lang}-{sec['diagram']}.png"
+                else:
+                    img_path = DIAG / f"{sec['diagram']}.png"
             else:
                 img_path = IMG / f"{lang}-{sec['img']}.png"
             img_w = Inches(7.2) if has_bul else Inches(12.4)
@@ -733,6 +874,7 @@ def build_lang(lang):
 def main():
     print("Rendering diagrams…")
     render_diagrams()
+    render_bilingual()
     print("Building Universalbank proposal")
     for lang in ("en", "ru"):
         print(f"→ {lang}")
