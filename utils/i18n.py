@@ -473,6 +473,51 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "mkt_turnover":         {"en": "Annual turnover",    "uz": "Yillik aylanma",       "ru": "Годовой оборот"},
     "mkt_registration":     {"en": "Registration",       "uz": "Ro'yxat raqami",       "ru": "Рег. номер"},
     "mkt_country":          {"en": "Country",            "uz": "Mamlakat",             "ru": "Страна"},
+
+    # ── AI assistants (nav + shared) ────────────────────────────────
+    "nav_triage":           {"en": "AI Triage",          "uz": "AI Triaj",             "ru": "AI-триаж"},
+    "nav_assistant":        {"en": "AI Reports",         "uz": "AI Hisobot",           "ru": "AI-отчёты"},
+    "ai_you":               {"en": "You",                "uz": "Siz",                  "ru": "Вы"},
+    "ai_bot":               {"en": "Factorio AI",        "uz": "Factorio AI",          "ru": "Factorio AI"},
+    "ai_send":              {"en": "Send",               "uz": "Yuborish",             "ru": "Отправить"},
+    "ai_thinking":          {"en": "Thinking…",          "uz": "O'ylayapman…",         "ru": "Думаю…"},
+    "ai_disabled":          {"en": "The AI assistant is not configured (set XAI_API_KEY).",
+                             "uz": "AI yordamchisi sozlanmagan (XAI_API_KEY ni o'rnating).",
+                             "ru": "AI-ассистент не настроен (задайте XAI_API_KEY)."},
+
+    # ── AI triage (seller) ──────────────────────────────────────────
+    "ai_triage_eyebrow":    {"en": "AI · Application triage",
+                             "uz": "AI · Ariza triaji",
+                             "ru": "AI · Триаж заявок"},
+    "ai_triage_h1":         {"en": "Get your invoice triaged in a chat",
+                             "uz": "Hisob-fakturangizni suhbatda baholang",
+                             "ru": "Оцените ваш счёт в чате"},
+    "ai_triage_lede":       {"en": "Describe your invoice and debtor in plain language. The assistant collects what's missing, then gives an indicative risk band, advance rate and the documents the bank will need next.",
+                             "uz": "Hisob-fakturangiz va qarzdoringizni oddiy so'zlar bilan tasvirlab bering. Yordamchi yetishmayotgan ma'lumotni to'playdi va indikativ risk darajasi, avans stavkasi hamda keyingi hujjatlar ro'yxatini beradi.",
+                             "ru": "Опишите ваш счёт и дебитора обычными словами. Ассистент соберёт недостающее и даст индикативный уровень риска, ставку аванса и список документов для банка."},
+    "ai_triage_greeting":   {"en": "Hi! I'll help triage your invoice for financing. To start, tell me: which company issued the invoice, who the debtor (buyer) is, the invoice amount, and its due date?",
+                             "uz": "Salom! Hisob-fakturangizni moliyalashtirish uchun baholashda yordam beraman. Boshlash uchun ayting: hisob-fakturani qaysi kompaniya chiqargan, qarzdor (xaridor) kim, summa qancha va to'lov muddati qachon?",
+                             "ru": "Здравствуйте! Помогу оценить ваш счёт для финансирования. Для начала укажите: какая компания выставила счёт, кто дебитор (покупатель), сумма счёта и срок оплаты?"},
+    "ai_triage_placeholder":{"en": "e.g. We invoiced Artel for UZS 480,000,000, due in 60 days…",
+                             "uz": "masalan, Artel'ga 480 000 000 so'mlik hisob-faktura, 60 kunda to'lanadi…",
+                             "ru": "напр. Выставили счёт Artel на 480 000 000 сум, срок 60 дней…"},
+
+    # ── AI reporting (investor) ─────────────────────────────────────
+    "ai_assistant_eyebrow": {"en": "AI · Portfolio reporting",
+                             "uz": "AI · Portfel hisoboti",
+                             "ru": "AI · Отчёты по портфелю"},
+    "ai_assistant_h1":      {"en": "Ask anything about your portfolio",
+                             "uz": "Portfelingiz haqida istalgan savol bering",
+                             "ru": "Спросите что угодно о вашем портфеле"},
+    "ai_assistant_lede":    {"en": "The assistant answers from your own positions — net return, outstanding interest, concentration by debtor or sector, upcoming settlements and more. Grounded in your live portfolio data.",
+                             "uz": "Yordamchi sizning pozitsiyalaringiz asosida javob beradi — sof daromad, kutilayotgan foizlar, qarzdor yoki soha bo'yicha konsentratsiya, yaqinlashayotgan hisob-kitoblar va boshqalar.",
+                             "ru": "Ассистент отвечает на основе ваших позиций — чистая доходность, ожидаемые проценты, концентрация по дебиторам и отраслям, ближайшие расчёты и другое. На данных вашего портфеля."},
+    "ai_assistant_greeting":{"en": "Hi! I can answer questions about your portfolio — returns, outstanding positions, concentration and settlements. What would you like to know?",
+                             "uz": "Salom! Portfelingiz haqidagi savollarga javob bera olaman — daromad, ochiq pozitsiyalar, konsentratsiya va hisob-kitoblar. Nimani bilmoqchisiz?",
+                             "ru": "Здравствуйте! Отвечу на вопросы о вашем портфеле — доходность, открытые позиции, концентрация и расчёты. Что вас интересует?"},
+    "ai_assistant_placeholder":{"en": "e.g. What's my exposure to construction? Which positions are overdue?",
+                             "uz": "masalan, Qurilishga qanday ta'sirim bor? Qaysi pozitsiyalar muddati o'tgan?",
+                             "ru": "напр. Какова моя доля в строительстве? Какие позиции просрочены?"},
 }
 
 

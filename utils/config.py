@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     app_secret: str = Field(default="change-me", alias="APP_SECRET")
     port: int = Field(default=5055, alias="PORT")
 
+    # AI — Grok via x.ai (OpenAI-compatible API). Powers the chat-based loan
+    # triage and investor-reporting assistants (see utils/ai.py).
+    xai_api_key: str = Field(default="", alias="XAI_API_KEY")
+    xai_model: str = Field(default="grok-4.3", alias="XAI_MODEL")
+    xai_base_url: str = Field(default="https://api.x.ai/v1", alias="XAI_BASE_URL")
+
 
 @lru_cache(maxsize=1)
 def settings() -> Settings:

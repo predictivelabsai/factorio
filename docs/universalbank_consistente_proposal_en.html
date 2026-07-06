@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Factorio for Universalbank</title>
+<link rel="stylesheet" href="assets/proposal.css">
+</head>
+<body>
+<h1>Factorio for Universalbank</h1>
+<h2>AI-native invoice financing · an international-investor SPV · UAE entry</h2>
+<p>Prepared by Consistente Ltd · Tallinn · info@consistente.tech · consistente.tech</p>
+<p>A proposal by <strong>Consistente Ltd</strong> to build and operate a next-generation, white-label invoice-financing platform for Universalbank — more efficient than the incumbent, priced on volume alone, with an AI core, an international-investor SPV, and a route into the UAE.</p>
+<hr />
+<p class="eyebrow">Executive summary</p>
+
+<h2>Three moves, one platform</h2>
+<ul>
+<li><strong>1 · A better platform.</strong> Rebuild the OzPlanet-style bank factoring experience with an AI core, open-banking-style credit scoring, and a cleaner trilingual UX — priced on <strong>financed volume only</strong>, with no SaaS licence.</li>
+<li><strong>2 · International capital.</strong> Add an SPV module so global — and specifically Gulf — investors can fund Uzbek receivables, turning a domestic product into a cross-border one.</li>
+<li><strong>3 · UAE entry.</strong> Stand up a <strong>DIFC SPV</strong> and a phased Shariah programme (Murabaha → Wakala → Sukuk) to reach Dubai / DIFC Islamic capital.</li>
+<li>A working AI prototype ships <strong>today</strong> — chat-based loan triage and chat-based investor reporting are already live in the app.</li>
+</ul>
+<hr />
+<p class="eyebrow">The opportunity</p>
+
+<h2>Uzbekistan built the perfect rails for invoice finance</h2>
+<ul>
+<li><strong>SoliqOnline</strong> — the State Tax Committee's platform — has validated, timestamped and archived every B2B e-invoice in the country since <strong>January 2020</strong>.</li>
+<li><strong>Didox</strong> connects <strong>350,000+ organisations</strong> to it and integrates with 1C — a ready-made supplier base that already exchanges invoices electronically.</li>
+<li>Every invoice is government-verified and buyer-confirmed on official record — <strong>fraud and debtor-confirmation, factoring's hardest problems, are solved at source.</strong></li>
+<li>The market is <strong>~$2bn</strong> addressable and <strong>under 2.5% penetrated</strong> — early, and growing fast.</li>
+</ul>
+<hr />
+<p class="eyebrow">Why now</p>
+
+<h2>The regulatory window is open</h2>
+<ul>
+<li><strong>Presidential Decree No. 106 (Aug 2024)</strong> mandated banks to offer factoring.</li>
+<li><strong>ZRU-1058 (Apr 2025)</strong> amended the Civil Code to give factoring full legal force, and mandates automated API registration of the bank's collateral priority in the <strong>CBU registry</strong> — within about an hour of approval.</li>
+<li><strong>No new licence</strong> is required: Universalbank's existing CBU licence covers this; Factorio operates as white-label technology under the bank's umbrella.</li>
+<li><strong>No Uzbek bank has yet built a production-grade SoliqOnline factoring stack with an AI core</strong> — the first mover captures structural advantage.</li>
+</ul>
+<hr />
+<p class="eyebrow">The incumbent</p>
+
+<h2>OzPlanet set the market — and left it beatable</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>OzPlanet (incumbent)</th>
+<th>Factorio by Consistente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commercial model</td>
+<td>Bank SaaS licence / subscription</td>
+<td>White-label, <strong>volume-only</strong> pricing — paid when the bank finances</td>
+</tr>
+<tr>
+<td>Credit scoring</td>
+<td>Bank's own manual / internal review</td>
+<td><strong>Open-banking-style</strong> automated score (SoliqOnline + bank txn + CRIF)</td>
+</tr>
+<tr>
+<td>AI</td>
+<td>—</td>
+<td><strong>Chat triage + chat reporting (Grok)</strong>, document intelligence</td>
+</tr>
+<tr>
+<td>Onboarding UX</td>
+<td>Bank-led, form-heavy</td>
+<td>Self-serve, trilingual, minutes</td>
+</tr>
+<tr>
+<td>International capital</td>
+<td>Domestic banks only</td>
+<td><strong>DIFC SPV</strong> for global / Gulf investors</td>
+</tr>
+<tr>
+<td>Time to indicative decision</td>
+<td>Days</td>
+<td><strong>Seconds</strong> (indicative) · hours (final)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>OzPlanet reportedly carries ~52% of factoring routed through e-platforms and serves ~50% of banks — proof the demand is real, and that a sharper product wins share.</p>
+</blockquote>
+<hr />
+<p class="eyebrow">Pillar 1 · A better platform</p>
+
+<h2>AI at the core, not bolted on</h2>
+<ul>
+<li>The same end-to-end factoring workflow — submit, verify, fund, settle — but with AI woven through triage, scoring, documents and reporting.</li>
+<li>Built on a lean, server-rendered stack (FastHTML + PostgreSQL) — fast to change, cheap to run, easy to white-label under the bank's brand.</li>
+<li>Trilingual by design (English · Oʻzbekcha · Russian); the AI answers in the user's language.</li>
+<li>The next three slides detail the AI, the credit-scoring engine, and the commercial model.</li>
+</ul>
+<hr />
+<p class="eyebrow">Pillar 1 · AI</p>
+
+<h2>Two conversational surfaces, one Grok core</h2>
+<p><img alt="Chat-based loan triage and chat-based investor reporting" src="img/proposal/d2-ai-chat.png" /></p>
+<p class="caption">Chat-based loan triage and chat-based investor reporting</p>
+
+<ul>
+<li><strong>Triage</strong> turns a seller's plain-language description into an indicative grade, advance rate and document list — in seconds.</li>
+<li><strong>Reporting</strong> answers an investor's questions grounded in their own live positions — no invented figures.</li>
+<li>Grok scores and explains; a human always approves. Every AI decision is logged and auditable.</li>
+</ul>
+<hr />
+<p class="eyebrow">Pillar 1 · Credit scoring</p>
+
+<h2>Open-banking-style scoring, Uzbek edition</h2>
+<p><img alt="Plaid-style data fusion adapted to Uzbekistan's rails" src="img/proposal/d3-scoring.png" /></p>
+<p class="caption">Plaid-style data fusion adapted to Uzbekistan's rails</p>
+
+<ul>
+<li>The Plaid model is <em>connect an account, read the cash flows, decide</em>. In Uzbekistan the richest feed is <strong>SoliqOnline</strong> — verified invoices and tax-declared turnover — plus <strong>bank transaction data</strong> and the <strong>CRIF</strong> bureau.</li>
+<li>A model produces the <strong>grade, advance rate and price</strong>; Grok writes the <strong>plain-language rationale and adverse-action reasons</strong>.</li>
+<li>Every decision is <strong>versioned and reproducible</strong> — Consistente's core methodology, and what a regulator will ask for.</li>
+</ul>
+<hr />
+<p class="eyebrow">Pillar 1 · Commercial model</p>
+
+<h2>Volume-only pricing — aligned with the bank</h2>
+<table>
+<thead>
+<tr>
+<th>Monthly financed volume</th>
+<th>Platform fee (bps of financed volume)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Up to UZS 50 bn</td>
+<td>120 bps</td>
+</tr>
+<tr>
+<td>UZS 50–200 bn</td>
+<td>90 bps</td>
+</tr>
+<tr>
+<td>UZS 200–500 bn</td>
+<td>70 bps</td>
+</tr>
+<tr>
+<td>Over UZS 500 bn</td>
+<td>55 bps</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Illustrative. No SaaS licence, no per-seat, no setup fee — Consistente is paid only when the bank finances an invoice. International SPV module: ~60 bps p.a. on invested AUM + a performance share above an agreed hurdle. Final figures to be set with Universalbank.</p>
+</blockquote>
+<hr />
+<p class="eyebrow">Pillar 2 · International capital</p>
+
+<h2>An SPV that opens Uzbek receivables to the world</h2>
+<p><img alt="Invoice pool → Factorio → DIFC SPV → international investors" src="img/proposal/d4-spv.png" /></p>
+<p class="caption">Invoice pool → Factorio → DIFC SPV → international investors</p>
+
+<ul>
+<li>Universalbank remains <strong>originator and servicer</strong>; a bankruptcy-remote <strong>SPV</strong> holds the investor-facing interest and channels foreign capital into the invoice pool.</li>
+<li>Two tracks off the <strong>same asset base</strong>: a <strong>conventional</strong> note/participation for institutional investors, and <strong>Shariah</strong> structures for Gulf capital.</li>
+<li>Investors get the same grounded, AI-assisted reporting — in their language — plus statements and a clean audit trail.</li>
+</ul>
+<hr />
+<p class="eyebrow">Pillar 3 · UAE entry</p>
+
+<h2>A phased Shariah programme for DIFC capital</h2>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Murabaha SCF</th>
+<th>Wakala Fund</th>
+<th>Sukuk</th>
+<th>Musharaka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shariah purity</td>
+<td>High</td>
+<td>High</td>
+<td>High</td>
+<td>Highest</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>Low</td>
+<td>Low–Med</td>
+<td>High</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Time to market</td>
+<td>Fastest</td>
+<td>Fast</td>
+<td>Slowest</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Dubai investor appeal</td>
+<td>Medium</td>
+<td>High</td>
+<td>Very high</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Capital per deal</td>
+<td>Small–Med</td>
+<td>Medium</td>
+<td>Large</td>
+<td>Med–Large</td>
+</tr>
+<tr>
+<td>Regulatory need</td>
+<td>Fatwa only</td>
+<td>Fatwa + fund</td>
+<td>Fatwa + DFSA</td>
+<td>Fatwa + fund</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Pilot</td>
+<td>Family offices</td>
+<td>Institutional</td>
+<td>Strategic partners</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Recommended path: run them in sequence — Murabaha SCF pilot (M6–12) → Wakala fund → Sukuk. Each phase builds the track record that makes the next credible. All require an AAOIFI-accredited fatwa before deployment.</p>
+</blockquote>
+<hr />
+<p class="eyebrow">Pillar 3 · Why Dubai / DIFC</p>
+
+<h2>The yield spread is the story</h2>
+<ul>
+<li>Uzbek factoring yields of <strong>~20–30% p.a.</strong> against Gulf Islamic money-market returns of <strong>~4–6%</strong> — an exceptional spread for the risk, given SoliqOnline's structural protections.</li>
+<li><strong>Short duration</strong> (30–90-day rolling receivables) is rare and highly demanded by Gulf liquidity managers.</li>
+<li>Uzbek receivables are <strong>uncorrelated</strong> with Gulf real estate, regional equities or oil — genuine diversification.</li>
+<li><strong>DIFC (DFSA)</strong> and <strong>ADGM (FSRA)</strong> both have mature Islamic-finance frameworks and recognise SPV/Sukuk structures; the UAE's Federal Decree-Law No. 50 of 2022 codifies the contracts.</li>
+</ul>
+<hr />
+<p class="eyebrow">Architecture</p>
+
+<h2>One process, AI-native, integration-ready</h2>
+<p><img alt="Target system architecture with AI components highlighted" src="img/proposal/d1-architecture.png" /></p>
+<p class="caption">Target system architecture with AI components highlighted</p>
+
+<ul>
+<li>A single FastHTML process serves the landing site, the investor app and the AI assistants; PostgreSQL holds the factoring and AI data.</li>
+<li>Clean integration seams to <strong>SoliqOnline/Didox</strong>, <strong>open banking</strong>, <strong>CRIF</strong>, the <strong>CBU registry</strong>, and the <strong>DIFC SPV / custodian</strong>.</li>
+<li>Grok (x.ai) is reached over an OpenAI-compatible interface — the model id is configuration, avoiding vendor lock-in.</li>
+</ul>
+<hr />
+<p class="eyebrow">Proof · Working today</p>
+
+<h2>The AI is not a slide — it's shipped</h2>
+<p><img alt="Live chat-based invoice triage in the Factorio app screen" src="img/en-13-ai-triage.png" /></p>
+<p class="caption">Live chat-based invoice triage in the Factorio app</p>
+
+<ul>
+<li>A seller describes an invoice in a sentence; the assistant returns an indicative risk band, advance rate and next-document list.</li>
+<li>Built on Grok (x.ai), trilingual, with graceful fallback and full audit logging — the same pattern extends to scoring and reporting.</li>
+</ul>
+<hr />
+<p class="eyebrow">Delivery</p>
+
+<h2>From prototype to regional platform</h2>
+<p><img alt="Phased rollout — each phase funds the next" src="img/proposal/d5-roadmap.png" /></p>
+<p class="caption">Phased rollout — each phase funds the next</p>
+
+<ul>
+<li><strong>Phase 0 (now):</strong> AI triage + reporting prototype live.</li>
+<li><strong>Phases 1–2 (M1–6):</strong> platform GA, SoliqOnline integration, open-banking scoring, volume pricing.</li>
+<li><strong>Phases 3–4 (M6+):</strong> DIFC SPV and first international capital, then the Wakala → Sukuk sequence and regional scale.</li>
+</ul>
+<hr />
+<p class="eyebrow">Why Consistente</p>
+
+<h2>Production AI, delivered consistently</h2>
+<ul>
+<li>Consistente Ltd (Tallinn, EU) builds <strong>production-grade AI for enterprises</strong> — with reproducible pipelines, versioned models and inspectable prompts, not black boxes.</li>
+<li>Precedents across <strong>financial services and regulated sectors</strong>: LSEG, DBRS Morningstar, ARM, Microsoft.</li>
+<li>Core capabilities map directly onto this project: <strong>document intelligence</strong>, <strong>applied forecasting/scoring</strong>, and <strong>agentic workflows</strong> with human review.</li>
+<li>EU-based, audit-first — the right profile for a bank building AI a regulator will scrutinise.</li>
+</ul>
+<hr />
+<p class="eyebrow">Next steps</p>
+
+<h2>What we propose to do first</h2>
+<ul>
+<li><strong>1.</strong> Agree the white-label scope and the volume-based commercial terms.</li>
+<li><strong>2.</strong> Stand up a pilot on live SoliqOnline data; ship the platform GA with the AI triage and scoring engine.</li>
+<li><strong>3.</strong> In parallel, begin DIFC SPV and fatwa preparation so international capital can follow the operating book.</li>
+<li><strong>Contact:</strong> Consistente Ltd · info@consistente.tech · consistente.tech</li>
+</ul>
+</body>
+</html>

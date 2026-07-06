@@ -1,0 +1,183 @@
+"""AI layer — Grok (x.ai) chat, plus the two Factorio assistants.
+
+Factorio uses Grok via x.ai's OpenAI-compatible Chat Completions API. Two
+product-facing assistants are built on it:
+
+  * triage     — a chat-based loan/invoice-application triage agent (seller side)
+  * reporting  — a chat-based investor-reporting agent (investor side), grounded
+                 in the current investor's own portfolio positions
+
+The client is deliberately dependency-free (stdlib ``urllib``) so the app keeps
+a small footprint; swap in the ``openai`` SDK later if streaming is needed.
+
+Config is read through ``settings()`` (``XAI_API_KEY`` / ``XAI_MODEL`` /
+``XAI_BASE_URL``) — never ``os.environ`` directly.
+"""
+
+from __future__ import annotations
+
+import json
+import urllib.error
+import urllib.request
+
+from utils.config import settings
+
+# Roughly how many recent turns of a conversation we keep in-context.
+MAX_HISTORY_TURNS = 12
+_TIMEOUT_S = 60
+
+
+def ai_available() -> bool:
+    """True when an x.ai key is configured — routes degrade gracefully otherwise."""
+    return bool(settings().xai_api_key)
+
+
+def chat(messages: list[dict], *, temperature: float = 0.3,
+         max_tokens: int = 900, model: str | None = None) -> str:
+    """Call Grok chat-completions and return the assistant text.
+
+    ``messages`` is the OpenAI-style list of ``{"role", "content"}`` dicts.
+    Any transport/API error is returned as a short, user-safe string rather than
+    raised, so a failed AI call never takes down a product page.
+    """
+    cfg = settings()
+    if not cfg.xai_api_key:
+        return ("The AI assistant is not configured yet — set XAI_API_KEY in the "
+                "environment to enable it.")
+
+    payload = json.dumps({
+        "model": model or cfg.xai_model,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "stream": False,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        f"{cfg.xai_base_url.rstrip('/')}/chat/completions",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {cfg.xai_api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=_TIMEOUT_S) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        return data["choices"][0]["message"]["content"].strip()
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "ignore")[:300]
+        return f"The AI assistant is temporarily unavailable (HTTP {e.code}). {detail}"
+    except (urllib.error.URLError, KeyError, ValueError, TimeoutError) as e:
+        return f"The AI assistant is temporarily unavailable ({type(e).__name__})."
+
+
+def build_conversation(system_prompt: str, history: list[dict],
+                       user_message: str) -> list[dict]:
+    """Assemble a messages list: system + trimmed history + the new user turn."""
+    trimmed = history[-(MAX_HISTORY_TURNS * 2):] if history else []
+    return [{"role": "system", "content": system_prompt}, *trimmed,
+            {"role": "user", "content": user_message}]
+
+
+# ── Assistant 1: loan / invoice-application triage (seller side) ────────────
+
+TRIAGE_SYSTEM = """You are Factorio's invoice-financing triage assistant, working \
+for Universalbank in Uzbekistan. Factorio finances (factors) B2B invoices: a \
+seller sells an unpaid invoice for cash today; the bank/investors advance a share \
+of it and are repaid when the debtor pays.
+
+Your job is to triage a seller's factoring application through a short, friendly \
+chat. In order:
+1. Collect the essentials: seller company, debtor (buyer) company, invoice amount \
+   and currency (UZS unless stated), invoice/issue date, due date, and whether the \
+   invoice is registered on SoliqOnline (the state e-invoice system) and \
+   buyer-confirmed.
+2. Ask only for what is still missing — never re-ask what the seller already gave.
+3. When you have enough, produce a concise triage summary: an indicative risk band \
+   (A–D), an indicative advance rate (typically 70–90%), the key risk flags, and \
+   the documents the bank will need next.
+
+Rules: be concise (a few short sentences or tight bullet points). Never promise a \
+final decision or an exact price — everything is indicative, subject to \
+verification. If asked something outside invoice financing, steer back politely. \
+Amounts are in Uzbekistani so‘m (UZS) unless the seller says otherwise."""
+
+
+_LANG_NAMES = {"en": "English", "uz": "Uzbek", "ru": "Russian"}
+
+
+def language_directive(lang: str) -> str:
+    name = _LANG_NAMES.get(lang, "English")
+    return (f"\n\nAlways write your replies in {name}. Keep company names, "
+            f"invoice numbers and currency codes as-is.")
+
+
+def triage_system_prompt(lang: str = "en") -> str:
+    return TRIAGE_SYSTEM + language_directive(lang)
+
+
+# ── Assistant 2: investor reporting (investor side) ─────────────────────────
+
+REPORTING_SYSTEM = """You are Factorio's investor-reporting assistant for \
+Universalbank's invoice-financing marketplace. You answer an investor's questions \
+about THEIR OWN portfolio of financed invoices, using only the portfolio data \
+provided in this prompt. Investors earn a short-term, asset-backed return by \
+funding verified invoices; positions settle when the debtor pays.
+
+Rules:
+- Ground every number in the PORTFOLIO DATA below. If the data doesn't contain the \
+  answer, say so plainly — do not invent figures.
+- Be concise and specific; use short bullet points and quote the actual amounts.
+- Amounts are in Uzbekistani so‘m (UZS). Format large numbers readably.
+- You may explain concepts (risk grades A–D, advance rate, aging, net annual \
+  return) but keep it brief and practical.
+- Never give personalised financial advice or guarantee future returns."""
+
+
+def reporting_system_prompt(portfolio_context: str, lang: str = "en") -> str:
+    return (f"{REPORTING_SYSTEM}{language_directive(lang)}"
+            f"\n\n=== PORTFOLIO DATA ===\n{portfolio_context}")
+
+
+def portfolio_context(investor: dict | None, metrics: dict,
+                      positions: list[dict]) -> str:
+    """Render an investor's computed metrics + positions into a compact text block
+    that grounds the reporting assistant. Kept plain-text and token-frugal."""
+    if not investor:
+        return "No investor selected; no portfolio data available."
+
+    def uzs(v) -> str:
+        try:
+            return f"UZS {float(v or 0):,.0f}"
+        except (TypeError, ValueError):
+            return "UZS 0"
+
+    lines = [
+        f"Investor: {investor.get('username', '—')}",
+        f"Account value: {uzs(metrics.get('account_value'))}",
+        f"Net annual return: {metrics.get('net_annual_return', 0):.1f}%",
+        f"Active invested: {uzs(metrics.get('active_invested'))}",
+        f"Expected outstanding (interest): {uzs(metrics.get('expected_outstanding'))}",
+        f"Interest received to date: {uzs(metrics.get('interest_received'))}",
+        f"Write-offs: {uzs(metrics.get('writeoffs'))}",
+        f"Positions: {len(positions)} "
+        f"(active {len(metrics.get('active', []))}, "
+        f"settled {len(metrics.get('settled', []))}, "
+        f"defaulted {len(metrics.get('defaulted', []))})",
+        "",
+        "Position detail (invoice | debtor | sector | grade | invested | expected | status | due):",
+    ]
+    for p in positions[:60]:
+        due = p.get("due_date")
+        due_s = due.date().isoformat() if hasattr(due, "date") else (str(due) if due else "—")
+        lines.append(
+            f"- {p.get('invoice_number','—')} | {p.get('debtor_name','—')} | "
+            f"{p.get('sector','—')} | {p.get('risk_grade','—')} | "
+            f"{uzs(p.get('investment_amount'))} | {uzs(p.get('expected_return_amount'))} | "
+            f"{p.get('status','—')} | {due_s}"
+        )
+    if len(positions) > 60:
+        lines.append(f"...and {len(positions) - 60} more positions.")
+    return "\n".join(lines)

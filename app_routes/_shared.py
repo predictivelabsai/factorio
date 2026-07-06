@@ -113,6 +113,8 @@ _APP_LINKS = [
     ("port_eyebrow", "/app/portfolio"),
     ("nav_statement", "/app/statement"),
     ("nav_autoinvest", "/app/auto-invest"),
+    ("nav_triage", "/app/triage"),
+    ("nav_assistant", "/app/assistant"),
 ]
 
 

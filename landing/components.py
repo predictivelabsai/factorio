@@ -191,6 +191,7 @@ def page(title: str, *content, current_path: str = "/", lang: str = DEFAULT_LANG
         ),
         Script(src="https://cdn.tailwindcss.com"),
         Script(NotStr(TAILWIND_CONFIG)),
+        Script(src="https://unpkg.com/htmx.org@2.0.3"),
         Link(rel="stylesheet", href="/static/site.css"),
     ]
     if head_extra:

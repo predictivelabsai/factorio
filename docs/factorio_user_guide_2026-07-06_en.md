@@ -1,7 +1,7 @@
 # Factorio — User Guide
 ## Invoice financing, end to end
 
-Generated 2026-06-28 · Live at **factorio.co.uk**
+Generated 2026-07-06 · Live at **factorio.co.uk**
 
 Factorio is an invoice-financing (factoring) marketplace. Businesses sell their unpaid invoices for cash today; investors fund those invoices for a short-term, asset-backed return. This guide walks through every screen — the public site and the investor product app — one screen per slide.
 
@@ -160,6 +160,32 @@ Factorio is an invoice-financing (factoring) marketplace. Businesses sell their 
 - Toggle the strategy active/inactive; the status is shown at the top.
 - Rules are saved per investor and applied to matching new invoices.
 - Modelled on investly.co's autobidder.
+
+---
+
+<p class="eyebrow">AI · Application triage</p>
+
+## Chat-based invoice triage
+
+![AI triage assistant](img/en-13-ai-triage.png)
+
+- Sellers describe an invoice and debtor in plain language; the assistant collects only what is still missing.
+- It returns an **indicative risk band (A–D)**, an **advance rate** and the **documents the bank needs next** — in seconds, not days.
+- Powered by **Grok (x.ai)**; everything is indicative and subject to verification — no final decision is automated.
+- Fully trilingual — the assistant replies in the visitor's language (English, Oʻzbekcha, Russian).
+
+---
+
+<p class="eyebrow">AI · Portfolio reporting</p>
+
+## Ask your portfolio anything
+
+![AI reporting assistant](img/en-14-ai-assistant.png)
+
+- Investors ask questions in natural language — net return, exposure by sector or debtor, overdue positions, upcoming settlements.
+- Answers are **grounded in the investor's own live positions** — every figure traces back to real portfolio data, not invented.
+- Concrete and specific: it quotes actual amounts and invoice numbers, and says so plainly when the data can't answer.
+- The conversational layer on top of the portfolio cockpit — reporting on demand, in the investor's language.
 
 ---
 

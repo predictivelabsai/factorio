@@ -306,6 +306,46 @@ SLIDES = [
             ],
         },
     },
+    {
+        "img": "13-ai-triage",
+        "eyebrow": {"en": "AI · Application triage", "ru": "AI · Триаж заявок"},
+        "title": {"en": "Chat-based invoice triage", "ru": "Триаж счёта в чате"},
+        "caption": {"en": "AI triage assistant", "ru": "AI-ассистент триажа"},
+        "bullets": {
+            "en": [
+                "Sellers describe an invoice and debtor in plain language; the assistant collects only what is still missing.",
+                "It returns an **indicative risk band (A–D)**, an **advance rate** and the **documents the bank needs next** — in seconds, not days.",
+                "Powered by **Grok (x.ai)**; everything is indicative and subject to verification — no final decision is automated.",
+                "Fully trilingual — the assistant replies in the visitor's language (English, Oʻzbekcha, Russian).",
+            ],
+            "ru": [
+                "Продавцы описывают счёт и должника обычными словами; ассистент запрашивает только недостающее.",
+                "Он возвращает **индикативный уровень риска (A–D)**, **ставку аванса** и **список документов для банка** — за секунды, а не за дни.",
+                "На базе **Grok (x.ai)**; все данные индикативны и подлежат проверке — окончательное решение не автоматизируется.",
+                "Полностью трёхъязычный — ассистент отвечает на языке посетителя (английский, узбекский, русский).",
+            ],
+        },
+    },
+    {
+        "img": "14-ai-assistant",
+        "eyebrow": {"en": "AI · Portfolio reporting", "ru": "AI · Отчёты по портфелю"},
+        "title": {"en": "Ask your portfolio anything", "ru": "Спросите свой портфель о чём угодно"},
+        "caption": {"en": "AI reporting assistant", "ru": "AI-ассистент отчётности"},
+        "bullets": {
+            "en": [
+                "Investors ask questions in natural language — net return, exposure by sector or debtor, overdue positions, upcoming settlements.",
+                "Answers are **grounded in the investor's own live positions** — every figure traces back to real portfolio data, not invented.",
+                "Concrete and specific: it quotes actual amounts and invoice numbers, and says so plainly when the data can't answer.",
+                "The conversational layer on top of the portfolio cockpit — reporting on demand, in the investor's language.",
+            ],
+            "ru": [
+                "Инвесторы задают вопросы на естественном языке — чистая доходность, доля по отраслям или должникам, просроченные позиции, ближайшие расчёты.",
+                "Ответы **основаны на реальных позициях инвестора** — каждая цифра восходит к данным портфеля, а не выдумана.",
+                "Конкретно и точно: приводятся реальные суммы и номера счетов, а при нехватке данных об этом честно сообщается.",
+                "Разговорный слой поверх аналитической панели портфеля — отчётность по запросу, на языке инвестора.",
+            ],
+        },
+    },
 ]
 
 CLOSING = {
