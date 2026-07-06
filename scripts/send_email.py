@@ -50,7 +50,7 @@ def _read_arg(value: str | None) -> str | None:
 
 
 def send_email(to, subject, body, *, html_body=None, attachments=None,
-               cc=None, bcc=None, reply_to=None, append_to_sent="Sent"):
+               cc=None, bcc=None, reply_to=None, append_to_sent="Sent Items"):
     be = _load_business_email()
     mailbox, password = be["mailbox"], be["password"]
     from_name = be.get("from_name", "Julian Kaljuvee")
