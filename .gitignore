@@ -224,3 +224,10 @@ __marimo__/
 config/credentials.yaml
 .credentials.yaml
 
+reply_state.json
+
+# stray browser-automation snapshots
+/*.yml
+ionos-*.png
+mx-*.png
+dkim-*.png
