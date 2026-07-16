@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     xai_model: str = Field(default="grok-4.3", alias="XAI_MODEL")
     xai_base_url: str = Field(default="https://api.x.ai/v1", alias="XAI_BASE_URL")
 
+    # Display currency for the demo. Stored amounts are UZS-scale and converted
+    # to this currency for display via utils.money (default USD).
+    display_currency: str = Field(default="USD", alias="DISPLAY_CURRENCY")
+
 
 @lru_cache(maxsize=1)
 def settings() -> Settings:

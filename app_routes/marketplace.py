@@ -113,8 +113,9 @@ def _progress_pct(raised: float, goal: float) -> int:
 
 
 def _cur(currency: str, amount: float) -> str:
-    sym = {"EUR": "€", "UZS": "UZS ", "USD": "$", "GBP": "£"}.get(currency, currency + " ")
-    return f"{sym}{amount:,.0f}"
+    # Stored amounts are UZS-scale; display in the app's currency (USD default).
+    from utils.money import fmt_money
+    return fmt_money(amount)
 
 
 def _field(label, control):

@@ -91,7 +91,7 @@ of it and are repaid when the debtor pays.
 Your job is to triage a seller's factoring application through a short, friendly \
 chat. In order:
 1. Collect the essentials: seller company, debtor (buyer) company, invoice amount \
-   and currency (UZS unless stated), invoice/issue date, due date, and whether the \
+   and currency (USD unless stated), invoice/issue date, due date, and whether the \
    invoice is registered on SoliqOnline (the state e-invoice system) and \
    buyer-confirmed.
 2. Ask only for what is still missing — never re-ask what the seller already gave.
@@ -102,7 +102,7 @@ chat. In order:
 Rules: be concise (a few short sentences or tight bullet points). Never promise a \
 final decision or an exact price — everything is indicative, subject to \
 verification. If asked something outside invoice financing, steer back politely. \
-Amounts are in Uzbekistani so‘m (UZS) unless the seller says otherwise."""
+Amounts are in US dollars (USD) unless the seller says otherwise."""
 
 
 _LANG_NAMES = {"en": "English", "uz": "Uzbek", "ru": "Russian"}
@@ -130,7 +130,7 @@ Rules:
 - Ground every number in the PORTFOLIO DATA below. If the data doesn't contain the \
   answer, say so plainly — do not invent figures.
 - Be concise and specific; use short bullet points and quote the actual amounts.
-- Amounts are in Uzbekistani so‘m (UZS). Format large numbers readably.
+- Amounts are in US dollars (USD). Format large numbers readably.
 - You may explain concepts (risk grades A–D, advance rate, aging, net annual \
   return) but keep it brief and practical.
 - Never give personalised financial advice or guarantee future returns."""
@@ -148,11 +148,7 @@ def portfolio_context(investor: dict | None, metrics: dict,
     if not investor:
         return "No investor selected; no portfolio data available."
 
-    def uzs(v) -> str:
-        try:
-            return f"UZS {float(v or 0):,.0f}"
-        except (TypeError, ValueError):
-            return "UZS 0"
+    from utils.money import fmt_money as uzs  # display currency (USD default)
 
     lines = [
         f"Investor: {investor.get('username', '—')}",

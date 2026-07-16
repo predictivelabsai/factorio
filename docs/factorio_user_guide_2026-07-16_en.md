@@ -1,7 +1,7 @@
 # Factorio — User Guide
 ## Invoice financing, end to end
 
-Generated 2026-07-06 · Live at **factorio.co.uk**
+Generated 2026-07-16 · Live at **factorio.co.uk**
 
 Factorio is an invoice-financing (factoring) marketplace. Businesses sell their unpaid invoices for cash today; investors fund those invoices for a short-term, asset-backed return. This guide walks through every screen — the public site and the investor product app — one screen per slide.
 

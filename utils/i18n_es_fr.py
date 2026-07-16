@@ -59,7 +59,7 @@ EXTRA = {
     },
     "hero_lede": {
         "es": "Factorio conecta empresas que necesitan flujo de caja ahora con inversores que buscan retornos a corto plazo respaldados por activos. Suba su factura, obtenga financiamiento en días y concéntrese en hacer crecer su negocio — no en perseguir pagos.",
-        "fr": "Factorio connecte les entreprises qui ont besoin de trésorerie maintenant avec des investisseurs à la recherche de rendements à court terme adossés à des actifs. Téléchargez votre facture, obtenez un financement en quelques jours et concentrez-vous sur la croissance de votre entreprise — pas sur la poursuite des paiements."
+        "fr": "Factorio connecte les entreprises qui ont besoin de trésorerie maintenant avec des investisseurs recherchant des rendements à court terme adossés à des actifs. Téléchargez votre facture, obtenez un financement en quelques jours et concentrez-vous sur la croissance de votre entreprise — pas sur la poursuite des paiements."
     },
     "hero_cta_finance": {
         "es": "Financiar una factura",
@@ -111,10 +111,10 @@ EXTRA = {
     },
     "how_s3_title": {
         "es": "Obtenga financiamiento de inversores",
-        "fr": "Obtenez un financement par des investisseurs"
+        "fr": "Obtenez un financement des investisseurs"
     },
     "how_s3_body": {
-        "es": "Su factura se publica en nuestro mercado. Los inversores la financian con una tasa de anticipo de hasta el 90 %. El efectivo llega a su cuenta en 1–3 días.",
+        "es": "Su factura se lista en nuestro mercado. Los inversores la financian con una tasa de anticipo de hasta el 90 %. El efectivo llega a su cuenta en 1–3 días.",
         "fr": "Votre facture est listée sur notre marketplace. Les investisseurs la financent à un taux d’avance pouvant atteindre 90 %. Les fonds arrivent sur votre compte en 1 à 3 jours."
     },
     "how_s4_title": {
@@ -122,8 +122,8 @@ EXTRA = {
         "fr": "Règlement et rendements"
     },
     "how_s4_body": {
-        "es": "Cuando su cliente paga la factura, los inversores reciben su capital más los rendimientos. Usted recibe el saldo restante menos las comisiones.",
-        "fr": "Lorsque votre client paie la facture, les investisseurs reçoivent leur capital plus les rendements. Vous recevez le solde restant moins les frais."
+        "es": "Cuando su cliente paga la factura, los inversores reciben su principal más los rendimientos. Usted recibe el saldo restante menos las comisiones.",
+        "fr": "Lorsque votre client paie la facture, les investisseurs reçoivent leur principal plus les rendements. Vous recevez le solde restant moins les frais."
     },
     "sectors_eyebrow": {
         "es": "Sectores que financiamos",
@@ -155,11 +155,11 @@ EXTRA = {
     },
     "sector_manufacturing_blurb": {
         "es": "Convierta ciclos de pago largos en capital de trabajo inmediato para materias primas y producción.",
-        "fr": "Transformez les cycles de paiement longs en capital de roulement immédiat pour les matières premières et la production."
+        "fr": "Transformez les longs cycles de paiement en capital de roulement immédiat pour les matières premières et la production."
     },
     "sector_wholesale_blurb": {
         "es": "Cierre la brecha entre los pagos a proveedores y los cobros de clientes en la distribución.",
-        "fr": "Comblez l’écart entre les paiements aux fournisseurs et les recettes clients dans la distribution."
+        "fr": "Comblez l’écart entre les paiements fournisseurs et les encaissements clients dans la distribution."
     },
     "sector_construction_blurb": {
         "es": "Financie facturas por hitos para que su equipo siga trabajando sin interrupciones de flujo de caja.",
@@ -167,7 +167,7 @@ EXTRA = {
     },
     "sector_logistics_blurb": {
         "es": "Mantenga los camiones en movimiento y los almacenes abastecidos mientras los clientes liquidan en sus términos.",
-        "fr": "Gardez les camions en mouvement et les entrepôts approvisionnés pendant que les clients règlent à leurs conditions."
+        "fr": "Gardez les camions en mouvement et les entrepôts approvisionnés pendant que les clients règlent selon leurs conditions."
     },
     "sector_services_blurb": {
         "es": "Consultoría, personal, TI — reciba el pago ahora por el trabajo que entregó el mes pasado.",
@@ -203,11 +203,11 @@ EXTRA = {
     },
     "sector_healthcare_blurb": {
         "es": "Financie las cuentas por cobrar lentas de aseguradoras e instituciones para clínicas y proveedores.",
-        "fr": "Financez les créances lentes des assureurs et institutions pour cliniques et fournisseurs."
+        "fr": "Financez les créances lentes des assureurs et institutions pour les cliniques et fournisseurs."
     },
     "sector_agriculture_blurb": {
         "es": "Cubra la brecha entre la cosecha, la entrega y el pago del comprador.",
-        "fr": "Comblez l'écart entre récolte, livraison et paiement de l'acheteur."
+        "fr": "Comblez l'écart entre la récolte, la livraison et le paiement de l'acheteur."
     },
     "sector_energy_blurb": {
         "es": "Financie las cuentas por cobrar de servicios públicos, contratistas y ciclos de proyectos largos.",
@@ -219,7 +219,7 @@ EXTRA = {
     },
     "sector_explorer_heading": {
         "es": "Vea cómo funciona en su industria.",
-        "fr": "Voyez comment cela fonctionne dans votre industrie."
+        "fr": "Découvrez comment cela fonctionne dans votre industrie."
     },
     "sector_explorer_label": {
         "es": "Elija una industria",
@@ -231,10 +231,10 @@ EXTRA = {
     },
     "sector_wholesale_usecase": {
         "es": "Un distribuidor factoriza facturas a una cadena de supermercados para pagar a sus propios proveedores antes y obtener descuentos por volumen.",
-        "fr": "Un distributeur factorise des factures pour une chaîne de supermarchés afin de payer ses fournisseurs plus tôt et obtenir des remises sur volume."
+        "fr": "Un distributeur factorise des factures auprès d'une chaîne de supermarchés pour payer ses propres fournisseurs plus tôt et obtenir des remises sur volume."
     },
     "sector_construction_usecase": {
-        "es": "Un subcontratista financia un certificado de hito para poder pagar a los equipos y alquilar equipo antes de que pague el desarrollador.",
+        "es": "Un subcontratista financia un certificado de hito para poder pagar a las cuadrillas y alquilar equipo antes de que pague el desarrollador.",
         "fr": "Un sous-traitant finance un certificat d'étape pour payer les équipes et louer du matériel avant que le promoteur ne paie."
     },
     "sector_logistics_usecase": {
@@ -243,11 +243,11 @@ EXTRA = {
     },
     "sector_hospitality_usecase": {
         "es": "Un grupo hotelero ejecuta un programa de factoraje inverso para que 200 proveedores de alimentos y lencería reciban el pago antes — sin que el grupo rompa sus términos.",
-        "fr": "Un groupe hôtelier gère un programme de reverse factoring pour que 200 fournisseurs de nourriture et linge soient payés plus tôt — sans que le groupe ne rompe ses conditions."
+        "fr": "Un groupe hôtelier gère un programme de reverse factoring afin que 200 fournisseurs de nourriture et de linge soient payés plus tôt — sans que le groupe ne rompe ses conditions."
     },
     "sector_retail_usecase": {
         "es": "Un minorista factoriza facturas de proveedores antes de un pico estacional para abastecer estantes antes de que lleguen las ventas.",
-        "fr": "Un détaillant factorise des factures fournisseurs avant un pic saisonnier pour approvisionner les rayons avant l'arrivée des ventes."
+        "fr": "Un détaillant factorise les factures fournisseurs avant un pic saisonnier pour approvisionner les rayons avant l'arrivée des ventes."
     },
     "sector_healthcare_usecase": {
         "es": "Un proveedor de suministros médicos adelanta facturas a clínicas mientras los reembolsos de aseguradoras se liquidan en 60–90 días.",
@@ -278,8 +278,8 @@ EXTRA = {
         "fr": "Pour les vendeurs"
     },
     "benefit_sellers_metric": {
-        "es": "1–3 days",
-        "fr": "1–3 days"
+        "es": "1–3 días",
+        "fr": "1–3 jours"
     },
     "benefit_sellers_caption": {
         "es": "desde el envío de la factura hasta el efectivo en su cuenta. No más esperar 30–90 días para el pago.",
@@ -311,7 +311,7 @@ EXTRA = {
     },
     "cta_eyebrow": {
         "es": "Comience",
-        "fr": "Commencez"
+        "fr": "Commencer"
     },
     "cta_headline": {
         "es": "¿Listo para desbloquear su flujo de efectivo?",
@@ -322,7 +322,7 @@ EXTRA = {
         "fr": "Obtenez un devis gratuit en quelques minutes. Aucun engagement, aucuns frais cachés."
     },
     "cta_button": {
-        "es": "Obtenga una cotización gratis",
+        "es": "Obtener una cotización gratis",
         "fr": "Obtenir un devis gratuit"
     },
     "cta_browse": {
@@ -367,7 +367,7 @@ EXTRA = {
     },
     "sellers_lede": {
         "es": "Deje de esperar a que las facturas se liquiden. Cargue una factura verificada y reciba hasta el 90% de su valor en 1–3 días hábiles. Cuando su cliente pague, obtendrá el saldo menos una pequeña comisión.",
-        "fr": "Arrêtez d'attendre que les factures soient réglées. Téléchargez une facture vérifiée et recevez jusqu'à 90 % de sa valeur en 1 à 3 jours ouvrés. Lorsque votre client paie, vous recevez le solde moins des frais minimes."
+        "fr": "Arrêtez d'attendre que les factures soient réglées. Téléversez une facture vérifiée et recevez jusqu'à 90 % de sa valeur en 1–3 jours ouvrés. Lorsque votre client paie, vous recevez le solde moins des frais minimes."
     },
     "sellers_benefits_h2": {
         "es": "Cómo el financiamiento de facturas ayuda a su negocio.",
@@ -375,11 +375,11 @@ EXTRA = {
     },
     "sellers_b1_title": {
         "es": "Crecimiento empresarial más rápido",
-        "fr": "Croissance d'entreprise plus rapide"
+        "fr": "Croissance plus rapide de l'entreprise"
     },
     "sellers_b1_body": {
         "es": "Contrate más personal y gane nuevos contratos sin esperar 30–90 días para el pago.",
-        "fr": "Embauchez plus de personnel et remportez de nouveaux contrats sans attendre 30 à 90 jours pour le paiement."
+        "fr": "Embauchez plus de personnel et remportez de nouveaux contrats sans attendre 30–90 jours pour le paiement."
     },
     "sellers_b2_title": {
         "es": "Mejores condiciones con proveedores",
@@ -387,23 +387,23 @@ EXTRA = {
     },
     "sellers_b2_body": {
         "es": "Muchos proveedores ofrecen descuentos por pago anticipado o temprano. Aproveche esos ahorros.",
-        "fr": "De nombreux fournisseurs offrent des réductions pour un paiement anticipé ou précoce. Profitez de ces économies."
+        "fr": "De nombreux fournisseurs offrent des remises pour un paiement anticipé ou rapide. Profitez de ces économies."
     },
     "sellers_b3_title": {
         "es": "Nómina eficiente",
         "fr": "Paie efficace"
     },
     "sellers_b3_body": {
-        "es": "Pago rápido para empleados y subcontratistas, incluso cuando los clientes pagan tarde.",
-        "fr": "Paiement rapide pour les employés et sous-traitants, même lorsque les clients paient en retard."
+        "es": "Pago puntual a empleados y subcontratistas, incluso cuando los clientes pagan tarde.",
+        "fr": "Paiement rapide des employés et sous-traitants, même lorsque les clients paient en retard."
     },
     "sellers_b4_title": {
         "es": "Sin deuda en sus libros",
         "fr": "Aucune dette sur vos livres"
     },
     "sellers_b4_body": {
-        "es": "El financiamiento de facturas no es un préstamo. Es un anticipo sobre el dinero que ya ha ganado.",
-        "fr": "Le financement de factures n'est pas un prêt. C'est une avance sur l'argent que vous avez déjà gagné."
+        "es": "El financiamiento de facturas no es un préstamo. Es un anticipo sobre dinero que ya ha ganado.",
+        "fr": "Le financement de factures n'est pas un prêt. C'est une avance sur de l'argent que vous avez déjà gagné."
     },
     "sellers_eligibility_h2": {
         "es": "Criterios de elegibilidad.",
@@ -414,24 +414,24 @@ EXTRA = {
         "fr": "Entreprise enregistrée, en activité depuis plus de 6 mois"
     },
     "sellers_e2": {
-        "es": "Facturación anual mínima de 500M UZS",
-        "fr": "Chiffre d'affaires annuel minimum de 500M UZS"
+        "es": "Facturación anual mínima de $40,000",
+        "fr": "Chiffre d'affaires annuel minimum de $40,000"
     },
     "sellers_e3": {
         "es": "Facturas con plazos de pago de 15–180 días",
-        "fr": "Factures avec des conditions de paiement de 15 à 180 jours"
+        "fr": "Factures avec des délais de paiement de 15–180 jours"
     },
     "sellers_e4": {
-        "es": "Su cliente es una empresa que opera 3+ años con al menos 5B UZS de facturación anual",
-        "fr": "Votre client est une entreprise en activité depuis 3 ans ou plus avec un chiffre d'affaires annuel d'au moins 5B UZS"
+        "es": "Su cliente es una empresa que opera desde hace 3+ años con al menos $400,000 de facturación anual",
+        "fr": "Votre client est une entreprise active depuis 3+ ans avec au moins $400,000 de chiffre d'affaires annuel"
     },
     "sellers_cta_h": {
         "es": "Convierta sus facturas en efectivo hoy.",
-        "fr": "Transformez vos factures en espèces dès aujourd'hui."
+        "fr": "Transformez vos factures en liquidités dès aujourd'hui."
     },
     "sellers_cta_b": {
-        "es": "Aplique en minutos. Reciba una oferta en 1–3 días hábiles. Sin compromiso.",
-        "fr": "Postulez en quelques minutes. Recevez une offre en 1 à 3 jours ouvrés. Aucun engagement."
+        "es": "Solicite en minutos. Reciba una oferta en 1–3 días hábiles. Sin compromiso.",
+        "fr": "Postulez en quelques minutes. Recevez une offre en 1–3 jours ouvrés. Aucun engagement."
     },
     "investors_eyebrow": {
         "es": "Para inversores",
@@ -439,7 +439,7 @@ EXTRA = {
     },
     "investors_h1": {
         "es": "Gane 8–12% en activos a corto plazo respaldados por facturas.",
-        "fr": "Gagnez 8 à 12 % sur des actifs à court terme adossés à des factures."
+        "fr": "Gagnez 8–12 % sur des actifs à court terme adossés à des factures."
     },
     "investors_lede": {
         "es": "Factorio le da acceso a una nueva clase de activos: facturas comerciales verificadas. Duración corta, precios transparentes y empresas reales al otro lado.",
@@ -454,15 +454,15 @@ EXTRA = {
         "fr": "Durée courte"
     },
     "investors_f1_body": {
-        "es": "Los plazos típicos de facturas de 30–90 días significan que su capital no está bloqueado por años. Rotación rápida, reinversión frecuente.",
-        "fr": "Les conditions de facturation typiques de 30 à 90 jours signifient que votre capital n'est pas bloqué pendant des années. Rotation rapide, réinvestissement fréquent."
+        "es": "Los plazos típicos de 30–90 días significan que su capital no queda inmovilizado durante años. Rotación rápida, reinversión frecuente.",
+        "fr": "Les délais typiques de 30–90 jours signifient que votre capital n'est pas bloqué pendant des années. Rotation rapide, réinvestissement fréquent."
     },
     "investors_f2_title": {
         "es": "Respaldado por activos",
         "fr": "Adossé à des actifs"
     },
     "investors_f2_body": {
-        "es": "Cada inversión está respaldada por una factura comercial verificada de una empresa en operación. Cuentas por cobrar reales, no promesas.",
+        "es": "Cada inversión está respaldada por una factura comercial verificada de una empresa en funcionamiento. Cuentas por cobrar reales, no promesas.",
         "fr": "Chaque investissement est adossé à une facture commerciale vérifiée d'une entreprise en activité. De vraies créances, pas des promesses."
     },
     "investors_f3_title": {
@@ -471,15 +471,15 @@ EXTRA = {
     },
     "investors_f3_body": {
         "es": "Cada factura se califica de A–D según la solvencia del deudor, el historial de pagos y el riesgo del sector. Usted elige su apetito de riesgo.",
-        "fr": "Chaque facture est notée de A à D en fonction de la solvabilité du débiteur, de l'historique de paiement et du risque sectoriel. Vous choisissez votre appétit pour le risque."
+        "fr": "Chaque facture est notée A–D selon la solvabilité du débiteur, l'historique de paiement et le risque sectoriel. Vous choisissez votre appétit pour le risque."
     },
     "investors_f4_title": {
         "es": "Diversificación",
         "fr": "Diversification"
     },
     "investors_f4_body": {
-        "es": "Distribuya su capital entre sectores, geografías y grados de riesgo. Inversión mínima desde 500,000 UZS por factura.",
-        "fr": "Répartissez votre capital entre secteurs, zones géographiques et niveaux de risque. Investissement minimum à partir de 500 000 UZS par facture."
+        "es": "Distribuya su capital entre sectores, geografías y grados de riesgo. Inversión mínima desde $50 por factura.",
+        "fr": "Répartissez votre capital entre secteurs, zones géographiques et niveaux de risque. Investissement minimum dès $50 par facture."
     },
     "investors_how_h2": {
         "es": "Cómo funciona la inversión.",
@@ -494,12 +494,12 @@ EXTRA = {
         "fr": "Filtrez les factures par secteur, note de risque, durée et rendement. Chaque annonce affiche le débiteur, le vendeur et l'évaluation complète des risques."
     },
     "investors_h_s2_title": {
-        "es": "Invierta desde 500K UZS",
-        "fr": "Investissez à partir de 500K UZS"
+        "es": "Invierte desde $50",
+        "fr": "Investissez à partir de 50 $"
     },
     "investors_h_s2_body": {
-        "es": "Elige cuánto invertir en cada factura. Tus fondos se agrupan con otros inversores para alcanzar el objetivo de financiamiento.",
-        "fr": "Choisissez combien investir dans chaque facture. Vos fonds sont mis en commun avec d'autres investisseurs pour atteindre l'objectif de financement."
+        "es": "Elige cuánto invertir en cada factura. Tus fondos se combinan con los de otros inversores para alcanzar el objetivo de financiamiento.",
+        "fr": "Choisissez le montant à investir dans chaque facture. Vos fonds sont mis en commun avec ceux d'autres investisseurs pour atteindre l'objectif de financement."
     },
     "investors_h_s3_title": {
         "es": "Sigue tu cartera",
@@ -578,7 +578,7 @@ EXTRA = {
         "fr": "Obtenir un devis gratuit"
     },
     "contact_thanks_h1": {
-        "es": "Gracias — nos pondremos en contacto pronto.",
+        "es": "Gracias — te contactaremos pronto.",
         "fr": "Merci — nous vous contacterons sous peu."
     },
     "contact_thanks_body": {
@@ -586,7 +586,7 @@ EXTRA = {
         "fr": "Généralement dans un jour ouvrable."
     },
     "dash_eyebrow": {
-        "es": "Panel de control",
+        "es": "Panel",
         "fr": "Tableau de bord"
     },
     "dash_h1": {
@@ -666,7 +666,7 @@ EXTRA = {
         "fr": "Frais / 30j"
     },
     "mkt_est_return": {
-        "es": "Rend. est.",
+        "es": "Retorno est.",
         "fr": "Rend. est."
     },
     "mkt_invoice": {
@@ -679,7 +679,7 @@ EXTRA = {
     },
     "mkt_empty": {
         "es": "No hay facturas disponibles actualmente para financiamiento.",
-        "fr": "Aucune facture n'est actuellement disponible pour le financement."
+        "fr": "Aucune facture actuellement disponible pour financement."
     },
     "mkt_back": {
         "es": "Volver al mercado",
@@ -698,7 +698,7 @@ EXTRA = {
         "fr": "Total investi"
     },
     "port_expected": {
-        "es": "Rendimientos esperados",
+        "es": "Retornos esperados",
         "fr": "Rendements attendus"
     },
     "port_active": {
@@ -706,11 +706,11 @@ EXTRA = {
         "fr": "Positions actives"
     },
     "port_total": {
-        "es": "Total de posiciones",
-        "fr": "Total des positions"
+        "es": "Posiciones totales",
+        "fr": "Positions totales"
     },
     "port_empty": {
-        "es": "Aún no hay inversiones.",
+        "es": "Sin inversiones aún.",
         "fr": "Aucun investissement pour l'instant."
     },
     "port_invoice": {
@@ -767,10 +767,10 @@ EXTRA = {
     },
     "port_writeoffs": {
         "es": "Cancelaciones",
-        "fr": "Pertes"
+        "fr": "Amortissements"
     },
     "port_net_income": {
-        "es": "Ingresos netos",
+        "es": "Ingreso neto",
         "fr": "Revenu net"
     },
     "port_account_value": {
@@ -782,11 +782,11 @@ EXTRA = {
         "fr": "Investissements actifs"
     },
     "port_expected_outstanding": {
-        "es": "Rendimientos esperados pendientes",
-        "fr": "Rendements attendus en cours"
+        "es": "Retornos esperados pendientes",
+        "fr": "Rendements attendus en suspens"
     },
     "port_realized": {
-        "es": "Rendimientos realizados",
+        "es": "Retornos realizados",
         "fr": "Rendements réalisés"
     },
     "port_aging_title": {
@@ -978,7 +978,7 @@ EXTRA = {
         "fr": "Automatisez vos investissements."
     },
     "ai_lede": {
-        "es": "Establezca sus reglas y deje que Factorio realice ofertas en facturas coincidentes automáticamente.",
+        "es": "Establezca sus reglas y deje que Factorio puje automáticamente en las facturas coincidentes.",
         "fr": "Définissez vos règles et laissez Factorio placer des offres sur les factures correspondantes automatiquement."
     },
     "ai_status": {
@@ -1082,8 +1082,8 @@ EXTRA = {
         "fr": "Vous"
     },
     "ai_bot": {
-        "es": "Factorio AI",
-        "fr": "Factorio AI"
+        "es": "Factorio IA",
+        "fr": "Factorio IA"
     },
     "ai_send": {
         "es": "Enviar",
@@ -1102,7 +1102,7 @@ EXTRA = {
         "fr": "IA · Triage des candidatures"
     },
     "ai_triage_h1": {
-        "es": "Obtenga el triage de su factura en un chat",
+        "es": "Haga que su factura sea triada en un chat",
         "fr": "Faites trier votre facture dans un chat"
     },
     "ai_triage_lede": {
@@ -1110,12 +1110,12 @@ EXTRA = {
         "fr": "Décrivez votre facture et votre débiteur en langage simple. L'assistant collecte ce qui manque, puis donne une bande de risque indicative, un taux d'avance et les documents dont la banque aura besoin ensuite."
     },
     "ai_triage_greeting": {
-        "es": "¡Hola! Te ayudaré a clasificar tu factura para financiamiento. Para empezar, dime: qué empresa emitió la factura, quién es el deudor (comprador), el monto de la factura y su fecha de vencimiento.",
+        "es": "¡Hola! Te ayudaré a triar tu factura para financiamiento. Para empezar, dime: qué empresa emitió la factura, quién es el deudor (comprador), el monto de la factura y su fecha de vencimiento.",
         "fr": "Salut ! Je vais vous aider à trier votre facture pour le financement. Pour commencer, dites-moi : quelle entreprise a émis la facture, qui est le débiteur (acheteur), le montant de la facture et sa date d'échéance ?"
     },
     "ai_triage_placeholder": {
-        "es": "p. ej. Facturamos a Artel por UZS 480,000,000, vencimiento en 60 días…",
-        "fr": "p. ex. Nous avons facturé Artel pour UZS 480 000 000, échéance dans 60 jours…"
+        "es": "p. ej. Facturamos a Artel por $38,000, vencimiento en 60 días…",
+        "fr": "ex. Nous avons facturé Artel pour 38 000 $, échéance dans 60 jours…"
     },
     "ai_assistant_eyebrow": {
         "es": "IA · Informes de cartera",
@@ -1126,15 +1126,115 @@ EXTRA = {
         "fr": "Posez n'importe quelle question sur votre portefeuille"
     },
     "ai_assistant_lede": {
-        "es": "El asistente responde desde tus propias posiciones — rendimiento neto, intereses pendientes, concentración por deudor o sector, próximos vencimientos y más. Basado en los datos en vivo de tu cartera.",
-        "fr": "L'assistant répond à partir de vos propres positions — rendement net, intérêts en suspens, concentration par débiteur ou secteur, règlements à venir et plus. Basé sur les données en direct de votre portefeuille."
+        "es": "El asistente responde desde sus propias posiciones — rendimiento neto, intereses pendientes, concentración por deudor o sector, próximos vencimientos y más. Basado en los datos en vivo de su cartera.",
+        "fr": "L'assistant répond à partir de vos propres positions — rendement net, intérêts en suspens, concentration par débiteur ou secteur, règlements à venir et plus encore. Ancré dans les données en direct de votre portefeuille."
     },
     "ai_assistant_greeting": {
-        "es": "¡Hola! Puedo responder preguntas sobre tu cartera — rendimientos, posiciones pendientes, concentración y vencimientos. ¿Qué te gustaría saber?",
-        "fr": "Bonjour ! Je peux répondre à des questions sur votre portefeuille — rendements, positions en suspens, concentration et règlements. Que souhaitez-vous savoir ?"
+        "es": "¡Hola! Puedo responder preguntas sobre su cartera — rendimientos, posiciones pendientes, concentración y vencimientos. ¿Qué le gustaría saber?",
+        "fr": "Bonjour ! Je peux répondre à des questions sur votre portefeuille — rendements, positions en cours, concentration et règlements. Que souhaitez-vous savoir ?"
     },
     "ai_assistant_placeholder": {
         "es": "p. ej. ¿Cuál es mi exposición a la construcción? ¿Qué posiciones están vencidas?",
         "fr": "p. ex. Quelle est mon exposition à la construction ? Quelles positions sont en retard ?"
+    },
+    "app_role_label": {
+        "es": "Rol",
+        "fr": "Rôle"
+    },
+    "role_investor": {
+        "es": "Inversor",
+        "fr": "Investisseur"
+    },
+    "role_seller": {
+        "es": "Vendedor",
+        "fr": "Vendeur"
+    },
+    "role_payer": {
+        "es": "Pagador",
+        "fr": "Payeur"
+    },
+    "role_admin": {
+        "es": "Admin",
+        "fr": "Admin"
+    },
+    "subrole_ops": {
+        "es": "Operaciones",
+        "fr": "Opérations"
+    },
+    "subrole_credit": {
+        "es": "Crédito",
+        "fr": "Crédit"
+    },
+    "subrole_collections": {
+        "es": "Cobranzas",
+        "fr": "Recouvrements"
+    },
+    "subrole_finance": {
+        "es": "Finanzas",
+        "fr": "Finance"
+    },
+    "subrole_compliance": {
+        "es": "Cumplimiento",
+        "fr": "Conformité"
+    },
+    "subrole_exec": {
+        "es": "Ejecutivo",
+        "fr": "Exécutif"
+    },
+    "subrole_super": {
+        "es": "Super-admin",
+        "fr": "Super-admin"
+    },
+    "nav_seller": {
+        "es": "Mis solicitudes",
+        "fr": "Mes demandes"
+    },
+    "nav_payer": {
+        "es": "Facturas por confirmar",
+        "fr": "Factures à confirmer"
+    },
+    "nav_admin": {
+        "es": "Consola",
+        "fr": "Console"
+    },
+    "nav_admin_onboarding": {
+        "es": "Incorporación",
+        "fr": "Intégration"
+    },
+    "nav_admin_risk": {
+        "es": "Riesgo",
+        "fr": "Risque"
+    },
+    "nav_admin_funding": {
+        "es": "Financiamiento",
+        "fr": "Financement"
+    },
+    "nav_admin_reports": {
+        "es": "Informes",
+        "fr": "Rapports"
+    },
+    "nav_admin_audit": {
+        "es": "Registro de auditoría",
+        "fr": "Journal d'audit"
+    },
+    "admin_eyebrow": {
+        "es": "Back office · Consola de administración",
+        "fr": "Back office · Console d'administration"
+    },
+    "admin_h1": {
+        "es": "Consola de operaciones",
+        "fr": "Console des opérations"
+    },
+    "admin_lede": {
+        "es": "Back office con alcance por rol para incorporación, riesgo, financiamiento, cobranzas e informes — cada acción se escribe en el registro de auditoría.",
+        "fr": "Back office limité au rôle pour l'intégration, le risque, le financement, les recouvrements et les rapports — chaque action est consignée dans le journal d'audit."
+    },
+    "admin_viewing_as": {
+        "es": "Viendo como",
+        "fr": "Affichage en tant que"
+    },
+    "admin_restricted": {
+        "es": "Su rol no tiene acceso a esta acción (segregación de funciones).",
+        "fr": "Votre rôle n'a pas accès à cette action (ségrégation des tâches)."
     }
 }

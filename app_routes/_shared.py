@@ -25,12 +25,13 @@ except Exception:  # pragma: no cover - DB optional in some environments
 
 # ── Money ───────────────────────────────────────────────────────────────
 
+from utils.money import fmt_money  # noqa: E402
+
+
 def fmt_uzs(amount) -> str:
-    """Format a monetary value in UZS. Single source of truth for the app."""
-    try:
-        return f"UZS {float(amount or 0):,.0f}"
-    except (TypeError, ValueError):
-        return "UZS 0"
+    """Back-compat name — formats a stored (UZS-scale) amount in the display
+    currency (USD by default). See utils.money.fmt_money."""
+    return fmt_money(amount)
 
 
 # ── Investor identity (no-password switcher) ────────────────────────────

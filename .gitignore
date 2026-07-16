@@ -231,3 +231,6 @@ reply_state.json
 ionos-*.png
 mx-*.png
 dkim-*.png
+
+# md->pdf intermediate mermaid renders
+docs/img/_mdpdf/

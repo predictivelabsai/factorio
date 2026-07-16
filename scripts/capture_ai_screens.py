@@ -27,12 +27,12 @@ VIEWPORT = {"width": 1440, "height": 900}
 # Per-language demo prompts so each screenshot reads naturally in its language.
 DEMOS = {
     "en": {
-        "triage": ("We invoiced Artel LLC for UZS 480,000,000, issued today, due in 60 days. "
+        "triage": ("We invoiced Artel LLC for $38,000, issued today, due in 60 days. "
                    "It's on SoliqOnline and buyer-confirmed. Seller is Silk Road Textiles LLC."),
         "assistant": "What's my net annual return and which sector am I most exposed to?",
     },
     "ru": {
-        "triage": ("Мы выставили счёт Artel LLC на 480 000 000 сум, выписан сегодня, срок 60 дней. "
+        "triage": ("Мы выставили счёт Artel LLC на $38,000, выписан сегодня, срок 60 дней. "
                    "Счёт в SoliqOnline и подтверждён покупателем. Продавец — Silk Road Textiles LLC."),
         "assistant": "Какова моя чистая годовая доходность и в какой отрасли у меня наибольшая доля?",
     },

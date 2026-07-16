@@ -88,20 +88,30 @@ def Pill(text: str, *, cls: str = ""):
 
 
 def _lang_switcher(current_lang: str):
-    flags = []
+    """Flag dropdown (kanvas/pehero pattern): a button showing the current flag,
+    opening a menu of flag + native-name options. Defaults to English (GB flag)."""
+    current = LANG_META.get(current_lang, LANG_META["en"])
+    options = []
     for code in SUPPORTED_LANGS:
         meta = LANG_META[code]
-        is_active = code == current_lang
-        flags.append(
-            A(
-                meta["flag"],
-                href=f"/set-lang?lang={code}",
-                onclick=f"document.cookie='lang={code};path=/;max-age=31536000;samesite=lax';location.reload();return false;",
-                title=meta["name"],
-                cls=f"text-lg leading-none px-1 cursor-pointer {'opacity-100' if is_active else 'opacity-50 hover:opacity-80'} transition-opacity",
-            )
+        active_cls = " font-semibold text-ink" if code == current_lang else ""
+        options.append(
+            A(Span(meta["flag"], cls="mr-2"), Span(meta["name"], cls="text-xs"),
+              href=f"/set-lang?lang={code}",
+              onclick=f"document.cookie='lang={code};path=/;max-age=31536000;samesite=lax';location.reload();return false;",
+              cls=("flex items-center gap-1 px-3 py-1.5 text-sm text-ink-muted "
+                   "hover:bg-bg-raised hover:text-ink transition-colors no-underline" + active_cls))
         )
-    return Div(*flags, cls="flex items-center gap-1")
+    return Div(
+        Button(current["flag"], type="button",
+               onclick="this.nextElementSibling.classList.toggle('hidden')",
+               cls="text-base leading-none px-1.5 py-1 border border-transparent rounded "
+                   "hover:border-line transition-colors cursor-pointer bg-transparent"),
+        Div(*options,
+            cls="hidden absolute right-0 top-full mt-1 bg-bg-elevated border border-line "
+                "rounded-lg shadow-lg z-50 py-1 min-w-[150px] flex flex-col"),
+        cls="relative",
+    )
 
 
 def _navbar(current_path: str = "/", lang: str = DEFAULT_LANG):
@@ -354,7 +364,6 @@ def BenefitsStrip(lang: str = DEFAULT_LANG):
     benefits = [
         (t("benefit_sellers_label", lang), t("benefit_sellers_metric", lang), t("benefit_sellers_caption", lang)),
         (t("benefit_investors_label", lang), t("benefit_investors_metric", lang), t("benefit_investors_caption", lang)),
-        (t("benefit_platform_label", lang), t("benefit_platform_metric", lang), t("benefit_platform_caption", lang)),
     ]
     return Section_(
         Eyebrow(t("benefits_eyebrow", lang)),
@@ -366,7 +375,7 @@ def BenefitsStrip(lang: str = DEFAULT_LANG):
                 P(caption, cls="text-ink-muted text-sm leading-relaxed"),
                 cls="p-7 rounded-2xl bg-bg-elevated border border-line",
             ) for (label, metric, caption) in benefits],
-            cls="grid md:grid-cols-3 gap-4",
+            cls="grid md:grid-cols-2 gap-4",
         ),
         cls="border-t border-line",
     )
