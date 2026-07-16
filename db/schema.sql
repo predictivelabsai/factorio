@@ -212,6 +212,15 @@ CREATE TABLE IF NOT EXISTS factorio.bank_transactions (
     ref_id      TEXT NOT NULL DEFAULT ''
 );
 
+-- ── Invoice processing / assignment (back office) ─────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.invoice_assignments (
+    id BIGSERIAL PRIMARY KEY, invoice_id BIGINT UNIQUE, invoice_number TEXT NOT NULL,
+    assignment_type TEXT NOT NULL DEFAULT 'notified', po_matched BOOLEAN NOT NULL DEFAULT FALSE,
+    verified BOOLEAN NOT NULL DEFAULT FALSE, registered BOOLEAN NOT NULL DEFAULT FALSE,
+    holdback NUMERIC(15,2) NOT NULL DEFAULT 0, reserve NUMERIC(15,2) NOT NULL DEFAULT 0,
+    state TEXT NOT NULL DEFAULT 'submitted', updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ── Credit scoring (back office) ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS factorio.credit_scores (
     id           BIGSERIAL PRIMARY KEY,
