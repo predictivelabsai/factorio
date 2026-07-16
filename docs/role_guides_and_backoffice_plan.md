@@ -21,7 +21,7 @@ screenshots from the live left-nav cockpit:
 | 5 | Risk management & underwriting | Risk + Credit scoring | **Built (production)** — multi-signal score, adverse-action reasons, back-testing (actual vs expected default) |
 | 6 | Accounting & financial ops | Accounting (GL) + Reports | **Built (production)** — double-entry ledger, trial balance, reconciliation |
 | 7 | Reporting & analytics | Reports + copilot | **Built (production)** — DSO, default, recovery, dilution, monthly/sector volume, grade performance + grounded AI |
-| 8 | Compliance, legal & audit | Audit log | **Built (demo)** — immutable action log |
+| 8 | Compliance, legal & audit | Compliance + Audit log | **Built (production)** — KYC coverage, retention schedule, regulatory checklist, audit CSV export |
 
 ## Deliverables in this pass
 - Four role guides (markdown + PDF) with cockpit screenshots.

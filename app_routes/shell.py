@@ -36,6 +36,7 @@ NAV = [
         ("scoring", "Credit scoring", "\U0001F3AF", "/app/admin/scoring"),
         ("collections", "Collections", "\U0001F4E9", "/app/admin/collections"),
         ("accounting", "Accounting", "\U0001F4B7", "/app/admin/accounting"),
+        ("compliance", "Compliance", "\U0001F6E1️", "/app/admin/compliance"),
     ]),
     ("Sales", [
         ("crm", "Pipeline", "\U0001F4C7", "/app/crm"),
