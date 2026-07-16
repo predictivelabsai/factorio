@@ -182,6 +182,7 @@ def admin_console(req):
         ("nav_admin_reports", "/app/admin/reports", "DSO, recovery, default, portfolio"),
         ("Accounting", "/app/admin/accounting", "Double-entry ledger, trial balance, reconciliation"),
         ("Compliance", "/app/admin/compliance", "AML/KYC posture, retention, audit export"),
+        ("Integrations", "/app/admin/integrations", "Accounting, banking, bureau, e-sign, webhooks"),
         ("nav_admin_audit", "/app/admin/audit", "Every action, immutable"),
     ]
     cards = Div(*[

@@ -251,3 +251,11 @@ CREATE TABLE IF NOT EXISTS factorio.credit_scores (
     reasons      TEXT NOT NULL DEFAULT '',
     scored_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS factorio.integrations (
+    name        TEXT PRIMARY KEY,
+    kind        TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    connected   BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
