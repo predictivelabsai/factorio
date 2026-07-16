@@ -242,13 +242,11 @@ def app_page(title: str, *content, current_path: str = "/app",
              lang: str = DEFAULT_LANG,
              investor: dict | None = None, investors: list[dict] | None = None,
              role: str = "investor", subrole: str = "ops"):
-    """Wrap product-app content with the marketing shell + role-scoped sub-nav."""
-    from landing.components import page
+    """Render product-app content inside the left-nav cockpit shell + copilot."""
+    from app_routes.shell import app_shell
     investors = investors if investors is not None else list_investors()
-    return page(
-        title,
-        app_subnav(current_path, lang, investor, investors, role, subrole),
-        *content,
-        current_path=current_path,
-        lang=lang,
+    return app_shell(
+        title, *content,
+        current_path=current_path, lang=lang,
+        investor=investor, investors=investors, role=role, subrole=subrole,
     )
