@@ -221,6 +221,14 @@ CREATE TABLE IF NOT EXISTS factorio.invoice_assignments (
     state TEXT NOT NULL DEFAULT 'submitted', updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- ── App users / auth (back office) ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.app_users (
+    email TEXT PRIMARY KEY, name TEXT NOT NULL DEFAULT '',
+    salt TEXT NOT NULL, pw_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'investor', subrole TEXT NOT NULL DEFAULT 'ops',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ── Collections (back office) ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS factorio.collections_actions (
     id BIGSERIAL PRIMARY KEY, invoice_number TEXT NOT NULL, stage INT NOT NULL DEFAULT 0,

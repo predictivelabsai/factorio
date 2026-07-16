@@ -80,11 +80,18 @@ ADMIN_SUBROLES = ("ops", "credit", "collections", "finance", "compliance", "exec
 
 
 def current_role(req) -> str:
+    # A real logged-in session wins; otherwise fall back to the demo cookie switcher.
+    s = getattr(req, "session", None) if req is not None else None
+    if s and s.get("role"):
+        return s["role"] if s["role"] in ROLES else "investor"
     r = req.cookies.get("role", "investor") if req is not None else "investor"
     return r if r in ROLES else "investor"
 
 
 def current_subrole(req) -> str:
+    s = getattr(req, "session", None) if req is not None else None
+    if s and s.get("uid") and s.get("subrole"):
+        return s["subrole"] if s["subrole"] in ADMIN_SUBROLES else "ops"
     r = req.cookies.get("admin_role", "ops") if req is not None else "ops"
     return r if r in ADMIN_SUBROLES else "ops"
 

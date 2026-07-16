@@ -190,7 +190,10 @@ def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFA
     topbar = Div(
         A(Span(NotStr("&#9670;"), cls="text-accent mr-2"), Span(SITE_NAME, cls="font-medium tracking-tight text-ink"),
           href="/", cls="flex items-center text-base no-underline"),
-        Div(right, _lang_pill(lang),
+        Div(A("Sign in", href="/login", cls="text-xs text-ink-muted hover:text-ink no-underline"),
+            Span("/", cls="text-ink-dim text-xs"),
+            A("Sign out", href="/logout", cls="text-xs text-ink-muted hover:text-ink no-underline mr-2"),
+            right, _lang_pill(lang),
             Button(NotStr("&#9776;"), onclick="wsToggleRail()", type="button",
                    cls="text-ink-dim text-lg bg-transparent border-0 cursor-pointer", title="Toggle copilot"),
             cls="flex items-center gap-3"),
