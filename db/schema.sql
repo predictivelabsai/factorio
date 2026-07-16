@@ -259,3 +259,42 @@ CREATE TABLE IF NOT EXISTS factorio.integrations (
     connected   BOOLEAN NOT NULL DEFAULT FALSE,
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ── Workspace modules (CRM / Drive / Docs / Mail) ─────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.crm_deals (
+    id          BIGSERIAL PRIMARY KEY,
+    client      TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    stage       TEXT NOT NULL,
+    value       NUMERIC(15,2) NOT NULL DEFAULT 0,
+    owner       TEXT NOT NULL DEFAULT '',
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS factorio.drive_files (
+    id            BIGSERIAL PRIMARY KEY,
+    icon          TEXT NOT NULL DEFAULT '📄',
+    name          TEXT NOT NULL,
+    kind          TEXT NOT NULL DEFAULT 'file',
+    size          TEXT NOT NULL DEFAULT '—',
+    updated_label TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS factorio.workspace_docs (
+    id        BIGSERIAL PRIMARY KEY,
+    title     TEXT NOT NULL,
+    folder    TEXT NOT NULL DEFAULT '',
+    excerpt   TEXT NOT NULL DEFAULT '',
+    words     INT NOT NULL DEFAULT 0,
+    published BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS factorio.mail_messages (
+    id         BIGSERIAL PRIMARY KEY,
+    sender     TEXT NOT NULL,
+    subject    TEXT NOT NULL DEFAULT '',
+    snippet    TEXT NOT NULL DEFAULT '',
+    when_label TEXT NOT NULL DEFAULT '',
+    is_read    BOOLEAN NOT NULL DEFAULT FALSE,
+    sort_order INT NOT NULL DEFAULT 0
+);

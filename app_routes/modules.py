@@ -1,23 +1,30 @@
 """Back-office workspace modules — CRM (sales pipeline), Drive, Docs, Mail.
 
-Demo-grade ports of the Fast* apps (FastCRM / FastDrive / FastDocs / FastMail),
-rendered inside Factorio's left-nav app shell. Data is in-memory demo data so the
-modules work without a schema migration; the shapes mirror the source apps and
-can be moved to Postgres later (see docs/enterprise_extension_plan.md).
+Ports of the Fast* apps (FastCRM / FastDrive / FastDocs / FastMail) rendered
+inside Factorio's left-nav app shell. **Persisted to Postgres** (step 10): each
+module has a table, seeded once from the shapes below, with real write paths —
+CRM deals advance stage, mail messages mark read — so state survives restarts.
 """
 
 from __future__ import annotations
 
-from fasthtml.common import Div, P, Span, A, H3, Table, Thead, Tbody, Tr, Th, Td, NotStr
+from fasthtml.common import Div, P, Span, A, H3, NotStr
+from starlette.responses import RedirectResponse
 
 from app import rt
-from utils.i18n import t, get_lang
+from utils.i18n import get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, fmt_uzs, current_role, current_subrole
+from app_routes._shared import app_page, current_role, current_subrole
 
-# ── CRM demo data (mirrors FastCRM deals) ─────────────────────────────────
+try:
+    from db import fetch_all, fetch_one, execute
+    _HAS_DB = True
+except Exception:  # pragma: no cover
+    _HAS_DB = False
+
+# ── Seed data (mirrors the Fast* apps; loaded into Postgres on first use) ──
 DEAL_STAGES = ["Qualification", "Demo", "Proposal", "Negotiation", "Ready to close"]
-DEALS = [
+SEED_DEALS = [
     ("Globex Corporation", "Reverse-factoring programme", "Qualification", 120000, "Aziza K."),
     ("Bright Textiles", "Invoice discounting facility", "Qualification", 60000, "Bek T."),
     ("Meridian Logistics", "Factoring — logistics", "Demo", 45000, "Aziza K."),
@@ -28,56 +35,7 @@ DEALS = [
     ("Vitalis Pharma", "Healthcare receivables", "Negotiation", 130000, "Bek T."),
     ("Vertex Construction", "Milestone financing", "Ready to close", 180000, "Aziza K."),
 ]
-
-
-def pipeline_summary() -> str:
-    by = {}
-    for _, _, stage, val, _ in DEALS:
-        s = by.setdefault(stage, [0, 0]); s[0] += 1; s[1] += val
-    total = sum(v for _, v in by.values())
-    parts = [f"{st}: {by[st][0]} deals / ${by[st][1]:,.0f}" for st in DEAL_STAGES if st in by]
-    return f"Open pipeline ${total:,.0f} across {len(DEALS)} deals — " + "; ".join(parts)
-
-
-def _usd(v):
-    return f"${v:,.0f}"
-
-
-@rt("/app/crm")
-def crm(req):
-    lang = get_lang(req)
-    cols = []
-    for stage in DEAL_STAGES:
-        deals = [d for d in DEALS if d[2] == stage]
-        total = sum(d[3] for d in deals)
-        cards = [
-            Div(P(name, cls="text-sm font-medium text-ink"),
-                P(desc, cls="text-xs text-ink-muted mt-0.5"),
-                Div(Span(_usd(val), cls="text-sm font-medium text-accent"),
-                    Span(owner, cls="text-[11px] text-ink-dim"),
-                    cls="flex items-center justify-between mt-2"),
-                cls="p-3 rounded-xl bg-bg-elevated border border-line mb-2")
-            for name, desc, _st, val, owner in deals
-        ]
-        cols.append(Div(
-            Div(Span(stage, cls="text-xs font-mono uppercase tracking-wider text-ink-dim"),
-                Span(f"{len(deals)} · {_usd(total)}", cls="text-[11px] text-ink-muted"),
-                cls="flex items-center justify-between mb-3 px-1"),
-            *cards,
-            cls="min-w-[220px] flex-1 p-2 rounded-2xl bg-bg-raised/40"))
-    return app_page(
-        "Sales pipeline",
-        Section_(Eyebrow("Sales · CRM"),
-                 Heading(1, "Sales pipeline", cls="mt-4"),
-                 P(NotStr(pipeline_summary()), cls="mt-3 text-ink-muted max-w-3xl"),
-                 cls="border-t border-line"),
-        Section_(Div(*cols, cls="flex gap-3 overflow-x-auto pb-4"), cls="border-t border-line"),
-        current_path="/app/crm", lang=lang, role=current_role(req), subrole=current_subrole(req),
-    )
-
-
-# ── Drive demo ────────────────────────────────────────────────────────────
-FILES = [
+SEED_FILES = [
     ("📁", "Client agreements", "folder", "—", "2d ago"),
     ("📁", "E-invoice exports", "folder", "—", "1d ago"),
     ("📄", "Globex_master_agreement.pdf", "pdf", "180 KB", "2d ago"),
@@ -86,17 +44,170 @@ FILES = [
     ("🖼️", "Warehouse_collateral.jpg", "image", "1.2 MB", "1d ago"),
     ("📄", "KYC_Greenfield_Agro.pdf", "pdf", "260 KB", "6h ago"),
 ]
+SEED_DOCS = [
+    ("Credit policy — v3", "Underwriting", "Advance rates, concentration limits and grade thresholds…", 1240, True),
+    ("Onboarding checklist", "Operations", "KYC/AML steps for new clients and debtors…", 480, True),
+    ("Collections playbook", "Collections", "Dunning cadence, dispute handling and write-off rules…", 760, False),
+    ("SPV term sheet (DIFC)", "Capital", "Structure, waterfall and investor reporting…", 2100, False),
+]
+SEED_MAIL = [
+    ("David Chen", "Re: Factorio proposal", "Thanks — let's schedule a call next week…", "10:24", False),
+    ("Globex Corporation AP", "Invoice INV-20260012 confirmed", "We confirm the obligation on the e-invoice network…", "09:12", False),
+    ("CRIF Bureau", "Debtor report ready", "The credit report for Meridian Logistics is available…", "Yesterday", True),
+    ("Oleg Kim", "Pipeline review", "Attaching the updated deal list for this week…", "Yesterday", True),
+    ("E-Invoice Network", "Daily e-invoice digest", "42 new buyer-confirmed invoices for your clients…", "Mon", True),
+]
 
+
+def _ensure():
+    if not _HAS_DB:
+        return
+    execute("""CREATE TABLE IF NOT EXISTS factorio.crm_deals (
+        id BIGSERIAL PRIMARY KEY, client TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+        stage TEXT NOT NULL, value NUMERIC(15,2) NOT NULL DEFAULT 0, owner TEXT NOT NULL DEFAULT '',
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now())""")
+    execute("""CREATE TABLE IF NOT EXISTS factorio.drive_files (
+        id BIGSERIAL PRIMARY KEY, icon TEXT NOT NULL DEFAULT '📄', name TEXT NOT NULL,
+        kind TEXT NOT NULL DEFAULT 'file', size TEXT NOT NULL DEFAULT '—',
+        updated_label TEXT NOT NULL DEFAULT '')""")
+    execute("""CREATE TABLE IF NOT EXISTS factorio.workspace_docs (
+        id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, folder TEXT NOT NULL DEFAULT '',
+        excerpt TEXT NOT NULL DEFAULT '', words INT NOT NULL DEFAULT 0,
+        published BOOLEAN NOT NULL DEFAULT FALSE)""")
+    execute("""CREATE TABLE IF NOT EXISTS factorio.mail_messages (
+        id BIGSERIAL PRIMARY KEY, sender TEXT NOT NULL, subject TEXT NOT NULL DEFAULT '',
+        snippet TEXT NOT NULL DEFAULT '', when_label TEXT NOT NULL DEFAULT '',
+        is_read BOOLEAN NOT NULL DEFAULT FALSE, sort_order INT NOT NULL DEFAULT 0)""")
+
+
+def seed_workspace() -> dict:
+    _ensure()
+    if not _HAS_DB:
+        return {}
+    counts = {}
+    if not fetch_one("SELECT 1 FROM factorio.crm_deals LIMIT 1"):
+        for client, desc, stage, val, owner in SEED_DEALS:
+            execute("INSERT INTO factorio.crm_deals (client,description,stage,value,owner) "
+                    "VALUES (%(c)s,%(d)s,%(s)s,%(v)s,%(o)s)",
+                    {"c": client, "d": desc, "s": stage, "v": val, "o": owner})
+        counts["deals"] = len(SEED_DEALS)
+    if not fetch_one("SELECT 1 FROM factorio.drive_files LIMIT 1"):
+        for icon, name, kind, size, when in SEED_FILES:
+            execute("INSERT INTO factorio.drive_files (icon,name,kind,size,updated_label) "
+                    "VALUES (%(i)s,%(n)s,%(k)s,%(s)s,%(w)s)",
+                    {"i": icon, "n": name, "k": kind, "s": size, "w": when})
+        counts["files"] = len(SEED_FILES)
+    if not fetch_one("SELECT 1 FROM factorio.workspace_docs LIMIT 1"):
+        for title, folder, excerpt, words, pub in SEED_DOCS:
+            execute("INSERT INTO factorio.workspace_docs (title,folder,excerpt,words,published) "
+                    "VALUES (%(t)s,%(f)s,%(e)s,%(w)s,%(p)s)",
+                    {"t": title, "f": folder, "e": excerpt, "w": words, "p": pub})
+        counts["docs"] = len(SEED_DOCS)
+    if not fetch_one("SELECT 1 FROM factorio.mail_messages LIMIT 1"):
+        for i, (sender, subject, snippet, when, read) in enumerate(SEED_MAIL):
+            execute("INSERT INTO factorio.mail_messages (sender,subject,snippet,when_label,is_read,sort_order) "
+                    "VALUES (%(s)s,%(su)s,%(sn)s,%(w)s,%(r)s,%(o)s)",
+                    {"s": sender, "su": subject, "sn": snippet, "w": when, "r": read, "o": i})
+        counts["mail"] = len(SEED_MAIL)
+    return counts
+
+
+def _q(sql, params=None):
+    if not _HAS_DB:
+        return []
+    try:
+        return fetch_all(sql, params or {})
+    except Exception:
+        return []
+
+
+def _usd(v):
+    return f"${float(v):,.0f}"
+
+
+# ── CRM ────────────────────────────────────────────────────────────────────
+
+def pipeline_summary(deals) -> str:
+    by = {}
+    for d in deals:
+        s = by.setdefault(d["stage"], [0, 0]); s[0] += 1; s[1] += float(d["value"])
+    total = sum(v for _, v in by.values())
+    parts = [f"{st}: {by[st][0]} deals / ${by[st][1]:,.0f}" for st in DEAL_STAGES if st in by]
+    return f"Open pipeline ${total:,.0f} across {len(deals)} deals — " + "; ".join(parts)
+
+
+@rt("/app/crm")
+def crm(req):
+    lang = get_lang(req)
+    try:
+        seed_workspace()
+    except Exception:
+        pass
+    deals = _q("SELECT id,client,description,stage,value,owner FROM factorio.crm_deals ORDER BY value DESC")
+    can_edit = current_role(req) == "admin"
+    cols = []
+    for stage in DEAL_STAGES:
+        col_deals = [d for d in deals if d["stage"] == stage]
+        total = sum(float(d["value"]) for d in col_deals)
+        next_stage = DEAL_STAGES[DEAL_STAGES.index(stage) + 1] if stage != DEAL_STAGES[-1] else None
+        cards = []
+        for d in col_deals:
+            advance = None
+            if can_edit and next_stage:
+                advance = A(NotStr(f"→ {next_stage}"), href=f"/app/crm/advance?deal_id={d['id']}",
+                            cls="text-[11px] text-accent hover:underline mt-2 inline-block")
+            cards.append(Div(P(d["client"], cls="text-sm font-medium text-ink"),
+                             P(d["description"], cls="text-xs text-ink-muted mt-0.5"),
+                             Div(Span(_usd(d["value"]), cls="text-sm font-medium text-accent"),
+                                 Span(d["owner"], cls="text-[11px] text-ink-dim"),
+                                 cls="flex items-center justify-between mt-2"),
+                             advance,
+                             cls="p-3 rounded-xl bg-bg-elevated border border-line mb-2"))
+        cols.append(Div(
+            Div(Span(stage, cls="text-xs font-mono uppercase tracking-wider text-ink-dim"),
+                Span(f"{len(col_deals)} · {_usd(total)}", cls="text-[11px] text-ink-muted"),
+                cls="flex items-center justify-between mb-3 px-1"),
+            *cards,
+            cls="min-w-[220px] flex-1 p-2 rounded-2xl bg-bg-raised/40"))
+    return app_page(
+        "Sales pipeline",
+        Section_(Eyebrow("Sales · CRM"),
+                 Heading(1, "Sales pipeline", cls="mt-4"),
+                 P(NotStr(pipeline_summary(deals)), cls="mt-3 text-ink-muted max-w-3xl"),
+                 cls="border-t border-line"),
+        Section_(Div(*cols, cls="flex gap-3 overflow-x-auto pb-4"), cls="border-t border-line"),
+        current_path="/app/crm", lang=lang, role=current_role(req), subrole=current_subrole(req),
+    )
+
+
+@rt("/app/crm/advance")
+def crm_advance(req, deal_id: int = 0):
+    if current_role(req) == "admin" and _HAS_DB:
+        row = fetch_one("SELECT stage FROM factorio.crm_deals WHERE id=%(i)s", {"i": deal_id})
+        if row and row["stage"] in DEAL_STAGES:
+            idx = DEAL_STAGES.index(row["stage"])
+            if idx < len(DEAL_STAGES) - 1:
+                execute("UPDATE factorio.crm_deals SET stage=%(s)s, updated_at=now() WHERE id=%(i)s",
+                        {"s": DEAL_STAGES[idx + 1], "i": deal_id})
+    return RedirectResponse("/app/crm", status_code=303)
+
+
+# ── Drive ───────────────────────────────────────────────────────────────────
 
 @rt("/app/drive")
 def drive(req):
     lang = get_lang(req)
+    try:
+        seed_workspace()
+    except Exception:
+        pass
+    files = _q("SELECT icon,name,kind,size,updated_label FROM factorio.drive_files ORDER BY id")
     tiles = [
-        Div(Span(icon, cls="text-3xl"),
-            P(name, cls="text-sm text-ink mt-2 truncate"),
-            P(f"{size} · {when}", cls="text-[11px] text-ink-dim mt-0.5"),
+        Div(Span(f["icon"], cls="text-3xl"),
+            P(f["name"], cls="text-sm text-ink mt-2 truncate"),
+            P(f"{f['size']} · {f['updated_label']}", cls="text-[11px] text-ink-dim mt-0.5"),
             cls="p-5 rounded-2xl bg-bg-elevated border border-line hover:border-accent transition-colors")
-        for icon, name, kind, size, when in FILES
+        for f in files
     ]
     return app_page(
         "Drive",
@@ -110,28 +221,26 @@ def drive(req):
     )
 
 
-# ── Docs demo ─────────────────────────────────────────────────────────────
-DOCS = [
-    ("Credit policy — v3", "Underwriting", "Advance rates, concentration limits and grade thresholds…", 1240, True),
-    ("Onboarding checklist", "Operations", "KYC/AML steps for new clients and debtors…", 480, True),
-    ("Collections playbook", "Collections", "Dunning cadence, dispute handling and write-off rules…", 760, False),
-    ("SPV term sheet (DIFC)", "Capital", "Structure, waterfall and investor reporting…", 2100, False),
-]
-
+# ── Docs ─────────────────────────────────────────────────────────────────────
 
 @rt("/app/docs")
 def docs(req):
     lang = get_lang(req)
+    try:
+        seed_workspace()
+    except Exception:
+        pass
+    rows = _q("SELECT title,folder,excerpt,words,published FROM factorio.workspace_docs ORDER BY id")
     cards = [
-        Div(Div(Span(folder, cls="text-[11px] font-mono uppercase tracking-wider text-accent"),
-                Span("Published" if pub else "Draft",
-                     cls="text-[11px] " + ("text-green-700" if pub else "text-ink-dim")),
+        Div(Div(Span(d["folder"], cls="text-[11px] font-mono uppercase tracking-wider text-accent"),
+                Span("Published" if d["published"] else "Draft",
+                     cls="text-[11px] " + ("text-green-700" if d["published"] else "text-ink-dim")),
                 cls="flex items-center justify-between"),
-            H3(title, cls="text-ink text-lg font-medium mt-1"),
-            P(excerpt, cls="text-sm text-ink-muted mt-1"),
-            P(f"{words} words", cls="text-[11px] text-ink-dim mt-2"),
+            H3(d["title"], cls="text-ink text-lg font-medium mt-1"),
+            P(d["excerpt"], cls="text-sm text-ink-muted mt-1"),
+            P(f"{d['words']} words", cls="text-[11px] text-ink-dim mt-2"),
             cls="p-6 rounded-2xl bg-bg-elevated border border-line")
-        for title, folder, excerpt, words, pub in DOCS
+        for d in rows
     ]
     return app_page(
         "Docs",
@@ -144,36 +253,45 @@ def docs(req):
     )
 
 
-# ── Mail demo ─────────────────────────────────────────────────────────────
-MAIL = [
-    ("David Chen", "Re: Factorio proposal", "Thanks — let's schedule a call next week…", "10:24", False),
-    ("Globex Corporation AP", "Invoice INV-20260012 confirmed", "We confirm the obligation on the e-invoice network…", "09:12", False),
-    ("CRIF Bureau", "Debtor report ready", "The credit report for Meridian Logistics is available…", "Yesterday", True),
-    ("Oleg Kim", "Pipeline review", "Attaching the updated deal list for this week…", "Yesterday", True),
-    ("E-Invoice Network", "Daily e-invoice digest", "42 new buyer-confirmed invoices for your clients…", "Mon", True),
-]
-
+# ── Mail ─────────────────────────────────────────────────────────────────────
 
 @rt("/app/mail")
 def mail(req):
     lang = get_lang(req)
+    try:
+        seed_workspace()
+    except Exception:
+        pass
+    msgs = _q("SELECT id,sender,subject,snippet,when_label,is_read FROM factorio.mail_messages ORDER BY sort_order")
+    unread = sum(1 for m in msgs if not m["is_read"])
     rows = [
-        Div(Span("●", cls=("text-accent" if not read else "text-transparent") + " text-xs mr-3"),
-            Div(P(sender, cls="text-sm font-medium text-ink"),
-                P(Span(subject, cls="text-ink"), Span(" — " + snippet, cls="text-ink-muted"),
-                  cls="text-sm truncate"),
-                cls="flex-1 min-w-0"),
-            Span(when, cls="text-[11px] text-ink-dim ml-3 whitespace-nowrap"),
-            cls="flex items-center py-3 px-4 border-b border-line hover:bg-bg-raised/40")
-        for sender, subject, snippet, when, read in MAIL
+        A(Span("●", cls=("text-accent" if not m["is_read"] else "text-transparent") + " text-xs mr-3"),
+          Div(P(m["sender"], cls="text-sm font-medium text-ink"),
+              P(Span(m["subject"], cls="text-ink"), Span(" — " + m["snippet"], cls="text-ink-muted"),
+                cls="text-sm truncate"),
+              cls="flex-1 min-w-0"),
+          Span(m["when_label"], cls="text-[11px] text-ink-dim ml-3 whitespace-nowrap"),
+          href=f"/app/mail/read?msg_id={m['id']}",
+          cls="flex items-center py-3 px-4 border-b border-line hover:bg-bg-raised/40 no-underline text-inherit")
+        for m in msgs
     ]
     return app_page(
         "Mail",
         Section_(Eyebrow("Workspace · Mail"),
                  Heading(1, "Inbox", cls="mt-4"),
-                 P("Client, debtor and bureau correspondence — threads, labels and AI draft replies.",
+                 P(f"{unread} unread · client, debtor and bureau correspondence — threads, labels and AI draft replies.",
                    cls="mt-3 text-ink-muted max-w-3xl"), cls="border-t border-line"),
         Section_(Div(*rows, cls="rounded-2xl bg-bg-elevated border border-line overflow-hidden"),
                  cls="border-t border-line"),
         current_path="/app/mail", lang=lang, role=current_role(req), subrole=current_subrole(req),
     )
+
+
+@rt("/app/mail/read")
+def mail_read(req, msg_id: int = 0):
+    if _HAS_DB:
+        try:
+            execute("UPDATE factorio.mail_messages SET is_read=TRUE WHERE id=%(i)s", {"i": msg_id})
+        except Exception:
+            pass
+    return RedirectResponse("/app/mail", status_code=303)
