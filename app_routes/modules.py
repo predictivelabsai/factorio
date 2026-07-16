@@ -18,15 +18,15 @@ from app_routes._shared import app_page, fmt_uzs, current_role, current_subrole
 # ── CRM demo data (mirrors FastCRM deals) ─────────────────────────────────
 DEAL_STAGES = ["Qualification", "Demo", "Proposal", "Negotiation", "Ready to close"]
 DEALS = [
-    ("Artel Group", "Reverse-factoring programme", "Qualification", 120000, "Aziza K."),
-    ("Silk Road Textiles", "Invoice discounting facility", "Qualification", 60000, "Bek T."),
-    ("Nukus Transport", "Factoring — logistics", "Demo", 45000, "Aziza K."),
-    ("Tashkent Hotels", "Hospitality SCF", "Demo", 210000, "Dmitry P."),
-    ("UzAgro Foods", "Seasonal working capital", "Proposal", 90000, "Bek T."),
-    ("Bo'stonliq Retail", "Supplier finance", "Proposal", 75000, "Aziza K."),
-    ("Zarafshan Energy", "Contractor receivables", "Negotiation", 320000, "Dmitry P."),
-    ("Registan Pharma", "Healthcare receivables", "Negotiation", 130000, "Bek T."),
-    ("Amu Construction", "Milestone financing", "Ready to close", 180000, "Aziza K."),
+    ("Globex Corporation", "Reverse-factoring programme", "Qualification", 120000, "Aziza K."),
+    ("Bright Textiles", "Invoice discounting facility", "Qualification", 60000, "Bek T."),
+    ("Meridian Logistics", "Factoring — logistics", "Demo", 45000, "Aziza K."),
+    ("Grand Plaza Hotels", "Hospitality SCF", "Demo", 210000, "Dmitry P."),
+    ("Greenfield Agro", "Seasonal working capital", "Proposal", 90000, "Bek T."),
+    ("Summit Retail", "Supplier finance", "Proposal", 75000, "Aziza K."),
+    ("Helios Energy", "Contractor receivables", "Negotiation", 320000, "Dmitry P."),
+    ("Vitalis Pharma", "Healthcare receivables", "Negotiation", 130000, "Bek T."),
+    ("Vertex Construction", "Milestone financing", "Ready to close", 180000, "Aziza K."),
 ]
 
 
@@ -79,12 +79,12 @@ def crm(req):
 # ── Drive demo ────────────────────────────────────────────────────────────
 FILES = [
     ("📁", "Client agreements", "folder", "—", "2d ago"),
-    ("📁", "SoliqOnline exports", "folder", "—", "1d ago"),
-    ("📄", "Artel_master_agreement.pdf", "pdf", "180 KB", "2d ago"),
-    ("📄", "INV-20260012_assignment.pdf", "pdf", "42 KB", "5h ago"),
+    ("📁", "E-invoice exports", "folder", "—", "1d ago"),
+    ("📄", "Globex_master_agreement.pdf", "pdf", "180 KB", "2d ago"),
+    ("📄", "INV-1042_assignment.pdf", "pdf", "42 KB", "5h ago"),
     ("📊", "Portfolio_aging_2026Q3.xlsx", "sheet", "88 KB", "3h ago"),
     ("🖼️", "Warehouse_collateral.jpg", "image", "1.2 MB", "1d ago"),
-    ("📄", "KYC_UzAgro_Foods.pdf", "pdf", "260 KB", "6h ago"),
+    ("📄", "KYC_Greenfield_Agro.pdf", "pdf", "260 KB", "6h ago"),
 ]
 
 
@@ -146,11 +146,11 @@ def docs(req):
 
 # ── Mail demo ─────────────────────────────────────────────────────────────
 MAIL = [
-    ("Ulugbek Tavakkalov", "Re: Factorio proposal", "Thanks — let's schedule a call next week…", "10:24", False),
-    ("Artel Group AP", "Invoice INV-20260012 confirmed", "We confirm the obligation on SoliqOnline…", "09:12", False),
-    ("CRIF Bureau", "Debtor report ready", "The credit report for Nukus Transport is available…", "Yesterday", True),
+    ("David Chen", "Re: Factorio proposal", "Thanks — let's schedule a call next week…", "10:24", False),
+    ("Globex Corporation AP", "Invoice INV-20260012 confirmed", "We confirm the obligation on the e-invoice network…", "09:12", False),
+    ("CRIF Bureau", "Debtor report ready", "The credit report for Meridian Logistics is available…", "Yesterday", True),
     ("Oleg Kim", "Pipeline review", "Attaching the updated deal list for this week…", "Yesterday", True),
-    ("SoliqOnline", "Daily e-invoice digest", "42 new buyer-confirmed invoices for your clients…", "Mon", True),
+    ("E-Invoice Network", "Daily e-invoice digest", "42 new buyer-confirmed invoices for your clients…", "Mon", True),
 ]
 
 

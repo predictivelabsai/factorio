@@ -19,7 +19,7 @@ screenshots from the live left-nav cockpit:
 | 3 | Funding & disbursements | Funding | **Built (demo)** — SoD-gated approve + audit |
 | 4 | Collections & credit management | Funding → collections | **Built (demo)** — dunning stages |
 | 5 | Risk management & underwriting | Risk | **Built (demo)** — grades, exposure, concentration, fraud |
-| 6 | Accounting & financial ops | Reports | **Partial** — DSO/default/volume; ledger + reconciliation next |
+| 6 | Accounting & financial ops | Accounting (GL) + Reports | **Built (production)** — double-entry ledger, trial balance, reconciliation |
 | 7 | Reporting & analytics | Reports + copilot | **Built (demo)** — grounded AI answers |
 | 8 | Compliance, legal & audit | Audit log | **Built (demo)** — immutable action log |
 

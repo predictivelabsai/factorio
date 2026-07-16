@@ -182,3 +182,32 @@ CREATE TABLE IF NOT EXISTS factorio.faq (
     is_active   BOOLEAN NOT NULL DEFAULT TRUE,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ── Accounting / general ledger (back office) ──────────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.gl_accounts (
+    code        TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    type        TEXT NOT NULL CHECK (type IN ('asset','liability','equity','income','expense'))
+);
+
+CREATE TABLE IF NOT EXISTS factorio.ledger_entries (
+    id          BIGSERIAL PRIMARY KEY,
+    entry_date  DATE NOT NULL,
+    account_code TEXT NOT NULL REFERENCES factorio.gl_accounts(code),
+    debit       NUMERIC(15,2) NOT NULL DEFAULT 0,
+    credit      NUMERIC(15,2) NOT NULL DEFAULT 0,
+    ref_type    TEXT NOT NULL DEFAULT '',
+    ref_id      TEXT NOT NULL DEFAULT '',
+    memo        TEXT NOT NULL DEFAULT '',
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ledger_account_idx ON factorio.ledger_entries(account_code);
+
+CREATE TABLE IF NOT EXISTS factorio.bank_transactions (
+    id          BIGSERIAL PRIMARY KEY,
+    txn_date    DATE NOT NULL,
+    amount      NUMERIC(15,2) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    reconciled  BOOLEAN NOT NULL DEFAULT FALSE,
+    ref_id      TEXT NOT NULL DEFAULT ''
+);

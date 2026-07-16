@@ -59,9 +59,19 @@ underwriting and portfolio-risk cockpit.
 ![Risk & underwriting](img/role-admin-risk.png)
 
 ## 6 · Accounting & financial operations
-**Screen: Reports.** DSO (average hold), default rate, settled positions and
-**funded volume by sector** — the finance/GL view. (Ledger and bank
-reconciliation are the next build phase per the enterprise plan.)
+**Screen: Accounting.** A **production double-entry general ledger**, derived
+deterministically from the factoring events (advances, settlements, fees,
+write-offs) so it always ties out. Includes a **trial balance** (chart of
+accounts with debit/credit and a balanced total), a **journal**, per-account
+**ledger drill-down**, and **bank reconciliation** (matched vs unmatched). Scoped
+to Finance / Compliance / Executive / Super (segregation of duties).
+
+![Trial balance](img/role-admin-accounting.png)
+![Journal](img/role-admin-journal.png)
+![Bank reconciliation](img/role-admin-reconciliation.png)
+
+Reporting KPIs (DSO, default rate, funded volume by sector) live on the Reports
+screen:
 
 ![Reports](img/role-admin-reports.png)
 
