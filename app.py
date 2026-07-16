@@ -40,6 +40,7 @@ from app_routes import statement as _statement_routes  # noqa: E402,F401
 from app_routes import autoinvest as _autoinvest_routes  # noqa: E402,F401
 from app_routes import assistant as _assistant_routes  # noqa: E402,F401
 from app_routes import admin as _admin_routes  # noqa: E402,F401
+from app_routes import onboarding as _onboarding_routes  # noqa: E402,F401
 from app_routes import modules as _modules_routes  # noqa: E402,F401
 from app_routes import accounting as _accounting_routes  # noqa: E402,F401
 from app_routes import scoring as _scoring_routes  # noqa: E402,F401

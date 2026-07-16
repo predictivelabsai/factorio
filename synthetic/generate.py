@@ -100,7 +100,8 @@ def _seed_companies(conn, rng: random.Random, fake: Faker) -> dict[str, int]:
     with conn.cursor() as cur:
         for name, sector, country in COMPANY_TEMPLATES:
             reg = f"{country}{rng.randint(10000000, 99999999)}"
-            turnover = rng.randint(100_000, 5_000_000)
+            # realistic annual turnover: ~$2.5M–$40M (UZS-scale, converted for display)
+            turnover = rng.randint(30_000_000_000, 500_000_000_000)
             cur.execute("""
                 INSERT INTO factorio.companies (name, registration_number, sector, country, address, annual_turnover)
                 VALUES (%s, %s, %s, %s, %s, %s)

@@ -191,43 +191,7 @@ def admin_console(req):
                        kpis, Div(cards, cls="mt-2"))
 
 
-# ── Onboarding & limits ─────────────────────────────────────────────────
-
-@rt("/app/admin/onboarding")
-def admin_onboarding(req):
-    g = _guard(req)
-    if g:
-        return g
-    subrole = current_subrole(req)
-    companies = _q("""
-        SELECT c.name, c.sector, c.country, c.registration_number, c.annual_turnover,
-               COUNT(i.id) AS n_invoices
-        FROM factorio.companies c
-        LEFT JOIN factorio.invoices i ON i.company_id = c.id
-        GROUP BY c.id ORDER BY c.annual_turnover DESC LIMIT 40
-    """)
-    rows = []
-    for idx, c in enumerate(companies):
-        # demo KYC + facility limit derived from turnover
-        kyc = "Approved" if idx % 5 else "Pending"
-        limit = float(c["annual_turnover"] or 0) * 0.15
-        badge = ("bg-green-100 text-green-800" if kyc == "Approved" else "bg-yellow-100 text-yellow-800")
-        rows.append(Tr(
-            Td(c["name"], cls=_TD),
-            Td(c["sector"], cls=_TD),
-            Td(c["country"], cls=_TD),
-            Td(Span(kyc, cls=f"px-2 py-0.5 rounded-full text-xs font-medium {badge}"), cls="py-3 px-4"),
-            Td(fmt_uzs(c["annual_turnover"]), cls=_TDR),
-            Td(fmt_uzs(limit), cls=_TDR + " text-accent"),
-            cls="border-b border-line",
-        ))
-    can_limits = subrole in CAN_SET_LIMITS
-    note = P(("You may set facility limits (Credit / Compliance)." if can_limits
-              else t("admin_restricted", get_lang(req))),
-             cls="text-sm mt-4 " + ("text-ink-muted" if can_limits else "text-red-700"))
-    return _admin_page(req, "/app/admin/onboarding", "nav_admin_onboarding",
-                       _table(["Client / debtor", "Sector", "Country", "KYC", "Turnover", "Facility limit"], rows),
-                       note)
+# Onboarding & facility limits are now the production module in app_routes/onboarding.py.
 
 
 # ── Risk & underwriting ─────────────────────────────────────────────────
