@@ -308,6 +308,24 @@ def admin_funding_approve(req, inv: str = ""):
 
 # ── Reports ─────────────────────────────────────────────────────────────
 
+def _bars(rows, label_key, val_key, fmt=None):
+    """Simple horizontal bar chart from (label, value) rows."""
+    fmt = fmt or (lambda v: f"{v:,.0f}")
+    mx = max((float(r[val_key] or 0) for r in rows), default=1) or 1
+    out = []
+    for r in rows:
+        v = float(r[val_key] or 0)
+        pct = max(2, round(v / mx * 100))
+        out.append(Div(
+            Div(Span(str(r[label_key]), cls="text-sm text-ink"),
+                Span(fmt(v), cls="text-sm text-ink-muted tabular-nums"),
+                cls="flex items-center justify-between mb-1"),
+            Div(Div(cls="h-2 rounded-full bg-accent", style=f"width:{pct}%"),
+                cls="h-2 rounded-full bg-bg-raised"),
+            cls="mb-3"))
+    return Div(*out)
+
+
 @rt("/app/admin/reports")
 def admin_reports(req):
     g = _guard(req)
@@ -317,29 +335,53 @@ def admin_reports(req):
         SELECT COUNT(*) FILTER (WHERE status='settled') AS settled,
                COUNT(*) FILTER (WHERE status='defaulted') AS defaulted,
                COUNT(*) AS total,
-               COALESCE(AVG(CASE WHEN status='settled' THEN (settlement_date - investment_date) END),0) AS avg_hold
+               COALESCE(AVG(CASE WHEN status='settled' THEN (settlement_date - investment_date) END),0) AS avg_hold,
+               COALESCE(SUM(investment_amount),0) AS deployed
         FROM factorio.investments
     """, one=True) or {}
     total = float(m.get("total") or 0) or 1
-    dr = 100 * float(m.get("defaulted") or 0) / total
-    by_sector = _q("""
-        SELECT i.sector, COALESCE(SUM(f.amount_raised),0) AS funded
-        FROM factorio.invoices i JOIN factorio.invoice_funding f ON f.invoice_id=i.id
-        GROUP BY i.sector ORDER BY funded DESC
-    """)
-    sec_rows = [Tr(Td(r["sector"], cls=_TD), Td(fmt_uzs(r["funded"]), cls=_TDR + " text-accent"),
-                   cls="border-b border-line") for r in by_sector]
+    settled = float(m.get("settled") or 0); defaulted = float(m.get("defaulted") or 0)
+    dr = 100 * defaulted / total
+    recovery = 100 * settled / (settled + defaulted) if (settled + defaulted) else 100.0
+    fundedv = _q("SELECT COALESCE(SUM(amount_raised),0) v FROM factorio.invoice_funding", one=True) or {}
+    dilution = _q("""SELECT COALESCE(SUM(i.amount) FILTER (WHERE i.status='defaulted'),0) d,
+                            COALESCE(SUM(f.amount_raised),0) f
+                     FROM factorio.invoices i JOIN factorio.invoice_funding f ON f.invoice_id=i.id""", one=True) or {}
+    dil = 100 * float(dilution.get("d") or 0) / (float(dilution.get("f") or 0) or 1)
+    by_sector = _q("""SELECT i.sector, COALESCE(SUM(f.amount_raised),0) AS funded
+                      FROM factorio.invoices i JOIN factorio.invoice_funding f ON f.invoice_id=i.id
+                      GROUP BY i.sector ORDER BY funded DESC""")
+    by_month = _q("""SELECT to_char(date_trunc('month', i.issue_date),'Mon YYYY') AS mon,
+                            date_trunc('month', i.issue_date) AS m,
+                            COALESCE(SUM(f.amount_raised),0) AS funded
+                     FROM factorio.invoices i JOIN factorio.invoice_funding f ON f.invoice_id=i.id
+                     GROUP BY 1,2 ORDER BY m DESC LIMIT 8""")
+    by_grade = _q("""SELECT risk_grade grade,
+                            COUNT(*) FILTER (WHERE status IN ('settled','defaulted')) n,
+                            COUNT(*) FILTER (WHERE status='defaulted') d
+                     FROM factorio.invoices GROUP BY risk_grade ORDER BY risk_grade""")
+    grade_rows = [Tr(Td(r["grade"], cls=_TD), Td(str(r["n"]), cls=_TDR),
+                     Td(f"{(100*float(r['d'])/r['n']) if r['n'] else 0:.1f}%", cls=_TDR + " text-accent"),
+                     cls="border-b border-line") for r in by_grade]
     kpis = Div(
         _card("DSO (avg hold)", f"{float(m.get('avg_hold') or 0):.0f} d", "settled positions"),
         _card("Default rate", f"{dr:.1f}%", "of positions"),
-        _card("Settled", str(m.get("settled", 0)), "positions"),
-        _card("Recovery", "—", "wire to settlements"),
-        cls="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8",
+        _card("Recovery rate", f"{recovery:.0f}%", "settled vs terminal"),
+        _card("Dilution", f"{dil:.1f}%", "write-offs / funded"),
+        _card("Funded volume", fmt_uzs(fundedv.get("v", 0)), "to date"),
+        _card("Capital deployed", fmt_uzs(m.get("deployed", 0)), "investor capital"),
+        cls="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8",
     )
     return _admin_page(req, "/app/admin/reports", "nav_admin_reports",
                        kpis,
+                       Div(P("Funded volume by month", cls="text-sm font-medium text-ink mb-3"),
+                           _bars(list(reversed(by_month)), "mon", "funded", fmt=fmt_uzs),
+                           cls="mb-8 max-w-2xl"),
                        Div(P("Funded volume by sector", cls="text-sm font-medium text-ink mb-3"),
-                           _table(["Sector", "Funded"], sec_rows)))
+                           _bars(by_sector, "sector", "funded", fmt=fmt_uzs),
+                           cls="mb-8 max-w-2xl"),
+                       Div(P("Default rate by grade (portfolio performance)", cls="text-sm font-medium text-ink mb-3"),
+                           _table(["Grade", "Terminal", "Default rate"], grade_rows)))
 
 
 # ── Audit log ─────────────────────────────────────────────────────────────
