@@ -1,0 +1,211 @@
+- generic [active] [ref=f21e1]:
+  - generic [ref=f21e2]:
+    - navigation [ref=f21e5]:
+      - generic [ref=f21e6]:
+        - generic [ref=f21e7]:
+          - link "Coolify" [ref=f21e8] [cursor=pointer]:
+            - /url: /
+          - link "v4.0.0-beta.459" [ref=f21e9] [cursor=pointer]:
+            - /url: https://github.com/coollabsio/coolify/releases/tag/v4.0.0-beta.459
+        - button / [ref=f21e11]
+        - button "Preferences 9+" [ref=f21e17] [cursor=pointer]:
+          - img "Preferences" [ref=f21e18]
+          - generic [ref=f21e20]: 9+
+      - combobox [ref=f21e23]:
+        - option "Switch team" [disabled]
+        - option "kaljuvee's Team"
+        - option "Finespresso Team" [selected]
+      - list [ref=f21e24]:
+        - listitem [ref=f21e25]:
+          - list [ref=f21e26]:
+            - listitem [ref=f21e27]:
+              - link "Dashboard" [ref=f21e28] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=f21e31]:
+              - link "Projects" [ref=f21e32] [cursor=pointer]:
+                - /url: /projects
+            - listitem [ref=f21e38]:
+              - link "Servers" [ref=f21e39] [cursor=pointer]:
+                - /url: /servers
+            - listitem [ref=f21e45]:
+              - link "Sources" [ref=f21e46] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/sources
+            - listitem [ref=f21e49]:
+              - link "Destinations" [ref=f21e50] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/destinations
+            - listitem [ref=f21e53]:
+              - link "S3 Storages" [ref=f21e54] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/storages
+            - listitem [ref=f21e60]:
+              - link "Shared Variables" [ref=f21e61] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/shared-variables
+            - listitem [ref=f21e66]:
+              - link "Notifications" [ref=f21e67] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/notifications/email
+            - listitem [ref=f21e70]:
+              - link "Keys & Tokens" [ref=f21e71] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/security/private-key
+            - listitem [ref=f21e74]:
+              - link "Tags" [ref=f21e75] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/tags
+            - listitem [ref=f21e80]:
+              - link "Terminal" [ref=f21e81] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/terminal
+            - listitem [ref=f21e85]:
+              - link "Profile" [ref=f21e86] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/profile
+            - listitem [ref=f21e92]:
+              - link "Teams" [ref=f21e93] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/team
+            - listitem [ref=f21e102]:
+              - link "Settings" [ref=f21e103] [cursor=pointer]:
+                - /url: /settings
+            - listitem [ref=f21e359]:
+              - generic "New version available" [ref=f21e360]:
+                - button "Upgrade" [ref=f21e362] [cursor=pointer]
+            - listitem [ref=f21e109]:
+              - link "Sponsor us" [ref=f21e110] [cursor=pointer]:
+                - /url: https://coolify.io/sponsorships
+            - listitem [ref=f21e115]:
+              - generic "Send us feedback or get help!" [ref=f21e118] [cursor=pointer]: Feedback
+            - listitem [ref=f21e121]:
+              - button "Logout" [ref=f21e123]
+    - main [ref=f21e126]:
+      - generic [ref=f21e128]:
+        - heading "Configuration" [level=1] [ref=f21e129]
+        - navigation [ref=f21e130]:
+          - navigation [ref=f21e131]:
+            - list [ref=f21e132]:
+              - listitem [ref=f21e133]:
+                - generic [ref=f21e134]:
+                  - link "predictive labs apps" [ref=f21e135] [cursor=pointer]:
+                    - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c
+                  - button [ref=f21e136]
+              - listitem [ref=f21e139]:
+                - generic [ref=f21e140]:
+                  - link "production" [ref=f21e141] [cursor=pointer]:
+                    - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks
+                  - button [ref=f21e142]
+              - listitem [ref=f21e145]:
+                - generic [ref=f21e146]:
+                  - link "predictivelabsai/factorio (finespresso-server)" [ref=f21e147] [cursor=pointer]:
+                    - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k
+                  - button [ref=f21e148]
+              - generic [ref=f21e151]:
+                - link "Running" [ref=f21e154] [cursor=pointer]:
+                  - /url: https://github.com/predictivelabsai/factorio/commit/e15de2cf6a303cfae4ff395eaba1f732eead9101
+                - generic [ref=f21e155]: (unknown)
+              - button "Refresh Status" [ref=f21e160]
+          - generic [ref=f21e163]:
+            - navigation [ref=f21e164]:
+              - link "Configuration" [ref=f21e165] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k
+              - link "Deployments" [ref=f21e166] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/deployment
+              - link "Logs" [ref=f21e167] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/logs
+              - link "Terminal" [ref=f21e169] [cursor=pointer]:
+                - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/terminal
+              - button "Links" [ref=f21e171]
+            - generic [ref=f21e175]:
+              - button "Advanced" [ref=f21e178]
+              - generic [ref=f21e182]:
+                - button "Redeploy" [ref=f21e183] [cursor=pointer]
+                - button "Restart" [ref=f21e186] [cursor=pointer]
+                - button "Stop" [ref=f21e192] [cursor=pointer]
+        - generic [ref=f21e195]:
+          - generic [ref=f21e196]:
+            - link "General" [ref=f21e197] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k
+            - link "Advanced" [ref=f21e198] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/advanced
+            - link "Environment Variables" [ref=f21e199] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/environment-variables
+            - link "Persistent Storage" [ref=f21e200] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/persistent-storage
+            - link "Git Source" [ref=f21e201] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/source
+            - link "Servers" [ref=f21e202] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/servers
+            - link "Scheduled Tasks" [ref=f21e203] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/scheduled-tasks
+            - link "Webhooks" [ref=f21e204] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/webhooks
+            - link "Preview Deployments" [ref=f21e205] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/preview-deployments
+            - link "Healthcheck" [ref=f21e206] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/healthcheck
+            - link "Rollback" [ref=f21e207] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/rollback
+            - link "Resource Limits" [ref=f21e208] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/resource-limits
+            - link "Resource Operations" [ref=f21e209] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/resource-operations
+            - link "Metrics" [ref=f21e210] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/metrics
+            - link "Tags" [ref=f21e211] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/tags
+            - link "Danger Zone" [ref=f21e212] [cursor=pointer]:
+              - /url: https://coolify.finespresso.org/project/d4wgogcokwsgw4oc4k0cco8c/environment/hg4wgcgwkg8oc8kkwoo8wwks/application/vsc4ws8g40cswoss40g0o48k/danger
+          - generic [ref=f21e214]:
+            - generic [ref=f21e215]:
+              - heading "Advanced" [level=2] [ref=f21e217]
+              - generic [ref=f21e218]: Advanced configuration for your application.
+              - generic [ref=f21e219]:
+                - heading "General" [level=3] [ref=f21e220]
+                - generic [ref=f21e222]:
+                  - generic [ref=f21e223]: Auto Deploy
+                  - checkbox "Auto Deploy" [checked] [ref=f21e228] [cursor=pointer]
+                - generic [ref=f21e230]:
+                  - generic [ref=f21e231]: Preview Deployments
+                  - checkbox "Preview Deployments" [ref=f21e236] [cursor=pointer]
+                - generic [ref=f21e238]:
+                  - generic [ref=f21e239]: Allow Public PR Deployments
+                  - checkbox "Allow Public PR Deployments" [disabled] [ref=f21e245]
+                - generic [ref=f21e247]:
+                  - generic [ref=f21e248]: Disable Build Cache
+                  - checkbox "Disable Build Cache" [ref=f21e253] [cursor=pointer]
+                - generic [ref=f21e255]:
+                  - generic [ref=f21e256]: Inject Build Args to Dockerfile
+                  - checkbox "Inject Build Args to Dockerfile" [checked] [ref=f21e261] [cursor=pointer]
+                - generic [ref=f21e263]:
+                  - generic [ref=f21e264]: Include Source Commit in Build
+                  - checkbox "Include Source Commit in Build" [ref=f21e269] [cursor=pointer]
+                - generic [ref=f21e271]:
+                  - generic [ref=f21e272]: Force Https
+                  - checkbox "Force Https" [checked] [ref=f21e277] [cursor=pointer]
+                - generic [ref=f21e279]:
+                  - generic [ref=f21e280]: Enable Gzip Compression
+                  - checkbox "Enable Gzip Compression" [checked] [ref=f21e285] [cursor=pointer]
+                - generic [ref=f21e287]:
+                  - generic [ref=f21e288]: Strip Prefixes
+                  - checkbox "Strip Prefixes" [checked] [ref=f21e293] [cursor=pointer]
+                - heading "Container Names" [level=3] [ref=f21e294]
+                - generic [ref=f21e296]:
+                  - generic [ref=f21e297]: Consistent Container Names
+                  - checkbox "Consistent Container Names" [ref=f21e302] [cursor=pointer]
+                - generic [ref=f21e303]:
+                  - generic [ref=f21e304]:
+                    - generic [ref=f21e305]: Custom Container Name
+                    - textbox [ref=f21e310]
+                  - button "Save" [ref=f21e311] [cursor=pointer]
+                - heading "Logs" [level=3] [ref=f21e312]
+                - generic [ref=f21e314]:
+                  - generic [ref=f21e315]: Drain Logs
+                  - checkbox "Drain Logs" [ref=f21e320] [cursor=pointer]
+                - heading "Git" [level=3] [ref=f21e321]
+                - generic [ref=f21e323]:
+                  - generic [ref=f21e324]: Submodules
+                  - checkbox "Submodules" [checked] [ref=f21e329] [cursor=pointer]
+                - generic [ref=f21e331]:
+                  - generic [ref=f21e332]: LFS
+                  - checkbox "LFS" [checked] [ref=f21e337] [cursor=pointer]
+                - generic [ref=f21e339]:
+                  - generic [ref=f21e340]: Shallow Clone
+                  - checkbox "Shallow Clone" [checked] [ref=f21e345] [cursor=pointer]
+            - generic [ref=f21e346]:
+              - heading "GPU" [level=3] [ref=f21e348]
+              - generic [ref=f21e351]:
+                - generic [ref=f21e352]: Enable GPU
+                - checkbox "Enable GPU" [ref=f21e357] [cursor=pointer]
+  - list

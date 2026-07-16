@@ -6,9 +6,13 @@ description: Deploy / redeploy the Factorio app to production (factorio.co.uk) v
 # Deploy Factorio (Coolify)
 
 Factorio is hosted on a self-hosted **Coolify** instance and served at
-**factorio.co.uk**. Pushing to `main` alone does **not** reliably rebuild — the
-GitHub auto-deploy webhook does not trigger a rebuild — so to ship the latest
-commit you **trigger a manual Redeploy** in Coolify.
+**factorio.co.uk**. **Auto Deploy is ENABLED** (Configuration → Advanced →
+"Auto Deploy" is checked), so pushing to `main` triggers a build+rollout via the
+GitHub webhook — verified 2026-07-16, when a push built commit `e15de2c`
+automatically before a manual Redeploy even ran ("image found with the same Git
+Commit SHA — build step skipped"). A **manual Redeploy** in Coolify remains the
+guaranteed way to force a rollout (e.g. if the webhook is slow or you want to be
+certain the latest commit is live).
 
 ## Where it lives
 - **Coolify:** `https://coolify.finespresso.org`
