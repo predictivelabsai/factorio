@@ -298,3 +298,13 @@ CREATE TABLE IF NOT EXISTS factorio.mail_messages (
     is_read    BOOLEAN NOT NULL DEFAULT FALSE,
     sort_order INT NOT NULL DEFAULT 0
 );
+
+-- ── Reverse-auction bids (marketplace depth) ──────────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.auction_bids (
+    id              BIGSERIAL PRIMARY KEY,
+    funding_id      BIGINT NOT NULL REFERENCES factorio.invoice_funding(id) ON DELETE CASCADE,
+    investor_id     BIGINT NOT NULL REFERENCES factorio.users(id) ON DELETE CASCADE,
+    bid_fee_pct     NUMERIC(5,2) NOT NULL,
+    bid_advance_pct NUMERIC(5,2) NOT NULL,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);

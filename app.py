@@ -49,4 +49,5 @@ from app_routes import modules as _modules_routes  # noqa: E402,F401
 from app_routes import accounting as _accounting_routes  # noqa: E402,F401
 from app_routes import scoring as _scoring_routes  # noqa: E402,F401
 from app_routes import integrations as _integrations_routes  # noqa: E402,F401
+from app_routes import depth as _depth_routes  # noqa: E402,F401
 from app_routes import shell as _shell_routes  # noqa: E402,F401

@@ -234,7 +234,7 @@ def marketplace(req):
     )
 
 
-@rt("/app/marketplace/{funding_id}")
+@rt("/app/marketplace/{funding_id:int}")
 def marketplace_detail(req, funding_id: int):
     lang = get_lang(req)
     investors = list_investors()

@@ -26,6 +26,8 @@ NAV = [
     ("Factoring", [
         ("dashboard", "nav_dashboard", "\U0001F4CA", "/app"),
         ("marketplace", "mkt_eyebrow", "\U0001F9FE", "/app/marketplace"),
+        ("auctions", "Auctions", "\U0001F528", "/app/marketplace/auctions"),
+        ("secondary", "Secondary", "\U0001F501", "/app/marketplace/secondary"),
         ("portfolio", "port_eyebrow", "\U0001F4C1", "/app/portfolio"),
         ("statement", "nav_statement", "\U0001F9EE", "/app/statement"),
         ("autoinvest", "nav_autoinvest", "⚙️", "/app/auto-invest"),
