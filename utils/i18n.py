@@ -8,13 +8,16 @@ Usage:
 
 from __future__ import annotations
 
-SUPPORTED_LANGS = ("en", "uz", "ru")
+# English is always first and is the default (no IP auto-detect).
+SUPPORTED_LANGS = ("en", "uz", "ru", "es", "fr")
 DEFAULT_LANG = "en"
 
 LANG_META = {
     "en": {"flag": "\U0001F1EC\U0001F1E7", "label": "EN", "name": "English"},
     "uz": {"flag": "\U0001F1FA\U0001F1FF", "label": "UZ", "name": "O'zbekcha"},
     "ru": {"flag": "\U0001F1F7\U0001F1FA", "label": "RU", "name": "Русский"},
+    "es": {"flag": "\U0001F1EA\U0001F1F8", "label": "ES", "name": "Español"},
+    "fr": {"flag": "\U0001F1EB\U0001F1F7", "label": "FR", "name": "Français"},
 }
 
 TRANSLATIONS: dict[str, dict[str, str]] = {
@@ -116,6 +119,78 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "en": "Consulting, staffing, IT — get paid now for the work you delivered last month.",
         "uz": "Konsalting, kadrlar, IT — o'tgan oy bajarga ishingiz uchun hozir pul oling.",
         "ru": "Консалтинг, кадры, IT — получите оплату сейчас за работу, выполненную в прошлом месяце."},
+    "sector_hospitality":   {"en": "Hospitality",       "uz": "Mehmondo'stlik",       "ru": "Гостеприимство"},
+    "sector_retail":        {"en": "Retail",            "uz": "Chakana savdo",        "ru": "Розничная торговля"},
+    "sector_healthcare":    {"en": "Healthcare",        "uz": "Sog'liqni saqlash",    "ru": "Здравоохранение"},
+    "sector_agriculture":   {"en": "Agriculture",       "uz": "Qishloq xo'jaligi",    "ru": "Сельское хозяйство"},
+    "sector_energy":        {"en": "Energy",            "uz": "Energetika",           "ru": "Энергетика"},
+    "sector_hospitality_blurb": {
+        "en": "Smooth out seasonal cash cycles for hotels, restaurants and their suppliers.",
+        "uz": "Mehmonxonalar, restoranlar va ularning yetkazib beruvchilari uchun mavsumiy pul oqimini tekislang.",
+        "ru": "Сгладьте сезонные денежные циклы для отелей, ресторанов и их поставщиков."},
+    "sector_retail_blurb": {
+        "en": "Fund inventory and bridge supplier terms while receipts catch up.",
+        "uz": "Tovar zaxirasini moliyalashtiring va tushumlar yetguncha yetkazib beruvchi shartlarini qoplang.",
+        "ru": "Финансируйте товарные запасы и покрывайте условия поставщиков, пока поступления догоняют."},
+    "sector_healthcare_blurb": {
+        "en": "Finance slow insurer and institutional receivables for clinics and suppliers.",
+        "uz": "Klinikalar va yetkazib beruvchilar uchun sug'urta va muassasa qarzlarini moliyalashtiring.",
+        "ru": "Финансируйте медленную дебиторку страховщиков и учреждений для клиник и поставщиков."},
+    "sector_agriculture_blurb": {
+        "en": "Cover the gap between harvest, delivery and buyer payment.",
+        "uz": "Hosil, yetkazib berish va xaridor to'lovi o'rtasidagi bo'shliqni to'ldiring.",
+        "ru": "Покройте разрыв между урожаем, поставкой и оплатой покупателя."},
+    "sector_energy_blurb": {
+        "en": "Finance receivables from utilities, contractors and long project cycles.",
+        "uz": "Kommunal xizmatlar, pudratchilar va uzoq loyiha davrlaridan qarzlarni moliyalashtiring.",
+        "ru": "Финансируйте дебиторку от коммунальных предприятий, подрядчиков и долгих проектов."},
+
+    # ── Sector explorer (home dropdown) — sample use cases ──────────
+    "sector_explorer_eyebrow": {"en": "Explore your sector", "uz": "Sohangizni o'rganing", "ru": "Изучите свою отрасль"},
+    "sector_explorer_heading": {"en": "See how it works in your industry.",
+                                "uz": "Bu sizning sohangizda qanday ishlashini ko'ring.",
+                                "ru": "Посмотрите, как это работает в вашей отрасли."},
+    "sector_explorer_label":   {"en": "Choose an industry", "uz": "Sohani tanlang", "ru": "Выберите отрасль"},
+    "sector_manufacturing_usecase": {
+        "en": "A parts manufacturer invoices a carmaker on 90-day terms and advances 85% today to buy raw materials for the next run.",
+        "uz": "Ehtiyot qismlar ishlab chiqaruvchisi avtoishlab chiqaruvchiga 90 kunlik shartlarda hisob-faktura chiqaradi va keyingi partiya uchun xom ashyo sotib olishga bugun 85% avans oladi.",
+        "ru": "Производитель деталей выставляет автопроизводителю счёт на 90 дней и получает 85% аванса сегодня, чтобы купить сырьё для следующей партии."},
+    "sector_wholesale_usecase": {
+        "en": "A distributor factors invoices to a supermarket chain to pay its own suppliers early and win volume discounts.",
+        "uz": "Distribyutor supermarket tarmog'iga hisob-fakturalarni faktoring qiladi, o'z yetkazib beruvchilariga erta to'lash va hajm chegirmalarini olish uchun.",
+        "ru": "Дистрибьютор факторит счета сети супермаркетов, чтобы заранее платить своим поставщикам и получать скидки за объём."},
+    "sector_construction_usecase": {
+        "en": "A subcontractor finances a milestone certificate so it can pay crews and rent equipment before the developer pays.",
+        "uz": "Subpudratchi bosqich sertifikatini moliyalashtiradi, shunda quruvchi to'lashdan oldin jamoalarga to'lay oladi va uskunalar ijaraga oladi.",
+        "ru": "Субподрядчик финансирует акт этапа, чтобы платить бригадам и арендовать технику до оплаты застройщиком."},
+    "sector_logistics_usecase": {
+        "en": "A freight carrier advances invoices to a retailer to cover fuel and driver wages while the 60-day term runs.",
+        "uz": "Yuk tashuvchi chakana sotuvchiga hisob-fakturalarni avanslaydi, 60 kunlik muddat davomida yoqilg'i va haydovchi maoshini qoplash uchun.",
+        "ru": "Грузоперевозчик авансирует счета ритейлеру, чтобы покрыть топливо и зарплаты водителей, пока идёт 60-дневный срок."},
+    "sector_hospitality_usecase": {
+        "en": "A hotel group runs a reverse-factoring programme so 200 food and linen suppliers get paid early — without the group breaking its terms.",
+        "uz": "Mehmonxonalar guruhi teskari faktoring dasturini yuritadi, shunda 200 oziq-ovqat va choyshab yetkazib beruvchi erta to'lov oladi — guruh o'z shartlarini buzmasdan.",
+        "ru": "Гостиничная группа запускает программу обратного факторинга, чтобы 200 поставщиков продуктов и белья получали оплату раньше — не нарушая условий группы."},
+    "sector_retail_usecase": {
+        "en": "A retailer factors supplier invoices ahead of a seasonal peak to stock shelves before the sales come in.",
+        "uz": "Chakana sotuvchi mavsumiy cho'qqidan oldin yetkazib beruvchi hisob-fakturalarini faktoring qiladi, sotuvlar kelishidan oldin javonlarni to'ldirish uchun.",
+        "ru": "Ритейлер факторит счета поставщиков перед сезонным пиком, чтобы заполнить полки до начала продаж."},
+    "sector_healthcare_usecase": {
+        "en": "A medical-supplies vendor advances invoices to clinics while insurer reimbursements settle over 60–90 days.",
+        "uz": "Tibbiy jihozlar sotuvchisi klinikalarga hisob-fakturalarni avanslaydi, sug'urta to'lovlari 60–90 kun ichida hal bo'lguncha.",
+        "ru": "Поставщик медицинских товаров авансирует счета клиникам, пока возмещения страховщиков идут 60–90 дней."},
+    "sector_services_usecase": {
+        "en": "An IT consultancy finances a milestone invoice to make payroll before the enterprise client's 45-day term ends.",
+        "uz": "IT-konsalting bosqich hisob-fakturasini moliyalashtiradi, korporativ mijozning 45 kunlik muddati tugashidan oldin ish haqi to'lash uchun.",
+        "ru": "IT-консалтинг финансирует счёт за этап, чтобы выплатить зарплату до конца 45-дневного срока корпоративного клиента."},
+    "sector_agriculture_usecase": {
+        "en": "A grain producer advances invoices to a processor to fund the next planting before the crop is paid for.",
+        "uz": "Don ishlab chiqaruvchi qayta ishlovchiga hisob-fakturalarni avanslaydi, hosil uchun to'lovdan oldin keyingi ekishni moliyalashtirish uchun.",
+        "ru": "Производитель зерна авансирует счета переработчику, чтобы профинансировать следующий посев до оплаты урожая."},
+    "sector_energy_usecase": {
+        "en": "A solar contractor finances receivables from a utility to fund the next installation across a long project cycle.",
+        "uz": "Quyosh pudratchisi kommunal korxonadan qarzlarni moliyalashtiradi, uzoq loyiha davrida keyingi o'rnatishni moliyalashtirish uchun.",
+        "ru": "Солнечный подрядчик финансирует дебиторку от коммунального предприятия, чтобы профинансировать следующую установку в долгом проекте."},
 
     # ── Benefits ────────────────────────────────────────────────────
     "benefits_eyebrow":     {"en": "Why Factorio",  "uz": "Nima uchun Factorio", "ru": "Почему Factorio"},
@@ -133,10 +208,10 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
                                  "uz": "qisqa muddatli, hisob-faktura bilan ta'minlangan aktivlar bo'yicha shaffof xavf darajalash bilan maqsadli yillik daromad.",
                                  "ru": "целевая годовая доходность по краткосрочным активам, обеспеченным счетами, с прозрачной оценкой рисков."},
     "benefit_platform_label":   {"en": "Platform",        "uz": "Platforma",            "ru": "Платформа"},
-    "benefit_platform_metric":  {"en": "500K UZS+",        "uz": "500K UZS+",            "ru": "500K UZS+"},
-    "benefit_platform_caption": {"en": "minimum investment per invoice. Diversify across sectors, risk grades, and durations.",
-                                 "uz": "har bir hisob-faktura uchun minimal investitsiya. Sektorlar, xavf darajalari va muddatlar bo'yicha diversifikatsiya qiling.",
-                                 "ru": "минимальная инвестиция на один счёт. Диверсифицируйте по секторам, уровням риска и срокам."},
+    "benefit_platform_metric":  {"en": "Multi-currency",   "uz": "Ko'p valyutali",       "ru": "Мультивалютность"},
+    "benefit_platform_caption": {"en": "Fund and invest in EUR, USD, GBP and local currencies. Diversify across sectors, risk grades, and durations.",
+                                 "uz": "EUR, USD, GBP va mahalliy valyutalarda moliyalashtiring va investitsiya qiling. Sektorlar, xavf darajalari va muddatlar bo'yicha diversifikatsiya qiling.",
+                                 "ru": "Финансируйте и инвестируйте в EUR, USD, GBP и местных валютах. Диверсифицируйте по секторам, уровням риска и срокам."},
 
     # ── CTA ─────────────────────────────────────────────────────────
     "cta_eyebrow":          {"en": "Get started",        "uz": "Boshlash",              "ru": "Начать"},
@@ -518,7 +593,47 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "ai_assistant_placeholder":{"en": "e.g. What's my exposure to construction? Which positions are overdue?",
                              "uz": "masalan, Qurilishga qanday ta'sirim bor? Qaysi pozitsiyalar muddati o'tgan?",
                              "ru": "напр. Какова моя доля в строительстве? Какие позиции просрочены?"},
+
+    # ── Roles / RBAC + admin nav ────────────────────────────────────
+    "app_role_label":       {"en": "Role",               "uz": "Rol",                  "ru": "Роль"},
+    "role_investor":        {"en": "Investor",           "uz": "Investor",             "ru": "Инвестор"},
+    "role_seller":          {"en": "Seller",             "uz": "Sotuvchi",             "ru": "Продавец"},
+    "role_payer":           {"en": "Payer",              "uz": "To'lovchi",            "ru": "Плательщик"},
+    "role_admin":           {"en": "Admin",              "uz": "Administrator",        "ru": "Админ"},
+    "subrole_ops":          {"en": "Operations",         "uz": "Operatsiyalar",        "ru": "Операции"},
+    "subrole_credit":       {"en": "Credit",             "uz": "Kredit",               "ru": "Кредит"},
+    "subrole_collections":  {"en": "Collections",        "uz": "Undirish",             "ru": "Взыскание"},
+    "subrole_finance":      {"en": "Finance",            "uz": "Moliya",               "ru": "Финансы"},
+    "subrole_compliance":   {"en": "Compliance",         "uz": "Muvofiqlik",           "ru": "Комплаенс"},
+    "subrole_exec":         {"en": "Executive",          "uz": "Rahbariyat",           "ru": "Руководство"},
+    "subrole_super":        {"en": "Super-admin",        "uz": "Super-admin",          "ru": "Супер-админ"},
+    "nav_seller":           {"en": "My applications",    "uz": "Mening arizalarim",    "ru": "Мои заявки"},
+    "nav_payer":            {"en": "Invoices to confirm","uz": "Tasdiqlash uchun",     "ru": "Счета на подтверждение"},
+    "nav_admin":            {"en": "Console",            "uz": "Konsol",               "ru": "Консоль"},
+    "nav_admin_onboarding": {"en": "Onboarding",         "uz": "Onboarding",           "ru": "Онбординг"},
+    "nav_admin_risk":       {"en": "Risk",               "uz": "Xavf",                 "ru": "Риск"},
+    "nav_admin_funding":    {"en": "Funding",            "uz": "Moliyalashtirish",     "ru": "Финансирование"},
+    "nav_admin_reports":    {"en": "Reports",            "uz": "Hisobotlar",           "ru": "Отчёты"},
+    "nav_admin_audit":      {"en": "Audit log",          "uz": "Audit jurnali",        "ru": "Журнал аудита"},
+    "admin_eyebrow":        {"en": "Back office · Admin console", "uz": "Backoffice · Admin konsoli", "ru": "Бэк-офис · Консоль администратора"},
+    "admin_h1":             {"en": "Operations console", "uz": "Operatsiyalar konsoli","ru": "Операционная консоль"},
+    "admin_lede":           {"en": "Role-scoped back office for onboarding, risk, funding, collections and reporting — every action written to the audit log.",
+                             "uz": "Onboarding, xavf, moliyalashtirish, undirish va hisobot uchun rolga bog'langan backoffice — har bir amal audit jurnaliga yoziladi.",
+                             "ru": "Ролевой бэк-офис для онбординга, риска, финансирования, взыскания и отчётности — каждое действие пишется в журнал аудита."},
+    "admin_viewing_as":     {"en": "Viewing as",         "uz": "Ko'rilmoqda",          "ru": "Просмотр как"},
+    "admin_restricted":     {"en": "Your role does not have access to this action (segregation of duties).",
+                             "uz": "Sizning rolingizda bu amalga ruxsat yo'q (vazifalarni ajratish).",
+                             "ru": "Ваша роль не имеет доступа к этому действию (разделение обязанностей)."},
 }
+
+# Spanish/French are kept in a generated overlay (scripts/translate_i18n.py) and
+# merged in here so the base dict stays readable. Missing keys fall back to English.
+try:  # pragma: no cover - overlay is optional
+    from utils.i18n_es_fr import EXTRA as _EXTRA
+    for _k, _v in _EXTRA.items():
+        TRANSLATIONS.setdefault(_k, {}).update(_v)
+except Exception:
+    pass
 
 
 def t(key: str, lang: str = DEFAULT_LANG) -> str:

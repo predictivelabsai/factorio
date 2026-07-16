@@ -9,7 +9,7 @@ from fasthtml.common import (
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import (
-    page, Hero, HowItWorks, SectorCards, BenefitsStrip, CTASection,
+    page, Hero, HowItWorks, SectorCards, SectorExplorer, BenefitsStrip, CTASection,
     Eyebrow, Heading, Body_, Button_, Pill, Section_, SITE_NAME,
 )
 
@@ -22,6 +22,7 @@ def home(req):
         Hero(lang=lang),
         HowItWorks(lang=lang),
         SectorCards(lang=lang),
+        SectorExplorer(lang=lang),
         BenefitsStrip(lang=lang),
         CTASection(lang=lang),
         current_path="/",

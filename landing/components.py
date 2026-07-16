@@ -6,6 +6,7 @@ from fasthtml.common import (
     Html, Head, Body, Meta, Title, Link, Script, NotStr,
     Nav, Main, Footer, Section, Article, Div, Span, A, Img,
     H1, H2, H3, H4, P, Ul, Li, Button, Form, Input, Textarea, Label,
+    Select, Option,
 )
 
 from utils.i18n import t, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
@@ -18,9 +19,16 @@ SECTOR_ICONS = {
     "wholesale": "&#128230;",
     "construction": "&#127959;",
     "logistics": "&#128666;",
+    "hospitality": "&#127976;",
+    "retail": "&#128717;",
+    "healthcare": "&#127973;",
     "services": "&#128188;",
+    "agriculture": "&#127806;",
+    "energy": "&#9889;",
 }
-SECTOR_KEYS = ["manufacturing", "wholesale", "construction", "logistics", "services"]
+SECTOR_KEYS = ["manufacturing", "wholesale", "construction", "logistics",
+               "hospitality", "retail", "healthcare", "services",
+               "agriculture", "energy"]
 
 TAILWIND_CONFIG = """
 tailwind.config = {
@@ -251,8 +259,8 @@ def Hero(lang: str = DEFAULT_LANG):
                 _StatCell("85%", t("stat_advance", lang)),
                 _StatCell("1–3 " + ("kun" if lang == "uz" else "дня" if lang == "ru" else "days"),
                           t("stat_days", lang)),
-                _StatCell("5", t("stat_sectors", lang)),
-                _StatCell("3", t("stat_total", lang)),
+                _StatCell("10", t("stat_sectors", lang)),
+                _StatCell("5", t("stat_total", lang)),
                 cls="max-w-7xl mx-auto px-5 md:px-6 py-5 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-6",
             ),
             cls="border-y border-line bg-bg-elevated/60",
@@ -302,6 +310,42 @@ def SectorCards(lang: str = DEFAULT_LANG):
             ) for k in SECTOR_KEYS],
             cls="grid sm:grid-cols-2 lg:grid-cols-5 gap-4",
         ),
+        cls="border-t border-line",
+    )
+
+
+def SectorExplorer(lang: str = DEFAULT_LANG):
+    """Home-page industry dropdown: pick a sector, see a sample use case."""
+    opts = [
+        Option(t(f"sector_{k}", lang), value=k, selected=(i == 0))
+        for i, k in enumerate(SECTOR_KEYS)
+    ]
+    panels = [
+        Div(
+            Div(Span(NotStr(SECTOR_ICONS[k]), cls="text-accent text-2xl"),
+                H3(t(f"sector_{k}", lang), cls="text-ink text-xl font-medium"),
+                cls="flex items-center gap-3 mb-3"),
+            P(t(f"sector_{k}_usecase", lang), cls="text-ink-muted leading-relaxed"),
+            id=f"uc-{k}",
+            cls="p-7 rounded-2xl bg-bg-elevated border border-line" + ("" if i == 0 else " hidden"),
+        )
+        for i, k in enumerate(SECTOR_KEYS)
+    ]
+    select = Select(
+        *opts,
+        onchange=("document.querySelectorAll('[id^=uc-]').forEach(function(e){e.classList.add('hidden')});"
+                  "document.getElementById('uc-'+this.value).classList.remove('hidden');"),
+        cls="w-full sm:w-auto bg-bg-elevated border border-line-bright rounded-full px-5 py-3 "
+            "text-sm text-ink focus:outline-none focus:border-accent cursor-pointer",
+        aria_label=t("sector_explorer_label", lang),
+    )
+    return Section_(
+        Eyebrow(t("sector_explorer_eyebrow", lang)),
+        Heading(2, t("sector_explorer_heading", lang), cls="mt-3 max-w-3xl mb-6"),
+        Div(Span(t("sector_explorer_label", lang),
+                 cls="text-[11px] font-mono tracking-widest uppercase text-ink-dim mr-3 hidden sm:inline"),
+            select, cls="mb-5 flex items-center flex-wrap gap-3"),
+        Div(*panels),
         cls="border-t border-line",
     )
 
