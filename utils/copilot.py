@@ -97,7 +97,18 @@ def _build_tools():
         except Exception:
             return "Pipeline data unavailable."
 
-    return [platform_kpis, sector_exposure, top_debtors, risk_distribution, sales_pipeline]
+    @tool
+    def credit_scores() -> str:
+        """Debtor credit-score distribution by grade, and model calibration (expected vs actual default)."""
+        try:
+            from app_routes.scoring import scores_summary, calibration
+            cal = calibration()
+            cal_s = "; ".join(f"{c['grade']} exp {c['expected']*100:.0f}% vs actual {c['actual']*100:.1f}%" for c in cal)
+            return f"{scores_summary()}. Calibration — {cal_s}."
+        except Exception:
+            return "Scoring data unavailable."
+
+    return [platform_kpis, sector_exposure, top_debtors, risk_distribution, sales_pipeline, credit_scores]
 
 
 def _get_agent():

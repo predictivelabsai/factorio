@@ -18,7 +18,7 @@ screenshots from the live left-nav cockpit:
 | 2 | Invoice processing & verification | Funding pipeline / detail | **Built (demo)** — grade, advance, status |
 | 3 | Funding & disbursements | Funding | **Built (demo)** — SoD-gated approve + audit |
 | 4 | Collections & credit management | Funding → collections | **Built (demo)** — dunning stages |
-| 5 | Risk management & underwriting | Risk | **Built (demo)** — grades, exposure, concentration, fraud |
+| 5 | Risk management & underwriting | Risk + Credit scoring | **Built (production)** — multi-signal score, adverse-action reasons, back-testing (actual vs expected default) |
 | 6 | Accounting & financial ops | Accounting (GL) + Reports | **Built (production)** — double-entry ledger, trial balance, reconciliation |
 | 7 | Reporting & analytics | Reports + copilot | **Built (demo)** — grounded AI answers |
 | 8 | Compliance, legal & audit | Audit log | **Built (demo)** — immutable action log |

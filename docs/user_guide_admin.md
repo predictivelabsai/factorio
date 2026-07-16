@@ -53,10 +53,24 @@ is Finance/Compliance-gated).
 
 ## 5 · Risk management & underwriting
 **Screen: Risk.** Risk-grade distribution (A–D), **exposure by sector**,
-**debtor concentration**, and a **duplicate-invoice fraud check**. This is the
-underwriting and portfolio-risk cockpit.
+**debtor concentration**, and a **duplicate-invoice fraud check**.
 
 ![Risk & underwriting](img/role-admin-risk.png)
+
+**Screen: Credit scoring (production).** A multi-signal debtor score fusing
+observed payment/default history, concentration and sector risk with credit-bureau
+and open-banking cash-flow signals (external feeds simulated pending integration).
+It produces a **score (0–100), grade (A–D), indicative advance rate and price**,
+plus plain-language **adverse-action reasons**. The model sets the numbers; a human
+approves. Scoped to Credit / Compliance / Executive / Super.
+
+![Credit scoring](img/role-admin-scoring.png)
+
+**Model back-testing.** The differentiator: **actual vs expected default rate**
+per grade — the model-accuracy metric — so calibration drift is visible and the
+model can be re-tuned.
+
+![Model calibration](img/role-admin-calibration.png)
 
 ## 6 · Accounting & financial operations
 **Screen: Accounting.** A **production double-entry general ledger**, derived

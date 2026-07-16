@@ -211,3 +211,19 @@ CREATE TABLE IF NOT EXISTS factorio.bank_transactions (
     reconciled  BOOLEAN NOT NULL DEFAULT FALSE,
     ref_id      TEXT NOT NULL DEFAULT ''
 );
+
+-- ── Credit scoring (back office) ───────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.credit_scores (
+    id           BIGSERIAL PRIMARY KEY,
+    subject      TEXT NOT NULL,
+    score        NUMERIC(5,2) NOT NULL,
+    grade        TEXT NOT NULL,
+    pd_expected  NUMERIC(5,4) NOT NULL,
+    advance_rate NUMERIC(5,2) NOT NULL,
+    price_bps    INT NOT NULL,
+    n_invoices   INT NOT NULL DEFAULT 0,
+    observed_default NUMERIC(5,4),
+    features     TEXT NOT NULL DEFAULT '',
+    reasons      TEXT NOT NULL DEFAULT '',
+    scored_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);

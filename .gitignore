@@ -234,3 +234,5 @@ dkim-*.png
 
 # md->pdf intermediate mermaid renders
 docs/img/_mdpdf/
+coolify-*.png
+coolify-*.yml

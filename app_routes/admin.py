@@ -175,6 +175,7 @@ def admin_console(req):
     mods = [
         ("nav_admin_onboarding", "/app/admin/onboarding", "Clients, debtors, KYC & facility limits"),
         ("nav_admin_risk", "/app/admin/risk", "Scoring, exposure, aging, fraud checks"),
+        ("Credit scoring", "/app/admin/scoring", "Multi-signal score + model back-testing"),
         ("nav_admin_funding", "/app/admin/funding", "Approvals (SoD), disbursement, collections"),
         ("nav_admin_reports", "/app/admin/reports", "DSO, recovery, default, portfolio"),
         ("Accounting", "/app/admin/accounting", "Double-entry ledger, trial balance, reconciliation"),

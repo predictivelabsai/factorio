@@ -37,9 +37,11 @@ PLANS = {
         [("confirm", "/app/payer")],
     ),
     "admin": (
-        {"role": "admin", "admin_role": "finance", "investor": INVESTOR},
+        {"role": "admin", "admin_role": "super", "investor": INVESTOR},
         [("console", "/app/admin"), ("onboarding", "/app/admin/onboarding"),
-         ("risk", "/app/admin/risk"), ("funding", "/app/admin/funding"),
+         ("risk", "/app/admin/risk"),
+         ("scoring", "/app/admin/scoring"),
+         ("calibration", "/app/admin/scoring/calibration"), ("funding", "/app/admin/funding"),
          ("accounting", "/app/admin/accounting"),
          ("journal", "/app/admin/accounting/journal"),
          ("reconciliation", "/app/admin/accounting/reconciliation"),
