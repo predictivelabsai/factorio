@@ -221,6 +221,13 @@ CREATE TABLE IF NOT EXISTS factorio.invoice_assignments (
     state TEXT NOT NULL DEFAULT 'submitted', updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- ── Collections (back office) ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS factorio.collections_actions (
+    id BIGSERIAL PRIMARY KEY, invoice_number TEXT NOT NULL, stage INT NOT NULL DEFAULT 0,
+    action_type TEXT NOT NULL DEFAULT 'dunning', note TEXT NOT NULL DEFAULT '',
+    actor TEXT NOT NULL DEFAULT '', created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- ── Credit scoring (back office) ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS factorio.credit_scores (
     id           BIGSERIAL PRIMARY KEY,

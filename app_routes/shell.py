@@ -34,6 +34,7 @@ NAV = [
         ("admin", "nav_admin", "\U0001F6E0️", "/app/admin"),
         ("processing", "Processing", "\U0001F9FE", "/app/admin/processing"),
         ("scoring", "Credit scoring", "\U0001F3AF", "/app/admin/scoring"),
+        ("collections", "Collections", "\U0001F4E9", "/app/admin/collections"),
         ("accounting", "Accounting", "\U0001F4B7", "/app/admin/accounting"),
     ]),
     ("Sales", [
