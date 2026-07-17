@@ -9,7 +9,8 @@ networks, and into short-term, asset-backed returns for investors.
 
 *Prepared by Consistente Ltd · Tallinn · info@consistente.tech · consistente.tech*
 
----
+
+<div class="pagebreak"></div>
 
 ## 1. Executive summary
 
@@ -29,7 +30,8 @@ networks, and into short-term, asset-backed returns for investors.
   with target net returns in the low-to-mid teens (Investly's comparable book
   ran ~13% realised net return at a 0% default rate on verified receivables).
 
----
+
+<div class="pagebreak"></div>
 
 ## 2. The hospitality opportunity
 
@@ -50,7 +52,8 @@ shape invoice finance serves best.
 cash-flows verifiable in real time, so underwriting that used to take weeks now
 takes seconds — and a marketplace can price the risk competitively.
 
----
+
+<div class="pagebreak"></div>
 
 ## 3. Hospitality use cases
 
@@ -65,7 +68,8 @@ takes seconds — and a marketplace can price the risk competitively.
 Each maps to the same money flow (§5) — only the capital source and the
 notification model (disclosed vs confidential) change.
 
----
+
+<div class="pagebreak"></div>
 
 ## 4. The platform
 
@@ -85,7 +89,8 @@ notification model (disclosed vs confidential) change.
 - **Sector-aware.** Hospitality is a first-class dimension for concentration
   limits, risk analytics and tailored onboarding.
 
----
+
+<div class="pagebreak"></div>
 
 ## 5. How the money moves
 
@@ -114,7 +119,8 @@ reverse-factoring programme the payer initiates and approves early payment for i
 suppliers; in factoring the supplier initiates. Either way the flow, and the
 pluggable capital layer (bank → investors → SPV), is identical.
 
----
+
+<div class="pagebreak"></div>
 
 ## 6. Journeys
 
@@ -131,7 +137,8 @@ flowchart LR
     O1["Supplier signs up"] --> O2["Invoice in"] --> O3["AI triage"] --> O4["Debtor scoring"] --> O5["Approval"] --> O6["Advance 24–48h"]
 ```
 
----
+
+<div class="pagebreak"></div>
 
 ## 7. Pricing & returns (illustrative, Investly-informed)
 
@@ -147,7 +154,8 @@ Reverse-auction competition drives the supplier's cost toward the floor while
 still clearing investor demand — the mechanism that let Investly undercut both
 banks and first-generation invoice-trading platforms.
 
----
+
+<div class="pagebreak"></div>
 
 ## 8. Investor capital & SPV
 
@@ -158,7 +166,8 @@ out in `universalbank_consistente_proposal`. Hospitality receivables are
 **uncorrelated** with real estate and equities, giving investors genuine
 diversification with short duration.
 
----
+
+<div class="pagebreak"></div>
 
 ## 9. Roadmap
 
@@ -170,7 +179,8 @@ diversification with short duration.
 | **3 · M6–12** | Investor marketplace + reverse-auction; secondary market; SPV / international capital |
 | **4 · Y2+** | Accounting / bank-API / bureau / e-sign integrations; public API; scale across corridors |
 
----
+
+<div class="pagebreak"></div>
 
 ## 10. Why Consistente
 
@@ -183,7 +193,8 @@ live, not mock-ups.
 **Next step.** A short call to walk through the platform and a live demonstration.
 Contact: Consistente Ltd · info@consistente.tech · consistente.tech.
 
----
+
+<div class="pagebreak"></div>
 
 # Appendix A — Product user guide
 
@@ -217,7 +228,8 @@ An end-to-end tour of the platform. Screens are shown in Appendix B.
 - **AI reporting** — chat-based portfolio reporting grounded in the investor's own
   positions.
 
----
+
+<div class="pagebreak"></div>
 
 # Appendix B — Screenshots
 

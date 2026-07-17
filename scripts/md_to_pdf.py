@@ -39,6 +39,27 @@ th { background:#1F5D43; color:#fff; text-align:left; padding:4px 8px; border:1p
 td { padding:4px 8px; border:1px solid #E3DFD2; vertical-align:top; }
 tr:nth-child(even) td { background:#EEEDE5; }
 h1,h2,h3,table,img,blockquote { page-break-inside:avoid; }
+
+/* Utilities for structured docs (page breaks + persona separators) */
+.pagebreak { page-break-before: always; }
+.persona {
+  page-break-before: always;
+  background:#1F5D43; color:#fff; border-radius:12px;
+  padding:1.5cm 1.2cm; margin:.2cm 0 .7cm; border-left:12px solid #C8A24B;
+}
+.persona .kicker {
+  font-family:"JetBrains Mono",monospace; font-size:9pt; letter-spacing:2.5px;
+  text-transform:uppercase; color:#C8A24B; margin:0 0 .3cm;
+}
+.persona h1 { color:#fff; font-size:30pt; margin:0 0 .25cm; letter-spacing:-.5px; }
+.persona .sub { color:#DCEBE3; font-size:12pt; margin:0; font-style:normal; }
+.persona strong { color:#fff; }
+.titlepage { text-align:center; padding:3cm 0 1cm; }
+.titlepage h1 { font-size:32pt; margin:.2cm 0 .3cm; }
+.titlepage .kicker {
+  font-family:"JetBrains Mono",monospace; font-size:9pt; letter-spacing:3px;
+  text-transform:uppercase; color:#C8A24B; margin:0 0 .3cm;
+}
 """
 
 
