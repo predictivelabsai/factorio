@@ -452,6 +452,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "app_viewing_as":       {"en": "Viewing as",         "uz": "Ko'rilmoqda",          "ru": "Просмотр как"},
 
     # ── Left-nav cockpit: section headers, back-office + workspace nav ──
+    "grp_backoffice":       {"en": "Back office",        "uz": "Bek-ofis",             "ru": "Бэк-офис"},
     "sec_factoring":        {"en": "Factoring",          "uz": "Faktoring",            "ru": "Факторинг"},
     "sec_sales":            {"en": "Sales",              "uz": "Sotuv",                "ru": "Продажи"},
     "sec_workspace":        {"en": "Workspace",          "uz": "Ish maydoni",          "ru": "Рабочая область"},

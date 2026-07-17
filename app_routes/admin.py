@@ -172,27 +172,49 @@ def admin_console(req):
         _card(t("nav_admin_risk", lang), str(stats.get("active", 0)), "active exposures"),
         cls="grid md:grid-cols-2 lg:grid-cols-4 gap-4",
     )
-    mods = [
-        ("nav_admin_onboarding", "/app/admin/onboarding", "Clients, debtors, KYC & facility limits"),
-        ("Processing", "/app/admin/processing", "Verification, assignment, holdback/reserve"),
-        ("nav_admin_risk", "/app/admin/risk", "Scoring, exposure, aging, fraud checks"),
-        ("Credit scoring", "/app/admin/scoring", "Multi-signal score + model back-testing"),
-        ("nav_admin_funding", "/app/admin/funding", "Approvals (SoD), disbursement"),
-        ("Collections", "/app/admin/collections", "Dunning, escalation, write-offs, provisioning"),
-        ("nav_admin_reports", "/app/admin/reports", "DSO, recovery, default, portfolio"),
-        ("Accounting", "/app/admin/accounting", "Double-entry ledger, trial balance, reconciliation"),
-        ("Compliance", "/app/admin/compliance", "AML/KYC posture, retention, audit export"),
-        ("Integrations", "/app/admin/integrations", "Accounting, banking, bureau, e-sign, webhooks"),
-        ("nav_admin_audit", "/app/admin/audit", "Every action, immutable"),
+    # Every built function surfaced as a card, grouped by domain.
+    groups = [
+        ("grp_backoffice", [
+            ("nav_admin_onboarding", "/app/admin/onboarding", "Clients, debtors, KYC & facility limits"),
+            ("nav_processing", "/app/admin/processing", "Verification, assignment, holdback/reserve"),
+            ("nav_admin_risk", "/app/admin/risk", "Scoring, exposure, aging, fraud checks"),
+            ("nav_scoring", "/app/admin/scoring", "Multi-signal score + model back-testing"),
+            ("nav_admin_funding", "/app/admin/funding", "Approvals (SoD), disbursement"),
+            ("nav_collections", "/app/admin/collections", "Dunning, escalation, write-offs, provisioning"),
+            ("nav_accounting", "/app/admin/accounting", "Double-entry ledger, trial balance, reconciliation"),
+            ("nav_admin_reports", "/app/admin/reports", "DSO, recovery, default, portfolio"),
+            ("nav_compliance", "/app/admin/compliance", "AML/KYC posture, retention, audit export"),
+            ("nav_admin_audit", "/app/admin/audit", "Every action, immutable"),
+            ("nav_integrations", "/app/admin/integrations", "Accounting, banking, bureau, e-sign, webhooks"),
+        ]),
+        ("mkt_eyebrow", [
+            ("mkt_eyebrow", "/app/marketplace", "Browse fundable invoices"),
+            ("nav_auctions", "/app/marketplace/auctions", "Reverse auction — bid the fee down"),
+            ("nav_secondary", "/app/marketplace/secondary", "Secondary market — trade positions"),
+        ]),
+        ("sec_sales", [
+            ("nav_pipeline", "/app/crm", "CRM deal pipeline by stage"),
+        ]),
+        ("sec_workspace", [
+            ("nav_drive", "/app/drive", "Invoice, KYC & collateral documents"),
+            ("nav_docs", "/app/docs", "Policies, playbooks, term sheets"),
+            ("nav_mail", "/app/mail", "Client, debtor & bureau correspondence"),
+        ]),
     ]
-    cards = Div(*[
-        A(Div(P(t(k, lang), cls="text-ink text-lg font-medium mb-1"),
-              P(desc, cls="text-ink-muted text-sm")),
-          href=href, cls="block p-6 rounded-2xl bg-bg-elevated border border-line hover:border-accent transition-colors")
-        for k, href, desc in mods
-    ], cls="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4")
-    return _admin_page(req, "/app/admin", "admin_h1",
-                       kpis, Div(cards, cls="mt-2"))
+
+    def _group(title_key, items):
+        cards = Div(*[
+            A(Div(P(t(k, lang), cls="text-ink text-lg font-medium mb-1"),
+                  P(desc, cls="text-ink-muted text-sm")),
+              href=href, cls="block p-6 rounded-2xl bg-bg-elevated border border-line hover:border-accent transition-colors")
+            for k, href, desc in items
+        ], cls="grid md:grid-cols-2 lg:grid-cols-3 gap-4")
+        return Div(
+            P(t(title_key, lang), cls="text-[11px] font-mono tracking-widest uppercase text-ink-dim mb-3 mt-8"),
+            cards)
+
+    sections = Div(*[_group(k, items) for k, items in groups], cls="mt-2")
+    return _admin_page(req, "/app/admin", "admin_h1", kpis, sections)
 
 
 # Onboarding & facility limits are now the production module in app_routes/onboarding.py.
