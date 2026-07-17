@@ -1,14 +1,16 @@
 # Role Guides & Back-Office — Plan and Status
 
-The user guide is now split into **four role-specific guides**, each with
-screenshots from the live left-nav cockpit:
+The user guide is a **single document with four persona parts** (EN:
+`factorio_user_guide.md`, RU: `factorio_user_guide_ru.md`), each part on its own
+page behind a coloured separator, with screenshots from the live left-nav
+cockpit. (The earlier per-role split files were retired in favour of this.)
 
-| Role | Guide | Primary screens |
+| Part | Persona | Primary screens |
 |---|---|---|
-| **Investor** | `user_guide_investor.md` | dashboard · marketplace · detail · portfolio · statement · auto-invest · AI reports |
-| **Supplier (seller)** | `user_guide_supplier.md` | my applications · AI triage |
-| **Payer (debtor)** | `user_guide_payer.md` | invoices to confirm · reverse factoring |
-| **Admin (back office)** | `user_guide_admin.md` | console · onboarding · risk · funding · collections · reports · audit · CRM · Drive · Docs · Mail |
+| **1** | **Investor** | dashboard · marketplace · detail · portfolio · statement · auto-invest · AI reports |
+| **2** | **Supplier (seller)** | my applications · AI triage |
+| **3** | **Payer (debtor)** | invoices to confirm · reverse factoring |
+| **4** | **Admin (back office)** | console · onboarding · risk · funding · collections · reports · audit · CRM · Drive · Docs · Mail |
 
 ## Back-office coverage vs the 8 functional areas
 

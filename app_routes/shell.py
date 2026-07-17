@@ -21,33 +21,33 @@ from utils.i18n import t, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
 from landing.components import TAILWIND_CONFIG, SITE_NAME
 from utils.copilot import copilot_available
 
-# ── Navigation model: (SECTION, [(key, i18n_key_or_label, icon, href)]) ────
+# ── Navigation model: (SECTION_KEY, [(key, i18n_key, icon, href)]) ────
 NAV = [
-    ("Factoring", [
+    ("sec_factoring", [
         ("dashboard", "nav_dashboard", "\U0001F4CA", "/app"),
         ("marketplace", "mkt_eyebrow", "\U0001F9FE", "/app/marketplace"),
-        ("auctions", "Auctions", "\U0001F528", "/app/marketplace/auctions"),
-        ("secondary", "Secondary", "\U0001F501", "/app/marketplace/secondary"),
+        ("auctions", "nav_auctions", "\U0001F528", "/app/marketplace/auctions"),
+        ("secondary", "nav_secondary", "\U0001F501", "/app/marketplace/secondary"),
         ("portfolio", "port_eyebrow", "\U0001F4C1", "/app/portfolio"),
         ("statement", "nav_statement", "\U0001F9EE", "/app/statement"),
         ("autoinvest", "nav_autoinvest", "⚙️", "/app/auto-invest"),
         ("triage", "nav_triage", "\U0001F4AC", "/app/triage"),
         ("reports", "nav_assistant", "\U0001F4C8", "/app/assistant"),
         ("admin", "nav_admin", "\U0001F6E0️", "/app/admin"),
-        ("processing", "Processing", "\U0001F9FE", "/app/admin/processing"),
-        ("scoring", "Credit scoring", "\U0001F3AF", "/app/admin/scoring"),
-        ("collections", "Collections", "\U0001F4E9", "/app/admin/collections"),
-        ("accounting", "Accounting", "\U0001F4B7", "/app/admin/accounting"),
-        ("compliance", "Compliance", "\U0001F6E1️", "/app/admin/compliance"),
-        ("integrations", "Integrations", "\U0001F517", "/app/admin/integrations"),
+        ("processing", "nav_processing", "\U0001F9FE", "/app/admin/processing"),
+        ("scoring", "nav_scoring", "\U0001F3AF", "/app/admin/scoring"),
+        ("collections", "nav_collections", "\U0001F4E9", "/app/admin/collections"),
+        ("accounting", "nav_accounting", "\U0001F4B7", "/app/admin/accounting"),
+        ("compliance", "nav_compliance", "\U0001F6E1️", "/app/admin/compliance"),
+        ("integrations", "nav_integrations", "\U0001F517", "/app/admin/integrations"),
     ]),
-    ("Sales", [
-        ("crm", "Pipeline", "\U0001F4C7", "/app/crm"),
+    ("sec_sales", [
+        ("crm", "nav_pipeline", "\U0001F4C7", "/app/crm"),
     ]),
-    ("Workspace", [
-        ("drive", "Drive", "\U0001F5C2️", "/app/drive"),
-        ("docs", "Docs", "\U0001F4DD", "/app/docs"),
-        ("mail", "Mail", "✉️", "/app/mail"),
+    ("sec_workspace", [
+        ("drive", "nav_drive", "\U0001F5C2️", "/app/drive"),
+        ("docs", "nav_docs", "\U0001F4DD", "/app/docs"),
+        ("mail", "nav_mail", "✉️", "/app/mail"),
     ]),
 ]
 
@@ -123,25 +123,26 @@ _SUGGESTIONS = ["How much have we funded?", "Which sector has the most exposure?
                 "Top debtors by concentration", "Summarise the sales pipeline"]
 
 
-def _copilot_pane():
+def _copilot_pane(lang: str = DEFAULT_LANG):
     if not copilot_available():
         return Div(Div("Copilot", cls="cp-who", style="padding:14px"),
                    P("Set XAI_API_KEY to enable the copilot.", cls="cp-tool", style="padding:0 14px"),
                    cls="ws-right")
-    chips = [Span(s, cls="cp-chip", onclick=f"cpAsk('{s}')") for s in _SUGGESTIONS]
+    suggestions = [t(f"cp_chip{i}", lang) for i in (1, 2, 3, 4)]
+    chips = [Span(s, cls="cp-chip", onclick=f"cpAsk('{s}')") for s in suggestions]
     return Div(
         Div(Span("✨ Copilot", style="font-weight:600;color:#1F5D43"),
             Button("‹", onclick="wsToggleRail()", type="button",
                    style="background:none;border:0;cursor:pointer;color:#7A867E;font-size:18px"),
             style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #E3DFD2"),
         Div(Div("Copilot", cls="cp-who"),
-            Div(NotStr("Ask me about funding, exposure, the pipeline or portfolio."), cls="cp-msg assistant"),
+            Div(t("cp_intro", lang), cls="cp-msg assistant"),
             id="cp-msgs", cls="cp-msgs"),
         Div(*chips, cls="cp-suggest"),
-        Form(Input(id="cp-input", cls="cp-input", placeholder="Ask about the data…",
+        Form(Input(id="cp-input", cls="cp-input", placeholder=t("cp_placeholder", lang),
                    autocomplete="off",
                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cpSend();}"),
-             Button("Send", cls="cp-send", type="submit"),
+             Button(t("cp_send", lang), cls="cp-send", type="submit"),
              cls="cp-form", onsubmit="return cpSend(event)"),
         cls="ws-right", id="ws-right")
 
@@ -151,11 +152,11 @@ def _left_nav(active: str, lang: str):
     for section, items in NAV:
         links = [
             A(Span(NotStr(icon), cls="nav-ic"),
-              Span(t(label, lang) if "_" in label and label.islower() else label),
+              Span(t(label, lang)),
               href=href, cls="nav-item active" if active == key else "nav-item")
             for key, label, icon, href in items
         ]
-        secs.append(Div(Div(section, cls="nav-head"), *links, cls="nav-sec"))
+        secs.append(Div(Div(t(section, lang), cls="nav-head"), *links, cls="nav-sec"))
     return Div(*secs, cls="ws-left")
 
 
@@ -193,9 +194,9 @@ def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFA
     topbar = Div(
         A(Span(NotStr("&#9670;"), cls="text-accent mr-2"), Span(SITE_NAME, cls="font-medium tracking-tight text-ink"),
           href="/", cls="flex items-center text-base no-underline"),
-        Div(A("Sign in", href="/login", cls="text-xs text-ink-muted hover:text-ink no-underline"),
+        Div(A(t("nav_signin", lang), href="/login", cls="text-xs text-ink-muted hover:text-ink no-underline"),
             Span("/", cls="text-ink-dim text-xs"),
-            A("Sign out", href="/logout", cls="text-xs text-ink-muted hover:text-ink no-underline mr-2"),
+            A(t("nav_signout", lang), href="/logout", cls="text-xs text-ink-muted hover:text-ink no-underline mr-2"),
             right, _lang_pill(lang),
             Button(NotStr("&#9776;"), onclick="wsToggleRail()", type="button",
                    cls="text-ink-dim text-lg bg-transparent border-0 cursor-pointer", title="Toggle copilot"),
@@ -204,7 +205,7 @@ def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFA
     return Html(
         Head(*head),
         Body(Div(topbar, _left_nav(active, lang),
-                 Div(*content, cls="ws-center"), _copilot_pane(),
+                 Div(*content, cls="ws-center"), _copilot_pane(lang),
                  cls="ws", id="ws"),
              Script(NotStr(SHELL_JS)),
              cls="bg-bg text-ink font-sans antialiased"),

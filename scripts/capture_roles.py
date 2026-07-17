@@ -17,7 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 IMG = ROOT / "docs" / "img"
 BASE = os.environ.get("FF_URL", "http://localhost:5082")
 INVESTOR = os.environ.get("FF_INVESTOR", "30")
+LANG = os.environ.get("FF_LANG", "en")  # set FF_LANG=ru for localized captures
 VP = {"width": 1440, "height": 900}
+
+# Output prefix: EN keeps the historical `role-<role>-<name>.png`; other langs
+# get `role-<lang>-<role>-<name>.png` so both coexist.
+_PREFIX = "role-" if LANG == "en" else f"role-{LANG}-"
 
 # role -> cookies, [(name, path or None-for-detail)]
 PLANS = {
@@ -58,7 +63,8 @@ def main() -> None:
         br = p.chromium.launch(headless=True)
         for role, (cookies, screens) in PLANS.items():
             ctx = br.new_context(viewport=VP, device_scale_factor=1)
-            ctx.add_cookies([{"name": k, "value": v, "url": BASE} for k, v in cookies.items()])
+            cookie_map = {**cookies, "lang": LANG}
+            ctx.add_cookies([{"name": k, "value": v, "url": BASE} for k, v in cookie_map.items()])
             pg = ctx.new_page()
             for name, path in screens:
                 if path is None:
@@ -72,9 +78,9 @@ def main() -> None:
                 except Exception:
                     pg.goto(BASE + path, wait_until="load", timeout=30_000)
                 pg.wait_for_timeout(400)
-                out = IMG / f"role-{role}-{name}.png"
+                out = IMG / f"{_PREFIX}{role}-{name}.png"
                 pg.screenshot(path=str(out), full_page=False)
-                print(f"[{role}] {out.relative_to(ROOT)}")
+                print(f"[{LANG}·{role}] {out.relative_to(ROOT)}")
             ctx.close()
         br.close()
     print("done")

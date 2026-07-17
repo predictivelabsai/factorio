@@ -451,6 +451,36 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "nav_autoinvest":       {"en": "Auto-invest",        "uz": "Avto-investitsiya",    "ru": "Автоинвест"},
     "app_viewing_as":       {"en": "Viewing as",         "uz": "Ko'rilmoqda",          "ru": "Просмотр как"},
 
+    # ── Left-nav cockpit: section headers, back-office + workspace nav ──
+    "sec_factoring":        {"en": "Factoring",          "uz": "Faktoring",            "ru": "Факторинг"},
+    "sec_sales":            {"en": "Sales",              "uz": "Sotuv",                "ru": "Продажи"},
+    "sec_workspace":        {"en": "Workspace",          "uz": "Ish maydoni",          "ru": "Рабочая область"},
+    "nav_auctions":         {"en": "Auctions",           "uz": "Auksionlar",           "ru": "Аукционы"},
+    "nav_secondary":        {"en": "Secondary",          "uz": "Ikkilamchi bozor",     "ru": "Вторичный рынок"},
+    "nav_processing":       {"en": "Processing",         "uz": "Qayta ishlash",        "ru": "Обработка"},
+    "nav_scoring":          {"en": "Credit scoring",     "uz": "Kredit skoring",       "ru": "Кредитный скоринг"},
+    "nav_collections":      {"en": "Collections",        "uz": "Undirish",             "ru": "Взыскание"},
+    "nav_accounting":       {"en": "Accounting",         "uz": "Buxgalteriya",         "ru": "Бухгалтерия"},
+    "nav_compliance":       {"en": "Compliance",         "uz": "Muvofiqlik",           "ru": "Комплаенс"},
+    "nav_integrations":     {"en": "Integrations",       "uz": "Integratsiyalar",      "ru": "Интеграции"},
+    "nav_pipeline":         {"en": "Pipeline",           "uz": "Voronka",              "ru": "Воронка"},
+    "nav_drive":            {"en": "Drive",              "uz": "Drive",                "ru": "Диск"},
+    "nav_docs":             {"en": "Docs",               "uz": "Hujjatlar",            "ru": "Документы"},
+    "nav_mail":             {"en": "Mail",               "uz": "Pochta",               "ru": "Почта"},
+    "nav_signin":           {"en": "Sign in",            "uz": "Kirish",               "ru": "Войти"},
+    "nav_signout":          {"en": "Sign out",           "uz": "Chiqish",              "ru": "Выйти"},
+
+    # ── Copilot pane chrome ─────────────────────────────────────────
+    "cp_intro":             {"en": "Ask me about funding, exposure, the pipeline or portfolio.",
+                             "uz": "Mendan moliyalashtirish, ekspozitsiya, voronka yoki portfel haqida so'rang.",
+                             "ru": "Спросите меня о финансировании, экспозиции, воронке или портфеле."},
+    "cp_placeholder":       {"en": "Ask about the data…", "uz": "Ma'lumotlar haqida so'rang…", "ru": "Спросите о данных…"},
+    "cp_send":              {"en": "Send",               "uz": "Yuborish",             "ru": "Отправить"},
+    "cp_chip1":             {"en": "How much have we funded?", "uz": "Qancha moliyalashtirdik?", "ru": "Сколько мы профинансировали?"},
+    "cp_chip2":             {"en": "Which sector has the most exposure?", "uz": "Qaysi sektorda eng katta ekspozitsiya bor?", "ru": "У какого сектора наибольшая экспозиция?"},
+    "cp_chip3":             {"en": "Top debtors by concentration", "uz": "Konsentratsiya boyicha yirik debitorlar", "ru": "Крупнейшие должники по концентрации"},
+    "cp_chip4":             {"en": "Summarise the sales pipeline", "uz": "Sotuv voronkasini qisqacha bayon qiling", "ru": "Кратко о воронке продаж"},
+
     # ── Portfolio cockpit — hero blocks ─────────────────────────────
     "port_net_return":      {"en": "Net annual return",  "uz": "Yillik sof daromad",   "ru": "Чистая годовая доходность"},
     "port_interest_received": {"en": "Interest received","uz": "Olingan foiz",         "ru": "Полученные проценты"},
