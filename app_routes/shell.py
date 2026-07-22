@@ -24,6 +24,7 @@ from utils.copilot import copilot_available
 
 # ── Tool catalog: key -> (i18n_key, icon, href) ───────────────────────────
 _COPILOT = ("copilot", "nav_copilot", "✨", "/app")
+_FLEET = ("agentfleet", "nav_agent_fleet", "\U0001F9E0", "/app/admin/agents")
 TOOLS = {
     "dashboard":    ("nav_dashboard",          "\U0001F4CA", "/app/dashboard"),
     "marketplace":  ("mkt_eyebrow",            "\U0001F9FE", "/app/marketplace"),
@@ -71,12 +72,15 @@ def _nav_for(role: str):
     """Return [(section_i18n_key, [(key, i18n_key, icon, href), ...]), ...] for a role."""
     tool_keys = _TOOLS_BY_ROLE.get(role, _TOOLS_BY_ROLE["investor"])
     tools = [(k,) + TOOLS[k] for k in tool_keys]
-    return [("nav_sec_agents", [_COPILOT]), ("nav_sec_tools", tools)]
+    agents = [_COPILOT] + ([_FLEET] if role == "admin" else [])
+    return [("nav_sec_agents", agents), ("nav_sec_tools", tools)]
 
 
 def _active_key(role: str, current_path: str) -> str:
     if current_path == "/app":
         return "copilot"
+    if current_path == "/app/admin/agents":
+        return "agentfleet"
     for k in _TOOLS_BY_ROLE.get(role, []):
         if TOOLS[k][2] == current_path:
             return k

@@ -467,6 +467,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "nav_sec_agents":       {"en": "Agents",             "uz": "Agentlar",             "ru": "Агенты"},
     "nav_sec_tools":        {"en": "Tools",              "uz": "Vositalar",            "ru": "Инструменты"},
     "nav_copilot":          {"en": "AI Assistant",       "uz": "AI yordamchi",         "ru": "ИИ-ассистент"},
+    "nav_agent_fleet":      {"en": "Agent fleet",        "uz": "Agentlar guruhi",      "ru": "Команда агентов"},
     "cp_new_chat":          {"en": "New chat",           "uz": "Yangi suhbat",         "ru": "Новый чат"},
     "nav_supplier":         {"en": "My applications",    "uz": "Mening arizalarim",    "ru": "Мои заявки"},
     "role_supplier":        {"en": "Supplier",           "uz": "Ta'minotchi",          "ru": "Поставщик"},

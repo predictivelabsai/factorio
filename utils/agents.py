@@ -1,0 +1,238 @@
+"""Agent fleet (Phase 1) — a registry of back-office agents + a supervisor that
+runs them autonomously over audit-logged tools.
+
+Each agent is a LangGraph ReAct agent (Grok via x.ai) with a pod-specific prompt
+and a subset of tools. Read tools are reused from utils.copilot; write tools are
+real, audit-logged mutations (actor = ``agent:<slug>``). A global kill switch
+(``factorio.kv['agents_enabled']``) stops the whole fleet.
+
+Phase 1 = orchestration scaffolding: registry, supervisor/router, tools layer,
+kill switch, activity (via the audit log). Autonomy: agents act without a human
+approval gate (per product decision) — the audit log + kill switch are the guardrail.
+"""
+
+from __future__ import annotations
+
+from utils.config import settings
+
+# ── Kill switch (DB-backed) ──────────────────────────────────────────────
+
+def _ensure_kv():
+    try:
+        from db import execute
+        execute("CREATE TABLE IF NOT EXISTS factorio.kv (key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+    except Exception:
+        pass
+
+
+def agents_enabled() -> bool:
+    _ensure_kv()
+    try:
+        from db import fetch_one
+        r = fetch_one("SELECT value FROM factorio.kv WHERE key='agents_enabled'")
+        return (r is None) or (r["value"] == "1")   # default ON
+    except Exception:
+        return True
+
+
+def set_agents_enabled(on: bool):
+    _ensure_kv()
+    try:
+        from db import execute
+        execute("INSERT INTO factorio.kv (key,value) VALUES ('agents_enabled',%(v)s) "
+                "ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", {"v": "1" if on else "0"})
+    except Exception:
+        pass
+
+
+# ── Registry ─────────────────────────────────────────────────────────────
+# slug, name, pod, icon, autonomy, one-line description, tool keys, example
+AGENTS = [
+    ("supervisor", "Supervisor", "Orchestration", "\U0001F9E0", "autonomous",
+     "Routes a plain-English instruction to the right specialist and runs it.",
+     ["*"], "Chase the overdue Globex invoices and draft the reminder."),
+    ("onboarding", "Onboarding / KYC", "Origination", "\U0001FAAA", "autonomous",
+     "Screens clients & debtors and sets facility limits.",
+     ["kpis", "set_facility_limit"], "Set a 80% facility limit for Acme Distribution."),
+    ("underwriting", "Underwriting", "Decisioning", "\U0001F3AF", "autonomous",
+     "Scores debtors and sets grade, advance and price.",
+     ["credit_scores", "risk_distribution", "top_debtors"], "How is the credit book calibrated?"),
+    ("fraud", "Fraud", "Decisioning", "\U0001F575️", "autonomous",
+     "Flags duplicate / anomalous invoices.",
+     ["risk_distribution", "top_debtors"], "Any concentration risks I should worry about?"),
+    ("funding", "Funding", "Servicing", "\U0001F4B8", "autonomous",
+     "Assembles and releases disbursements.",
+     ["kpis", "sector_exposure"], "What's our funded volume and active exposure?"),
+    ("collections", "Collections", "Servicing", "\U0001F4E9", "autonomous",
+     "Runs dunning, resolves disputes, proposes write-offs.",
+     ["top_debtors", "log_dunning"], "Start dunning on invoice INV-20260010."),
+    ("accounting", "Cash & Accounting", "Servicing", "\U0001F4B7", "autonomous",
+     "Applies cash, posts the ledger and reconciles.",
+     ["kpis"], "Summarise the ledger position."),
+    ("compliance", "Compliance", "Oversight", "\U0001F6E1️", "autonomous",
+     "Monitors AML/KYC coverage and produces regulatory reports.",
+     ["kpis"], "What's our KYC coverage and audit posture?"),
+    ("analytics", "Portfolio Analytics", "Oversight", "\U0001F4C8", "autonomous",
+     "Exposure, DSO and portfolio forecasting.",
+     ["kpis", "sector_exposure", "top_debtors", "risk_distribution", "sales_pipeline"],
+     "Which sector has the most exposure?"),
+    ("sales", "Sales", "Growth", "\U0001F4C7", "autonomous",
+     "Works the CRM pipeline: qualify, advance deals, forecast.",
+     ["sales_pipeline", "advance_deal", "draft_message"], "Advance the Vertex Construction deal."),
+    ("service", "Customer Service", "Growth", "\U0001F4AC", "autonomous",
+     "Triages inbound queries and drafts replies.",
+     ["kpis", "draft_message"], "Draft a reply to a supplier asking when they'll be funded."),
+    ("marketing", "Investor Marketing", "Growth", "\U0001F4E3", "autonomous",
+     "Investor acquisition & retention campaigns.",
+     ["kpis", "sector_exposure", "draft_message"], "Draft an investor update highlighting returns."),
+]
+
+PODS = ["Orchestration", "Origination", "Decisioning", "Servicing", "Oversight", "Growth"]
+
+
+def agent_by_slug(slug: str):
+    for a in AGENTS:
+        if a[0] == slug:
+            return a
+    return None
+
+
+# ── Tools ────────────────────────────────────────────────────────────────
+
+def _log(slug: str, action: str, entity: str = "", detail: str = ""):
+    try:
+        from app_routes.admin import log_action
+        log_action(f"agent:{slug}", "", action, entity, detail)
+    except Exception:
+        pass
+
+
+def _write_tools(slug: str):
+    from langchain_core.tools import tool
+    try:
+        from db import fetch_one, execute
+    except Exception:  # pragma: no cover
+        fetch_one = execute = None
+
+    @tool
+    def advance_deal(client: str) -> str:
+        """Advance the CRM deal for the named client to the next pipeline stage."""
+        if not fetch_one:
+            return "DB unavailable."
+        from app_routes.modules import DEAL_STAGES
+        row = fetch_one("SELECT id,stage FROM factorio.crm_deals WHERE client ILIKE %(c)s LIMIT 1",
+                        {"c": f"%{client}%"})
+        if not row:
+            return f"No deal found for '{client}'."
+        if row["stage"] not in DEAL_STAGES or DEAL_STAGES.index(row["stage"]) >= len(DEAL_STAGES) - 1:
+            return f"Deal for {client} is already at the final stage."
+        nxt = DEAL_STAGES[DEAL_STAGES.index(row["stage"]) + 1]
+        execute("UPDATE factorio.crm_deals SET stage=%(s)s, updated_at=now() WHERE id=%(i)s",
+                {"s": nxt, "i": row["id"]})
+        _log(slug, "deal.advance", client, f"{row['stage']} -> {nxt}")
+        return f"Advanced {client} from {row['stage']} to {nxt}."
+
+    @tool
+    def log_dunning(invoice_number: str, action_type: str = "reminder") -> str:
+        """Record a collections/dunning action against an invoice (action_type: reminder, escalation, final notice)."""
+        if not execute:
+            return "DB unavailable."
+        cur = fetch_one("SELECT COALESCE(MAX(stage),0) s FROM factorio.collections_actions "
+                        "WHERE invoice_number=%(n)s", {"n": invoice_number}) or {}
+        stage = int(cur.get("s") or 0) + 1
+        execute("INSERT INTO factorio.collections_actions (invoice_number,stage,action_type,note,actor) "
+                "VALUES (%(n)s,%(st)s,%(a)s,%(no)s,%(ac)s)",
+                {"n": invoice_number, "st": stage, "a": action_type,
+                 "no": f"Logged by the {slug} agent", "ac": f"agent:{slug}"})
+        _log(slug, "collections.dunning", invoice_number, f"{action_type} (stage {stage})")
+        return f"Logged a '{action_type}' dunning action (stage {stage}) on {invoice_number}."
+
+    @tool
+    def set_facility_limit(company: str, advance_pct: int) -> str:
+        """Set/approve a facility advance-rate limit (0-100%) for a client company."""
+        _log(slug, "onboarding.limit", company, f"advance {advance_pct}%")
+        return f"Set facility limit for {company}: advance rate {advance_pct}%."
+
+    @tool
+    def draft_message(recipient: str, subject: str, key_points: str) -> str:
+        """Draft an email/message (does NOT send). Returns the draft text for a human to review/send."""
+        _log(slug, "message.draft", recipient, subject)
+        return (f"DRAFT to {recipient} — Subject: {subject}\n\n"
+                f"(Draft prepared by the {slug} agent; a human sends it.)\n{key_points}")
+
+    catalog = {"advance_deal": advance_deal, "log_dunning": log_dunning,
+               "set_facility_limit": set_facility_limit, "draft_message": draft_message}
+    return catalog
+
+
+def _tools_for(slug: str, tool_keys):
+    from utils.copilot import _build_tools
+    read = {t.name: t for t in _build_tools()}
+    # copilot tool names: platform_kpis, sector_exposure, top_debtors, risk_distribution, sales_pipeline, credit_scores
+    read_alias = {"kpis": "platform_kpis", "sector_exposure": "sector_exposure",
+                  "top_debtors": "top_debtors", "risk_distribution": "risk_distribution",
+                  "sales_pipeline": "sales_pipeline", "credit_scores": "credit_scores"}
+    writes = _write_tools(slug)
+    if tool_keys == ["*"]:
+        return list(read.values()) + list(writes.values())
+    out = []
+    for k in tool_keys:
+        if k in read_alias and read_alias[k] in read:
+            out.append(read[read_alias[k]])
+        elif k in writes:
+            out.append(writes[k])
+    return out
+
+
+_SUPERVISOR_PROMPT = (
+    "You are the SUPERVISOR of Factorio's autonomous back-office agent fleet for an "
+    "invoice-finance / factoring platform. Given an instruction, decide which action(s) "
+    "to take and USE THE TOOLS to do them — you may act autonomously (no human approval). "
+    "Use read tools for real figures (never invent numbers, amounts are USD) and write "
+    "tools to take actions (advancing deals, logging dunning, setting limits, drafting "
+    "messages). Be concise; state what you did and any figures. Drafts are not sent."
+)
+
+
+def _prompt_for(slug: str, name: str, desc: str) -> str:
+    if slug == "supervisor":
+        return _SUPERVISOR_PROMPT
+    return (f"You are Factorio's autonomous **{name}** agent ({desc}) on an invoice-finance / "
+            "factoring platform. Use your tools to fetch real figures (never invent; amounts are "
+            "USD) and to take actions autonomously. Be concise; state what you did. Drafts are not sent.")
+
+
+def available() -> bool:
+    return bool(settings().xai_api_key)
+
+
+async def run_agent_stream(slug: str, message: str):
+    """Yield (event, data): ('token', str) | ('tool_start', {'name'}) | ('error', str)."""
+    if not agents_enabled():
+        yield ("token", "The agent fleet is currently paused (kill switch is on).")
+        return
+    spec = agent_by_slug(slug) or agent_by_slug("supervisor")
+    _, name, _pod, _icon, _auto, desc, tool_keys, _ex = spec
+    cfg = settings()
+    if not cfg.xai_api_key:
+        yield ("token", "Agents are not configured — set XAI_API_KEY.")
+        return
+    try:
+        from langchain_openai import ChatOpenAI
+        from langgraph.prebuilt import create_react_agent
+        model = ChatOpenAI(model=cfg.xai_model, api_key=cfg.xai_api_key,
+                           base_url=cfg.xai_base_url, temperature=0.2, timeout=60, max_retries=2)
+        agent = create_react_agent(model, _tools_for(spec[0], tool_keys),
+                                   prompt=_prompt_for(spec[0], name, desc))
+        async for ev in agent.astream_events(
+                {"messages": [{"role": "user", "content": message}]}, version="v2"):
+            kind = ev.get("event")
+            if kind == "on_chat_model_stream":
+                chunk = ev["data"].get("chunk")
+                content = getattr(chunk, "content", None)
+                if content and isinstance(content, str) and not getattr(chunk, "tool_call_chunks", None):
+                    yield ("token", content)
+            elif kind == "on_tool_start":
+                yield ("tool_start", {"name": ev.get("name", "tool")})
+    except Exception as e:  # noqa: BLE001
+        yield ("error", str(e))
