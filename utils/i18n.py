@@ -45,6 +45,17 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "hero_cta_finance":     {"en": "Finance an invoice", "uz": "Fakturani moliyalashtirish", "ru": "Финансировать счёт"},
     "hero_cta_invest":      {"en": "Invest now",         "uz": "Hozir investitsiya qiling",  "ru": "Инвестировать"},
 
+    # ── Product preview (home-page hero GIF) ────────────────────────
+    "preview_eyebrow":      {"en": "A look inside",
+                             "uz": "Ichki ko'rinish",
+                             "ru": "Взгляд изнутри"},
+    "preview_title":        {"en": "One platform — from marketplace to back office",
+                             "uz": "Bitta platforma — bozordan bek-ofisgacha",
+                             "ru": "Одна платформа — от маркетплейса до бэк-офиса"},
+    "preview_sub":          {"en": "Investor cockpit, AI application triage, credit scoring, double-entry accounting and collections — all in one place.",
+                             "uz": "Investor kokpiti, AI ariza tahlili, kredit skoring, ikki tomonlama buxgalteriya va undirish — barchasi bir joyda.",
+                             "ru": "Кокпит инвестора, ИИ-триаж заявок, кредитный скоринг, двойная бухгалтерия и взыскание — всё в одном месте."},
+
     # ── Stat strip ──────────────────────────────────────────────────
     "stat_advance":         {"en": "advance rate on verified invoices",
                              "uz": "tasdiqlangan hisob-fakturalarda avans stavkasi",

@@ -278,6 +278,33 @@ def Hero(lang: str = DEFAULT_LANG):
     )
 
 
+def ProductPreview(lang: str = DEFAULT_LANG):
+    """Animated product tour (home-page hero GIF), built from the same role
+    screenshots as the user guide (scripts/make_gif.py --home)."""
+    return Section(
+        Div(
+            Div(
+                Eyebrow(t("preview_eyebrow", lang)),
+                Heading(2, t("preview_title", lang),
+                        cls="mt-4 max-w-3xl mx-auto text-center"),
+                P(t("preview_sub", lang),
+                  cls="mt-4 text-ink-muted text-base md:text-lg max-w-2xl mx-auto text-center"),
+                cls="text-center",
+            ),
+            Div(
+                Img(src="/docs/factorio-home.gif",
+                    alt="Factorio product tour",
+                    loading="lazy",
+                    cls="w-full h-auto block"),
+                cls="mt-10 md:mt-12 max-w-5xl mx-auto rounded-2xl overflow-hidden "
+                    "border border-line shadow-2xl shadow-ink/5 bg-bg-elevated",
+            ),
+            cls="max-w-7xl mx-auto px-5 md:px-6 py-20 md:py-28",
+        ),
+        cls="bg-bg border-t border-line",
+    )
+
+
 def HowItWorks(lang: str = DEFAULT_LANG):
     steps = [
         ("01", t("how_s1_title", lang), t("how_s1_body", lang)),

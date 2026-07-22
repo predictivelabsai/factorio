@@ -1,18 +1,23 @@
-"""Compose FactorFinance demo screenshots into an animated GIF.
+"""Compose Factorio demo screenshots into an animated GIF.
 
 Usage:
-    python -m scripts.make_gif
+    python -m scripts.make_gif            # landing-tour GIF (screenshots/)
+    python -m scripts.make_gif --home     # home-page hero GIF from the
+                                          # user-guide role screenshots (docs/img/)
 """
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SHOTS = ROOT / "screenshots"
+IMG = ROOT / "docs" / "img"
 OUT_GIF = ROOT / "docs" / "factorio.gif"
+OUT_HOME = ROOT / "docs" / "factorio-home.gif"
 
 FRAMES = [
     ("01-home-en.png",              2800),
@@ -26,50 +31,67 @@ FRAMES = [
     ("14-marketplace-ru.png",       2800),
 ]
 
+# Home-page hero tour — the SAME role screenshots the user guide uses
+# (docs/img/role-*.png), curated into a product story: investor journey →
+# AI → back office.
+HOME_FRAMES = [
+    ("role-investor-dashboard.png",   2600),
+    ("role-investor-marketplace.png", 2900),
+    ("role-investor-detail.png",      2700),
+    ("role-investor-portfolio.png",   2900),
+    ("role-supplier-triage.png",      3000),
+    ("role-admin-console.png",        2800),
+    ("role-admin-scoring.png",        2800),
+    ("role-admin-accounting.png",     2700),
+    ("role-admin-reports.png",        2700),
+]
+
 TARGET_W = 1200
 TARGET_H = 820
 BG = (247, 246, 241)  # parchment (#F7F6F1)
 
 
-def load_frame(path: Path) -> Image.Image:
+def load_frame(path: Path, target_w: int, target_h: int) -> Image.Image:
     img = Image.open(path).convert("RGB")
-    ratio = TARGET_W / img.width
-    img = img.resize((TARGET_W, int(img.height * ratio)), Image.LANCZOS)
-    if img.height > TARGET_H:
-        img = img.crop((0, 0, TARGET_W, TARGET_H))
+    ratio = target_w / img.width
+    img = img.resize((target_w, int(img.height * ratio)), Image.LANCZOS)
+    if img.height > target_h:
+        img = img.crop((0, 0, target_w, target_h))
     else:
-        canvas = Image.new("RGB", (TARGET_W, TARGET_H), BG)
+        canvas = Image.new("RGB", (target_w, target_h), BG)
         canvas.paste(img, (0, 0))
         img = canvas
     return img
 
 
-def main() -> None:
+def build(frame_list, shots_dir: Path, out: Path, target_w: int, target_h: int) -> None:
     frames: list[Image.Image] = []
     durations: list[int] = []
-    for fname, dur in FRAMES:
-        p = SHOTS / fname
+    for fname, dur in frame_list:
+        p = shots_dir / fname
         if not p.exists():
             print(f"  skip (missing): {p}")
             continue
-        frames.append(load_frame(p))
+        frames.append(load_frame(p, target_w, target_h))
         durations.append(dur)
         print(f"  added {fname}  ({dur} ms)")
-
     if not frames:
-        raise SystemExit("No frames found — run scripts/capture_screenshots.py first.")
+        raise SystemExit(f"No frames found in {shots_dir}.")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    frames[0].save(out, save_all=True, append_images=frames[1:], optimize=True,
+                   duration=durations, loop=0, disposal=2)
+    print(f"\nWrote {out}  ({out.stat().st_size / 1024:.1f} KB, {len(frames)} frames)")
 
-    OUT_GIF.parent.mkdir(parents=True, exist_ok=True)
-    frames[0].save(
-        OUT_GIF,
-        save_all=True,
-        append_images=frames[1:],
-        optimize=True,
-        duration=durations,
-        loop=0,
-        disposal=2,
-    )
-    print(f"\nWrote {OUT_GIF}  ({OUT_GIF.stat().st_size / 1024:.1f} KB, {len(frames)} frames)")
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--home", action="store_true", help="Build the home-page hero GIF")
+    args = ap.parse_args()
+    if args.home:
+        # role screenshots are 1440x900 → natural 1200x750 (no letterbox)
+        build(HOME_FRAMES, IMG, OUT_HOME, 1200, 750)
+    else:
+        build(FRAMES, SHOTS, OUT_GIF, TARGET_W, TARGET_H)
 
 
 if __name__ == "__main__":
