@@ -90,6 +90,19 @@ SHELL_CSS = """
   padding:0 16px; background:#FFFFFF; border-bottom:1px solid #E3DFD2; }
 .ws-left { grid-area:left; background:#FFFFFF; border-right:1px solid #E3DFD2; overflow-y:auto; padding:10px 0; }
 .ws-center { grid-area:center; overflow-y:auto; background:#F7F6F1; }
+
+/* Compact page header: turn the first section into a slim sticky title bar so
+   content fills the pane (liquidround / pehero pattern) — no wasted real estate. */
+.ws-center section { padding-top:22px !important; padding-bottom:22px !important; }
+.ws-center section:first-of-type {
+  padding:11px 24px !important; border-top:0 !important; border-bottom:1px solid #E3DFD2;
+  position:sticky; top:0; z-index:6; background:#FBFAF6; }
+.ws-center section:first-of-type > div { max-width:none !important; padding:0 !important; margin:0 !important; }
+.ws-center section:first-of-type .font-mono { display:none !important; }
+.ws-center section:first-of-type h1 { font-size:18px !important; font-weight:600 !important;
+  line-height:1.3 !important; letter-spacing:-.2px !important; margin:0 !important; max-width:none !important; }
+.ws-center section:first-of-type p { font-size:12.5px !important; color:#7A867E !important;
+  margin:3px 0 0 !important; max-width:none !important; line-height:1.4 !important; }
 .nav-sec { margin:2px 0 10px; }
 .nav-head { padding:8px 16px 4px; font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:#7A867E; font-weight:700; }
 .nav-item { display:flex; align-items:center; gap:9px; padding:8px 16px; font-size:13.5px; color:#415046;
