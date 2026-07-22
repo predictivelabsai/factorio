@@ -118,6 +118,8 @@ def processing(req):
             nxt = "verify" if st == "submitted" else "assign"
             act = A(nxt.title(), href=f"/app/admin/processing/act?inv={r['invoice_number']}&step={nxt}",
                     cls="text-xs px-2 py-1 rounded-full bg-accent text-bg")
+        _num = (r["invoice_number"] or "").replace("'", "")
+        _deb = (r["debtor_name"] or "").replace("'", "")
         rows.append(Tr(
             Td(r["invoice_number"], cls=_TD), Td(r["debtor_name"], cls=_TD),
             Td(fmt_uzs(r["amount"]), cls=_TDR),
@@ -125,6 +127,7 @@ def processing(req):
             Td("✓" if r["po_matched"] else "—", cls="py-3 px-4 text-center"),
             Td(fmt_uzs(r["holdback"]), cls=_TDR + " text-accent"),
             Td(Span(st, cls=f"px-2 py-0.5 rounded-full text-xs font-medium {_BADGE.get(st,'bg-gray-100')}"), cls="py-3 px-4"),
+            Td(A("View", href="#", onclick=f"return fcShowPdf('{_num}','{_deb}')", cls="pdf-view-btn"), cls="py-3 px-4"),
             Td(act, cls="py-3 px-4 text-right"),
             cls="border-b border-line"))
     note = P(("You may verify and assign invoices (Ops / Credit)." if can
@@ -136,7 +139,7 @@ def processing(req):
                              P("Authenticity / PO-match, assignment (notified vs confidential), collateral "
                                "registration and holdback/reserve — the receivable's path to fundable.",
                                cls="mt-3 text-ink-muted max-w-3xl"), cls="border-t border-line"),
-                    Section_(_table_wrap(["Invoice", "Debtor", "Amount", "Assignment", "PO", "Holdback", "State", "Action"], rows),
+                    Section_(_table_wrap(["Invoice", "Debtor", "Amount", "Assignment", "PO", "Holdback", "State", "Document", "Action"], rows),
                              note, cls="border-t border-line"),
                     current_path="/app/admin/processing", lang=get_lang(req),
                     role="admin", subrole=current_subrole(req))

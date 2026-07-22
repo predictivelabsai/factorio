@@ -127,6 +127,21 @@ SHELL_CSS = """
 .chat-input:focus { border-color:#1F5D43; }
 .chat-send { background:#1F5D43; color:#fff; border:0; border-radius:999px; padding:0 20px; font-weight:600; cursor:pointer; }
 .chat-disabled { text-align:center; color:#7A867E; font-size:13px; padding:40px 24px; }
+
+/* Slide-in right pane: invoice PDF viewer */
+.pdf-pane { position:fixed; top:0; right:-480px; width:460px; height:100vh; z-index:200;
+  background:#FFFFFF; border-left:1px solid #E3DFD2; box-shadow:-6px 0 24px rgba(0,0,0,.08);
+  display:flex; flex-direction:column; transition:right .28s ease; }
+.pdf-pane.open { right:0; }
+.pdf-pane.wide { width:min(72vw, 1000px); }
+.pdf-head { display:flex; align-items:center; justify-content:space-between; padding:10px 14px;
+  border-bottom:1px solid #E3DFD2; }
+.pdf-title { font-size:13px; font-weight:600; color:#14231B; }
+.pdf-head button { background:none; border:0; cursor:pointer; color:#7A867E; font-size:16px; padding:2px 6px; }
+.pdf-frame { flex:1; width:100%; border:0; }
+.pdf-view-btn { font-size:11px; color:#1F5D43; border:1px solid #CFC8B4; border-radius:999px;
+  padding:3px 10px; cursor:pointer; background:#fff; text-decoration:none; white-space:nowrap; }
+.pdf-view-btn:hover { border-color:#1F5D43; background:#F3F1E9; }
 """
 
 SHELL_JS = """
@@ -190,6 +205,18 @@ async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
   var m=document.getElementById('cp-msgs'); m.scrollTop=m.scrollHeight; _cpBusy=false; return false;
 }
 function cpAsk(q){ var i=document.getElementById('cp-input'); i.value=q; cpSend(); }
+
+/* ── Invoice PDF right pane ─────────────────────────────────────────── */
+function fcShowPdf(num, search){ var f=document.getElementById('fc-pdf-frame');
+  var t=document.getElementById('fc-pdf-title'); if(t) t.textContent=num;
+  var url='/pdfjs/viewer?file='+encodeURIComponent('/app/invoice-pdf/'+num)+'&t='+Date.now();
+  if(search) url+='#search='+encodeURIComponent(search);
+  f.src='about:blank'; setTimeout(function(){ f.src=url; }, 40);
+  document.getElementById('fc-pdf-pane').classList.add('open'); return false; }
+function fcHidePdf(){ document.getElementById('fc-pdf-pane').classList.remove('open','wide');
+  document.getElementById('fc-pdf-frame').src='about:blank'; }
+function fcWidePdf(){ document.getElementById('fc-pdf-pane').classList.toggle('wide'); }
+
 document.addEventListener('DOMContentLoaded', function(){ fcRenderHistory();
   if(location.pathname==='/app'){ var a=fcActive(); if(a && fcGet(a)) fcLoad(a); } });
 """
@@ -282,6 +309,17 @@ def _lang_of(lang: str) -> str:
     return {"en": "en", "uz": "uz", "ru": "ru", "es": "es", "fr": "fr"}.get(lang, "en")
 
 
+def _pdf_pane():
+    from fasthtml.common import Iframe
+    return Div(
+        Div(Span("Invoice", id="fc-pdf-title", cls="pdf-title"),
+            Div(Button(NotStr("⤢"), onclick="fcWidePdf()", type="button", title="Widen"),
+                Button(NotStr("✕"), onclick="fcHidePdf()", type="button", title="Close")),
+            cls="pdf-head"),
+        Iframe(id="fc-pdf-frame", src="about:blank", cls="pdf-frame"),
+        id="fc-pdf-pane", cls="pdf-pane")
+
+
 def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFAULT_LANG,
               investor=None, investors=None, role: str = "investor", subrole: str = "ops"):
     """Render a Tool page inside the Agents+Tools cockpit (content in the center)."""
@@ -293,6 +331,7 @@ def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFA
                  _left_nav(role, current_path, lang),
                  Div(*content, cls="ws-center"),
                  cls="ws", id="ws"),
+             _pdf_pane(),
              Script(NotStr(SHELL_JS)),
              cls="bg-bg text-ink font-sans antialiased"),
         lang=_lang_of(lang))
@@ -312,6 +351,7 @@ def app_home(req):
                  _left_nav(role, "/app", lang),
                  Div(_chat_center(lang), cls="ws-center"),
                  cls="ws", id="ws"),
+             _pdf_pane(),
              Script(NotStr(SHELL_JS)),
              cls="bg-bg text-ink font-sans antialiased"),
         lang=_lang_of(lang))

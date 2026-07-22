@@ -77,10 +77,22 @@ def enrich_investor() -> int:
     return n
 
 
+def drop_junk_invoices() -> int:
+    """Remove the tiny EXT-* webhook test invoices (unrealistic $4/$6 amounts)."""
+    rows = fetch_all("SELECT id FROM factorio.invoices WHERE invoice_number LIKE %(p)s AND amount < 1000000",
+                     {"p": "EXT-%"})
+    n = 0
+    for r in rows:
+        execute("DELETE FROM factorio.invoices WHERE id=%(i)s", {"i": r["id"]})
+        n += 1
+    return n
+
+
 def main() -> None:
+    j = drop_junk_invoices()
     t = fix_turnovers()
     e = enrich_investor()
-    print(f"repaired {t} company turnovers; gave demo investor {e} settled positions")
+    print(f"dropped {j} junk invoices; repaired {t} turnovers; gave demo investor {e} settled positions")
 
 
 if __name__ == "__main__":

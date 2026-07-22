@@ -124,6 +124,13 @@ def _table(headers, rows):
     ), cls="rounded-2xl bg-bg-elevated border border-line overflow-hidden overflow-x-auto")
 
 
+def _view_btn(invoice_number: str, search: str = ""):
+    """A 'View' pill that opens the invoice PDF in the right pane, highlighting `search`."""
+    num = (invoice_number or "").replace("'", "")
+    term = (search or "").replace("'", "")
+    return A("View", href="#", onclick=f"return fcShowPdf('{num}','{term}')", cls="pdf-view-btn")
+
+
 def _admin_page(req, current_path, title_key, *content):
     lang = get_lang(req)
     return app_page(
@@ -439,7 +446,8 @@ def supplier_home(req):
     """)
     rows = [Tr(Td(a["invoice_number"], cls=_TD), Td(a["debtor_name"], cls=_TD),
                Td(fmt_uzs(a["amount"]), cls=_TDR), Td(a["risk_grade"], cls="py-3 px-4 text-center text-sm"),
-               Td(a["status"], cls=_TD), cls="border-b border-line") for a in apps]
+               Td(a["status"], cls=_TD), Td(_view_btn(a["invoice_number"], a["debtor_name"]), cls="py-3 px-4 text-right"),
+               cls="border-b border-line") for a in apps]
     return app_page(
         t("nav_supplier", lang),
         Section_(Eyebrow(t("role_supplier", lang)),
@@ -448,7 +456,7 @@ def supplier_home(req):
                    A(t("nav_triage", lang) + " →", href="/app/triage", cls="text-accent"),
                    cls="mt-4 text-ink-muted text-lg max-w-3xl"),
                  cls="border-t border-line"),
-        Section_(_table(["Invoice", "Debtor", "Amount", "Grade", "Status"], rows), cls="border-t border-line"),
+        Section_(_table(["Invoice", "Debtor", "Amount", "Grade", "Status", "Document"], rows), cls="border-t border-line"),
         current_path="/app/supplier", lang=lang, role="supplier",
     )
 
@@ -468,6 +476,7 @@ def payer_home(req):
                else Span("Confirm / dispute", cls="text-xs px-3 py-1 rounded-full bg-accent text-bg"))
         rows.append(Tr(Td(i["invoice_number"], cls=_TD), Td(fmt_uzs(i["amount"]), cls=_TDR),
                        Td(str(i["due_date"]), cls=_TD), Td(i["status"], cls=_TD),
+                       Td(_view_btn(i["invoice_number"], debtor), cls="py-3 px-4"),
                        Td(act, cls="py-3 px-4 text-right"), cls="border-b border-line"))
     return app_page(
         t("nav_payer", lang),
@@ -476,6 +485,6 @@ def payer_home(req):
                  P(NotStr(f"Invoices where <b>{debtor}</b> is the debtor. Confirm the obligation so suppliers can be financed."),
                    cls="mt-4 text-ink-muted text-lg max-w-3xl"),
                  cls="border-t border-line"),
-        Section_(_table(["Invoice", "Amount", "Due", "Status", ""], rows), cls="border-t border-line"),
+        Section_(_table(["Invoice", "Amount", "Due", "Status", "Document", ""], rows), cls="border-t border-line"),
         current_path="/app/payer", lang=lang, role="payer",
     )

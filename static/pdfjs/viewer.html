@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PDF Viewer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: #eee; font-family: sans-serif; }
+
+#toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 10px; background: #333; color: #fff; font-size: 13px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 36px;
+}
+#toolbar input[type=text] {
+  padding: 3px 8px; border: 1px solid #555; border-radius: 3px;
+  background: #444; color: #fff; font-size: 12px; width: 200px;
+}
+#toolbar button {
+  padding: 3px 10px; border: none; border-radius: 3px; cursor: pointer;
+  background: #555; color: #fff; font-size: 12px;
+}
+#toolbar button:hover { background: #777; }
+#match-info { font-size: 11px; color: #aaa; min-width: 60px; }
+
+#viewer-container {
+  position: absolute; top: 36px; bottom: 0; left: 0; right: 0;
+  overflow: auto; background: #888;
+}
+.page-wrapper {
+  margin: 10px auto; background: #fff; position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+canvas { display: block; }
+
+.text-layer {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden; opacity: 0.25; line-height: 1;
+}
+.text-layer span {
+  position: absolute; white-space: pre; color: transparent;
+  pointer-events: all;
+}
+.text-layer .highlight { background: rgba(255, 200, 0, 0.6); border-radius: 2px; }
+.text-layer .highlight.active { background: rgba(255, 120, 0, 0.8); }
+.text-layer ::selection { background: rgba(0, 100, 255, 0.3); }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <input type="text" id="search-input" placeholder="Search in PDF...">
+  <button id="btn-prev" title="Previous match">&#9650;</button>
+  <button id="btn-next" title="Next match">&#9660;</button>
+  <span id="match-info"></span>
+</div>
+<div id="viewer-container"></div>
+
+<script type="module">
+import * as pdfjsLib from './pdf.min.mjs?v=4';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.min.mjs?v=4';
+
+const container = document.getElementById('viewer-container');
+const searchInput = document.getElementById('search-input');
+const matchInfo = document.getElementById('match-info');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+
+const params = new URLSearchParams(window.location.search);
+const pdfUrl = params.get('file');
+const targetPage = parseInt(params.get('page') || '0', 10);
+const hashParams = window.location.hash.substring(1);
+let initialSearch = '';
+if (hashParams) {
+  const hp = new URLSearchParams(hashParams);
+  initialSearch = hp.get('search') || '';
+}
+
+const SCALE = 1.5;
+let allTextItems = []; // {pageIdx, span, text}
+let pageWrappers = []; // DOM elements per page
+let highlights = [];
+let currentMatch = -1;
+
+async function loadPdf() {
+  if (!pdfUrl) { container.textContent = 'No PDF URL provided'; return; }
+
+  const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: SCALE });
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'page-wrapper';
+    wrapper.style.width = viewport.width + 'px';
+    wrapper.style.height = viewport.height + 'px';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    wrapper.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    const textLayer = document.createElement('div');
+    textLayer.className = 'text-layer';
+    textLayer.style.width = viewport.width + 'px';
+    textLayer.style.height = viewport.height + 'px';
+    wrapper.appendChild(textLayer);
+
+    const textContent = await page.getTextContent();
+    for (const item of textContent.items) {
+      if (!item.str) continue;
+      const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+      const span = document.createElement('span');
+      span.textContent = item.str;
+      const fh = Math.sqrt(tx[2] * tx[2] + tx[3] * tx[3]);
+      span.style.left = tx[4] + 'px';
+      span.style.top = (tx[5] - fh) + 'px';
+      span.style.fontSize = fh + 'px';
+      span.style.fontFamily = item.fontName || 'sans-serif';
+      textLayer.appendChild(span);
+      allTextItems.push({ pageIdx: i - 1, span, text: item.str });
+    }
+
+    container.appendChild(wrapper);
+    pageWrappers.push(wrapper);
+  }
+
+  if (initialSearch) {
+    searchInput.value = initialSearch;
+    doSearch(initialSearch, targetPage);
+  } else if (targetPage > 0 && targetPage <= pageWrappers.length) {
+    pageWrappers[targetPage - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function clearHighlights() {
+  for (const h of highlights) {
+    h.span.classList.remove('highlight', 'active');
+  }
+  highlights = [];
+  currentMatch = -1;
+  matchInfo.textContent = '';
+}
+
+function doSearch(query, preferPage) {
+  clearHighlights();
+  if (!query) return;
+
+  const q = query.toLowerCase();
+
+  // Strategy 1: exact match within single text items
+  for (const item of allTextItems) {
+    if (item.text.toLowerCase().includes(q)) {
+      item.span.classList.add('highlight');
+      highlights.push(item);
+    }
+  }
+
+  // Strategy 2: if no exact match, try first significant word (4+ chars)
+  if (highlights.length === 0) {
+    const words = query.split(/\s+/).filter(w => w.length >= 4);
+    if (words.length > 0) {
+      const firstWord = words[0].toLowerCase();
+      for (const item of allTextItems) {
+        if (item.text.toLowerCase().includes(firstWord)) {
+          item.span.classList.add('highlight');
+          highlights.push(item);
+        }
+      }
+    }
+  }
+
+  // If matches found, prefer one on the target page
+  if (highlights.length > 0) {
+    let startIdx = 0;
+    if (preferPage > 0) {
+      const pageMatch = highlights.findIndex(h => h.pageIdx === preferPage - 1);
+      if (pageMatch >= 0) startIdx = pageMatch;
+    }
+    currentMatch = startIdx;
+    goToMatch(startIdx);
+  } else if (preferPage > 0 && preferPage <= pageWrappers.length) {
+    // No text match but we know the page — scroll there
+    pageWrappers[preferPage - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  updateMatchInfo();
+}
+
+function goToMatch(idx) {
+  if (idx < 0 || idx >= highlights.length) return;
+  if (currentMatch >= 0 && currentMatch < highlights.length) {
+    highlights[currentMatch].span.classList.remove('active');
+  }
+  currentMatch = idx;
+  highlights[currentMatch].span.classList.add('active');
+  highlights[currentMatch].span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  updateMatchInfo();
+}
+
+function updateMatchInfo() {
+  if (highlights.length === 0) {
+    matchInfo.textContent = searchInput.value ? 'No matches' : '';
+  } else {
+    matchInfo.textContent = (currentMatch + 1) + ' of ' + highlights.length;
+  }
+}
+
+searchInput.addEventListener('input', () => doSearch(searchInput.value, 0));
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    if (e.shiftKey) { goToMatch((currentMatch - 1 + highlights.length) % highlights.length); }
+    else { goToMatch((currentMatch + 1) % highlights.length); }
+  }
+});
+btnNext.addEventListener('click', () => {
+  if (highlights.length) goToMatch((currentMatch + 1) % highlights.length);
+});
+btnPrev.addEventListener('click', () => {
+  if (highlights.length) goToMatch((currentMatch - 1 + highlights.length) % highlights.length);
+});
+
+loadPdf();
+</script>
+</body>
+</html>
