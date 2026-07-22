@@ -51,58 +51,81 @@ def pdfjs_asset(fname: str):
                     headers={"Cache-Control": "public, max-age=86400"})
 
 
-def _money(amount, currency="USD") -> str:
-    from utils.money import fmt_money
-    return fmt_money(amount)
+def _s(x) -> str:
+    """Sanitise to latin-1 for fpdf2 core fonts."""
+    return str(x if x is not None else "").encode("latin-1", "replace").decode("latin-1")
 
 
-def _invoice_html(r: dict) -> str:
+def _invoice_pdf_bytes(r: dict) -> bytes:
+    """Render a clean invoice PDF with fpdf2 (pure-Python — no system deps)."""
+    from fpdf import FPDF
     from utils.money import fmt_money
+
     face = float(r["amount"] or 0)
-    # a couple of synthetic line items that sum to the face value
+    seller = _s(r.get("seller_company") or "Supplier Ltd")
+    num = _s(r["invoice_number"])
+    debtor = _s(r["debtor_name"])
+    terms = r.get("payment_terms_days") or 60
     li = [("Goods / services supplied per contract", round(face * 0.82, 2)),
           ("Delivery & handling", round(face * 0.18, 2))]
-    rows = "".join(
-        f"<tr><td>{desc}</td><td class='r'>1</td><td class='r'>{fmt_money(amt)}</td>"
-        f"<td class='r'>{fmt_money(amt)}</td></tr>" for desc, amt in li)
-    seller = r.get("seller_company") or "Supplier Ltd"
-    issue = r.get("issue_date"); due = r.get("due_date")
-    return f"""<!doctype html><html><head><meta charset="utf-8"><style>
-@page {{ size: A4; margin: 1.8cm; }}
-body {{ font-family: Inter, Arial, sans-serif; color:#14231B; font-size:11pt; }}
-.top {{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #1F5D43; padding-bottom:12px; }}
-.brand {{ font-size:20pt; font-weight:700; color:#1F5D43; }}
-.muted {{ color:#6b7280; font-size:9.5pt; }}
-h1 {{ font-size:15pt; margin:18px 0 4px; }}
-.grid {{ display:flex; gap:40px; margin:16px 0; }}
-.grid div p {{ margin:2px 0; }}
-.lbl {{ font-size:8pt; letter-spacing:1px; text-transform:uppercase; color:#9ca3af; }}
-table {{ width:100%; border-collapse:collapse; margin-top:14px; font-size:10.5pt; }}
-th {{ background:#1F5D43; color:#fff; text-align:left; padding:6px 8px; }}
-td {{ padding:6px 8px; border-bottom:1px solid #E3DFD2; }}
-td.r, th.r {{ text-align:right; }}
-.total {{ text-align:right; margin-top:10px; font-size:13pt; font-weight:700; color:#1F5D43; }}
-.terms {{ margin-top:26px; font-size:9pt; color:#6b7280; }}
-</style></head><body>
-<div class="top">
-  <div><div class="brand">◆ {seller}</div><div class="muted">Supplier · issued via Factorio</div></div>
-  <div style="text-align:right"><div class="muted">INVOICE</div><div style="font-size:13pt;font-weight:700">{r['invoice_number']}</div></div>
-</div>
-<h1>Invoice {r['invoice_number']}</h1>
-<div class="grid">
-  <div><p class="lbl">Bill to (debtor)</p><p style="font-weight:600">{r['debtor_name']}</p>
-       <p class="muted">Sector: {(r.get('sector') or '—').title()}</p></div>
-  <div><p class="lbl">Issue date</p><p>{issue}</p><p class="lbl" style="margin-top:8px">Due date</p><p>{due}</p></div>
-  <div><p class="lbl">Terms</p><p>{r.get('payment_terms_days') or 60} days</p>
-       <p class="lbl" style="margin-top:8px">Risk grade</p><p>{r.get('risk_grade') or 'B'}</p></div>
-</div>
-<table><thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Unit</th><th class="r">Amount</th></tr></thead>
-<tbody>{rows}</tbody></table>
-<div class="total">Total due: {fmt_money(face)}</div>
-<p class="terms">Payment due within {r.get('payment_terms_days') or 60} days of the issue date to the account on file.
-This invoice may be assigned to a financing party; on assignment, payment must be made to the assignee's collection account.
-Buyer-confirmed on the SoliqOnline e-invoice network. Generated for demonstration — synthetic data.</p>
-</body></html>"""
+
+    GREEN, GREY, INK = (31, 93, 67), (107, 114, 128), (20, 35, 27)
+    p = FPDF(format="A4")
+    p.set_auto_page_break(True, 18)
+    p.add_page()
+    p.set_margins(18, 16, 18)
+
+    # header (row 1: seller + INVOICE, row 2: subtitle + number)
+    p.set_font("Helvetica", "B", 20); p.set_text_color(*GREEN)
+    p.cell(120, 9, seller)
+    p.set_font("Helvetica", "", 9); p.set_text_color(*GREY)
+    p.cell(0, 9, "INVOICE", align="R", new_x="LMARGIN", new_y="NEXT")
+    p.set_font("Helvetica", "", 9); p.set_text_color(*GREY)
+    p.cell(120, 5, "Supplier - issued via Factorio")
+    p.set_font("Helvetica", "B", 12); p.set_text_color(*INK)
+    p.cell(0, 5, num, align="R", new_x="LMARGIN", new_y="NEXT")
+    p.ln(4); p.set_draw_color(*GREEN); p.set_line_width(0.8)
+    p.line(18, p.get_y(), 192, p.get_y()); p.ln(7)
+
+    p.set_font("Helvetica", "B", 15); p.set_text_color(*INK)
+    p.cell(0, 9, f"Invoice {num}", new_x="LMARGIN", new_y="NEXT"); p.ln(3)
+
+    # meta row (four columns)
+    cols = [("BILL TO (DEBTOR)", debtor), ("ISSUE DATE", _s(r.get("issue_date"))),
+            ("DUE DATE", _s(r.get("due_date"))), ("TERMS", f"{terms} days")]
+    y = p.get_y()
+    for i, (lbl, val) in enumerate(cols):
+        x = 18 + i * 44
+        p.set_xy(x, y); p.set_font("Helvetica", "", 7.5); p.set_text_color(*GREY)
+        p.cell(44, 4, lbl)
+        p.set_xy(x, y + 5); p.set_font("Helvetica", "B" if i == 0 else "", 11); p.set_text_color(*INK)
+        p.cell(44, 6, val)
+    p.set_y(y + 16)
+
+    # line-item table
+    p.set_fill_color(*GREEN); p.set_text_color(255, 255, 255); p.set_font("Helvetica", "B", 10)
+    p.cell(96, 8, " Description", fill=True)
+    p.cell(20, 8, "Qty", align="C", fill=True)
+    p.cell(29, 8, "Unit", align="R", fill=True)
+    p.cell(29, 8, "Amount ", align="R", fill=True, new_x="LMARGIN", new_y="NEXT")
+    p.set_text_color(*INK); p.set_font("Helvetica", "", 10)
+    for desc, amt in li:
+        p.cell(96, 8, " " + _s(desc), border="B")
+        p.cell(20, 8, "1", align="C", border="B")
+        p.cell(29, 8, fmt_money(amt), align="R", border="B")
+        p.cell(29, 8, fmt_money(amt) + " ", align="R", border="B", new_x="LMARGIN", new_y="NEXT")
+    p.ln(4)
+    p.set_font("Helvetica", "B", 13); p.set_text_color(*GREEN)
+    p.cell(0, 8, f"Total due: {fmt_money(face)}", align="R", new_x="LMARGIN", new_y="NEXT")
+
+    p.ln(10); p.set_font("Helvetica", "", 8.5); p.set_text_color(*GREY)
+    p.multi_cell(0, 4.6,
+        f"Payment due within {terms} days of the issue date to the account on file. This invoice may be "
+        "assigned to a financing party; on assignment, payment must be made to the assignee's collection "
+        "account. Buyer-confirmed on the SoliqOnline e-invoice network. Generated for demonstration - "
+        "synthetic data.")
+    out = p.output()
+    return bytes(out)
 
 
 @rt("/app/invoice-pdf/{invoice_number}")
@@ -123,8 +146,7 @@ def invoice_pdf(req, invoice_number: str):
         if not r:
             return Response("invoice not found", status_code=404)
         try:
-            from weasyprint import HTML
-            data = HTML(string=_invoice_html(r)).write_pdf()
+            data = _invoice_pdf_bytes(r)
         except Exception as e:  # noqa: BLE001
             return Response(f"pdf error: {e}", status_code=500)
         _pdf_cache[invoice_number] = data
