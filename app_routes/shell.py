@@ -1,9 +1,10 @@
-"""Left-nav app shell + docked streaming copilot (drvet/monika pattern).
+"""Agents + Tools cockpit with a central Copilot chat (liquidround pattern).
 
-`app_shell()` renders the /app workspace as a CSS-grid cockpit: top bar · left
-navigation · center content · right copilot rail. Every /app page flows through
-it (via `app_page`, which lazy-imports this). The copilot streams tokens from a
-LangGraph/Grok agent (utils.copilot) over hand-rolled SSE.
+`/app` is the central **Copilot** chat (the Agents view). Every Tool page renders
+in the same center pane via `app_shell()`. The left rail has two role-scoped
+sections — **Agents** (Copilot) and **Tools**. There is no right rail; the copilot
+is the center. Roles: investor / supplier / payer / admin (Admin = full
+back-office access — segregation of duties is collapsed to the single Admin role).
 """
 
 from __future__ import annotations
@@ -12,86 +13,123 @@ import json
 
 from fasthtml.common import (
     Html, Head, Body, Meta, Title, Link, Script, Style, NotStr,
-    Div, Span, A, Button, Form, Input, P,
+    Div, Span, A, Button, Form, Textarea, P, H2,
 )
 from starlette.responses import StreamingResponse
 
 from app import rt
-from utils.i18n import t, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
+from utils.i18n import t, get_lang, LANG_META, SUPPORTED_LANGS, DEFAULT_LANG
 from landing.components import TAILWIND_CONFIG, SITE_NAME
 from utils.copilot import copilot_available
 
-# ── Navigation model: (SECTION_KEY, [(key, i18n_key, icon, href)]) ────
-NAV = [
-    ("sec_factoring", [
-        ("dashboard", "nav_dashboard", "\U0001F4CA", "/app"),
-        ("marketplace", "mkt_eyebrow", "\U0001F9FE", "/app/marketplace"),
-        ("auctions", "nav_auctions", "\U0001F528", "/app/marketplace/auctions"),
-        ("secondary", "nav_secondary", "\U0001F501", "/app/marketplace/secondary"),
-        ("portfolio", "port_eyebrow", "\U0001F4C1", "/app/portfolio"),
-        ("statement", "nav_statement", "\U0001F9EE", "/app/statement"),
-        ("autoinvest", "nav_autoinvest", "⚙️", "/app/auto-invest"),
-        ("triage", "nav_triage", "\U0001F4AC", "/app/triage"),
-        ("reports", "nav_assistant", "\U0001F4C8", "/app/assistant"),
-        ("admin", "nav_admin", "\U0001F6E0️", "/app/admin"),
-        ("processing", "nav_processing", "\U0001F9FE", "/app/admin/processing"),
-        ("scoring", "nav_scoring", "\U0001F3AF", "/app/admin/scoring"),
-        ("collections", "nav_collections", "\U0001F4E9", "/app/admin/collections"),
-        ("accounting", "nav_accounting", "\U0001F4B7", "/app/admin/accounting"),
-        ("compliance", "nav_compliance", "\U0001F6E1️", "/app/admin/compliance"),
-        ("integrations", "nav_integrations", "\U0001F517", "/app/admin/integrations"),
-    ]),
-    ("sec_sales", [
-        ("crm", "nav_pipeline", "\U0001F4C7", "/app/crm"),
-    ]),
-    ("sec_workspace", [
-        ("drive", "nav_drive", "\U0001F5C2️", "/app/drive"),
-        ("docs", "nav_docs", "\U0001F4DD", "/app/docs"),
-        ("mail", "nav_mail", "✉️", "/app/mail"),
-    ]),
-]
+# ── Tool catalog: key -> (i18n_key, icon, href) ───────────────────────────
+_COPILOT = ("copilot", "nav_copilot", "✨", "/app")
+TOOLS = {
+    "dashboard":    ("nav_dashboard",          "\U0001F4CA", "/app/dashboard"),
+    "marketplace":  ("mkt_eyebrow",            "\U0001F9FE", "/app/marketplace"),
+    "auctions":     ("nav_auctions",           "\U0001F528", "/app/marketplace/auctions"),
+    "secondary":    ("nav_secondary",          "\U0001F501", "/app/marketplace/secondary"),
+    "portfolio":    ("port_eyebrow",           "\U0001F4C1", "/app/portfolio"),
+    "statement":    ("nav_statement",          "\U0001F9EE", "/app/statement"),
+    "autoinvest":   ("nav_autoinvest",         "⚙️",         "/app/auto-invest"),
+    "triage":       ("nav_triage",             "\U0001F4AC", "/app/triage"),
+    "reports":      ("nav_assistant",          "\U0001F4C8", "/app/assistant"),
+    "supplier":     ("nav_supplier",           "\U0001F9FE", "/app/supplier"),
+    "payer":        ("nav_payer",              "\U0001F4E9", "/app/payer"),
+    "console":      ("nav_admin",              "\U0001F6E0️", "/app/admin"),
+    "onboarding":   ("nav_admin_onboarding",   "\U0001FAAA", "/app/admin/onboarding"),
+    "processing":   ("nav_processing",         "\U0001F9FE", "/app/admin/processing"),
+    "risk":         ("nav_admin_risk",         "⚠️",         "/app/admin/risk"),
+    "scoring":      ("nav_scoring",            "\U0001F3AF", "/app/admin/scoring"),
+    "funding":      ("nav_admin_funding",      "\U0001F4B8", "/app/admin/funding"),
+    "collections":  ("nav_collections",        "\U0001F4E9", "/app/admin/collections"),
+    "accounting":   ("nav_accounting",         "\U0001F4B7", "/app/admin/accounting"),
+    "compliance":   ("nav_compliance",         "\U0001F6E1️", "/app/admin/compliance"),
+    "integrations": ("nav_integrations",       "\U0001F517", "/app/admin/integrations"),
+    "reports_admin":("nav_admin_reports",      "\U0001F4C8", "/app/admin/reports"),
+    "audit":        ("nav_admin_audit",        "\U0001F4DC", "/app/admin/audit"),
+    "pipeline":     ("nav_pipeline",           "\U0001F4C7", "/app/crm"),
+    "drive":        ("nav_drive",              "\U0001F5C2️", "/app/drive"),
+    "docs":         ("nav_docs",               "\U0001F4DD", "/app/docs"),
+    "mail":         ("nav_mail",               "✉️",         "/app/mail"),
+}
 
-_ACTIVE_BY_PATH = {href: key for _, items in NAV for key, _, _, href in items}
+# Role-scoped tool lists (order = display order).
+_TOOLS_BY_ROLE = {
+    "investor": ["dashboard", "marketplace", "auctions", "secondary", "portfolio",
+                 "statement", "autoinvest", "triage", "reports"],
+    "supplier": ["supplier", "triage", "marketplace"],
+    "payer":    ["payer"],
+    "admin":    ["console", "onboarding", "processing", "risk", "scoring", "funding",
+                 "collections", "accounting", "compliance", "integrations",
+                 "reports_admin", "audit", "pipeline", "drive", "docs", "mail",
+                 "dashboard", "marketplace", "auctions", "secondary", "portfolio", "statement"],
+}
+
+
+def _nav_for(role: str):
+    """Return [(section_i18n_key, [(key, i18n_key, icon, href), ...]), ...] for a role."""
+    tool_keys = _TOOLS_BY_ROLE.get(role, _TOOLS_BY_ROLE["investor"])
+    tools = [(k,) + TOOLS[k] for k in tool_keys]
+    return [("nav_sec_agents", [_COPILOT]), ("nav_sec_tools", tools)]
+
+
+def _active_key(role: str, current_path: str) -> str:
+    if current_path == "/app":
+        return "copilot"
+    for k in _TOOLS_BY_ROLE.get(role, []):
+        if TOOLS[k][2] == current_path:
+            return k
+    return ""
+
 
 SHELL_CSS = """
-.ws { display:grid; grid-template-columns:236px 1fr var(--rail,360px);
-  grid-template-rows:56px 1fr; grid-template-areas:"top top top" "left center right";
-  height:100vh; overflow:hidden; transition:grid-template-columns .18s ease; }
-.ws.rail-collapsed { --rail:0px; }
-.ws.rail-collapsed .ws-right { display:none; }
+.ws { display:grid; grid-template-columns:262px 1fr; grid-template-rows:56px 1fr;
+  grid-template-areas:"top top" "left center"; height:100vh; overflow:hidden; }
 .ws-top { grid-area:top; display:flex; align-items:center; justify-content:space-between;
   padding:0 16px; background:#FFFFFF; border-bottom:1px solid #E3DFD2; }
 .ws-left { grid-area:left; background:#FFFFFF; border-right:1px solid #E3DFD2; overflow-y:auto; padding:10px 0; }
 .ws-center { grid-area:center; overflow-y:auto; background:#F7F6F1; }
-.ws-right { grid-area:right; background:#FFFFFF; border-left:1px solid #E3DFD2; display:flex; flex-direction:column; overflow:hidden; }
-.nav-sec { margin:2px 0 8px; }
-.nav-head { padding:6px 16px; font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:#7A867E; font-weight:700; }
+.nav-sec { margin:2px 0 10px; }
+.nav-head { padding:8px 16px 4px; font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:#7A867E; font-weight:700; }
 .nav-item { display:flex; align-items:center; gap:9px; padding:8px 16px; font-size:13.5px; color:#415046;
   text-decoration:none; border-left:3px solid transparent; }
 .nav-item:hover { background:#EFEDE4; color:#14231B; }
 .nav-item.active { background:#CFE5DA; color:#0F3226; border-left-color:#1F5D43; font-weight:600; }
 .nav-ic { width:18px; text-align:center; }
-.cp-msgs { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
-.cp-msg { font-size:13.5px; line-height:1.5; }
-.cp-msg.user { align-self:flex-end; background:#1F5D43; color:#fff; padding:8px 12px; border-radius:14px; max-width:88%; }
-.cp-msg.assistant { align-self:flex-start; color:#14231B; }
-.cp-msg.assistant p { margin:.2em 0; } .cp-msg.assistant ul { margin:.2em 0 .2em 1em; }
+
+/* Central Copilot chat */
+.chat { display:flex; flex-direction:column; height:100%; max-width:860px; width:100%; margin:0 auto; }
+.chat-msgs { flex:1; overflow-y:auto; padding:28px 24px 8px; display:flex; flex-direction:column; gap:16px; }
+.chat-hero { margin:auto; text-align:center; max-width:540px; padding:24px 0; }
+.chat-hero .spark { font-size:30px; }
+.chat-hero h2 { font-size:26px; font-weight:600; color:#14231B; margin-top:6px; }
+.chat-hero p { color:#5b6b62; margin-top:8px; font-size:15px; line-height:1.5; }
+.cp-msg { font-size:14px; line-height:1.55; max-width:100%; }
+.cp-msg.user { align-self:flex-end; background:#1F5D43; color:#fff; padding:9px 13px; border-radius:14px; max-width:82%; }
+.cp-msg.assistant { align-self:flex-start; color:#14231B; max-width:92%; }
+.cp-msg.assistant p { margin:.25em 0; } .cp-msg.assistant ul { margin:.25em 0 .25em 1.1em; }
 .cp-who { font-size:10px; font-family:monospace; text-transform:uppercase; letter-spacing:1px; color:#7A867E; margin-bottom:3px; }
-.cp-tool { font-size:11px; color:#7A867E; font-style:italic; }
-.cp-form { border-top:1px solid #E3DFD2; padding:10px; display:flex; gap:8px; }
-.cp-input { flex:1; border:1px solid #CFC8B4; border-radius:12px; padding:9px 12px; font-size:13.5px; resize:none; outline:none; }
-.cp-input:focus { border-color:#1F5D43; }
-.cp-send { background:#1F5D43; color:#fff; border:0; border-radius:999px; padding:0 16px; font-size:13px; cursor:pointer; }
-.cp-suggest { padding:0 14px 6px; display:flex; flex-wrap:wrap; gap:6px; }
-.cp-chip { font-size:11.5px; color:#1F5D43; background:#EFEDE4; border:1px solid #E3DFD2; border-radius:999px; padding:4px 10px; cursor:pointer; }
+.cp-tool { font-size:12px; color:#7A867E; font-style:italic; }
+.chat-cards { padding:8px 24px 0; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.chat-card { font-size:12.5px; color:#1F5D43; background:#fff; border:1px solid #E3DFD2; border-radius:12px;
+  padding:8px 13px; cursor:pointer; transition:border-color .15s, background .15s; }
+.chat-card:hover { border-color:#1F5D43; background:#F3F1E9; }
+.chat-form { display:flex; gap:10px; padding:14px 24px 22px; }
+.chat-input { flex:1; border:1px solid #CFC8B4; border-radius:14px; padding:12px 14px; font-size:14px;
+  resize:none; outline:none; background:#fff; font-family:inherit; }
+.chat-input:focus { border-color:#1F5D43; }
+.chat-send { background:#1F5D43; color:#fff; border:0; border-radius:999px; padding:0 20px; font-weight:600; cursor:pointer; }
+.chat-disabled { text-align:center; color:#7A867E; font-size:13px; padding:40px 24px; }
 """
 
 SHELL_JS = """
-function wsToggleRail(){ document.getElementById('ws').classList.toggle('rail-collapsed'); }
 function cpAdd(role, html){ var m=document.getElementById('cp-msgs');
-  var d=document.createElement('div'); d.className='cp-msg '+role;
-  if(role==='assistant'){ var w=document.createElement('div'); w.className='cp-who'; w.textContent='Copilot'; m.appendChild(w); }
-  d.innerHTML=html; m.appendChild(d); m.scrollTop=m.scrollHeight; return d; }
+  var h=document.getElementById('chat-hero'); if(h) h.remove();
+  var wrap=document.createElement('div'); wrap.className='cp-msg '+role;
+  if(role==='assistant'){ var w=document.createElement('div'); w.className='cp-who'; w.textContent='Copilot'; wrap.appendChild(w);
+    var body=document.createElement('div'); body.innerHTML=html; wrap.appendChild(body); m.appendChild(wrap); m.scrollTop=m.scrollHeight; return body; }
+  wrap.innerHTML=html; m.appendChild(wrap); m.scrollTop=m.scrollHeight; return wrap; }
 function cpMd(t){ try{ return window.marked ? marked.parse(t) : t.replace(/\\n/g,'<br>'); }catch(e){ return t; } }
 function cpEsc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 var _cpBusy=false;
@@ -107,7 +145,7 @@ async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
       var i; while((i=buf.indexOf('\\n\\n'))!==-1){ var raw=buf.slice(0,i); buf=buf.slice(i+2);
         var type=null,data=''; raw.split('\\n').forEach(function(l){ if(l.indexOf('event: ')===0) type=l.slice(7).trim(); else if(l.indexOf('data: ')===0) data+=l.slice(6); });
         var p=data?JSON.parse(data):{};
-        if(type==='token'){ if(acc===''){ think.remove(); bubble=cpAdd('assistant',''); } acc+=p.text||''; bubble.innerHTML=cpMd(acc); }
+        if(type==='token'){ if(acc===''){ think.parentNode.remove(); bubble=cpAdd('assistant',''); } acc+=p.text||''; bubble.innerHTML=cpMd(acc); }
         else if(type==='tool_start'){ think.innerHTML='<span class=cp-tool>checking '+(p.name||'data')+'…</span>'; }
         else if(type==='error'){ think.innerHTML='<span class=cp-tool>error: '+cpEsc(p.message||'')+'</span>'; }
       }
@@ -116,48 +154,58 @@ async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
   }catch(e){ if(think) think.innerHTML='<span class=cp-tool>connection error</span>'; }
   var m=document.getElementById('cp-msgs'); m.scrollTop=m.scrollHeight; _cpBusy=false; return false;
 }
-function cpAsk(q){ document.getElementById('cp-input').value=q; cpSend(); }
+function cpAsk(q){ var i=document.getElementById('cp-input'); i.value=q; cpSend(); }
 """
 
-_SUGGESTIONS = ["How much have we funded?", "Which sector has the most exposure?",
-                "Top debtors by concentration", "Summarise the sales pipeline"]
+_SUGGESTIONS = ["cp_chip1", "cp_chip2", "cp_chip3", "cp_chip4"]
 
 
-def _copilot_pane(lang: str = DEFAULT_LANG):
-    if not copilot_available():
-        return Div(Div("Copilot", cls="cp-who", style="padding:14px"),
-                   P("Set XAI_API_KEY to enable the copilot.", cls="cp-tool", style="padding:0 14px"),
-                   cls="ws-right")
-    suggestions = [t(f"cp_chip{i}", lang) for i in (1, 2, 3, 4)]
-    chips = [Span(s, cls="cp-chip", onclick=f"cpAsk('{s}')") for s in suggestions]
-    return Div(
-        Div(Span("✨ Copilot", style="font-weight:600;color:#1F5D43"),
-            Button("‹", onclick="wsToggleRail()", type="button",
-                   style="background:none;border:0;cursor:pointer;color:#7A867E;font-size:18px"),
-            style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #E3DFD2"),
-        Div(Div("Copilot", cls="cp-who"),
-            Div(t("cp_intro", lang), cls="cp-msg assistant"),
-            id="cp-msgs", cls="cp-msgs"),
-        Div(*chips, cls="cp-suggest"),
-        Form(Input(id="cp-input", cls="cp-input", placeholder=t("cp_placeholder", lang),
-                   autocomplete="off",
-                   onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cpSend();}"),
-             Button(t("cp_send", lang), cls="cp-send", type="submit"),
-             cls="cp-form", onsubmit="return cpSend(event)"),
-        cls="ws-right", id="ws-right")
-
-
-def _left_nav(active: str, lang: str):
+def _left_nav(role: str, current_path: str, lang: str):
+    active = _active_key(role, current_path)
     secs = []
-    for section, items in NAV:
+    for section_key, items in _nav_for(role):
         links = [
-            A(Span(NotStr(icon), cls="nav-ic"),
-              Span(t(label, lang)),
+            A(Span(NotStr(icon), cls="nav-ic"), Span(t(i18n_key, lang)),
               href=href, cls="nav-item active" if active == key else "nav-item")
-            for key, label, icon, href in items
+            for key, i18n_key, icon, href in items
         ]
-        secs.append(Div(Div(t(section, lang), cls="nav-head"), *links, cls="nav-sec"))
+        secs.append(Div(Div(t(section_key, lang), cls="nav-head"), *links, cls="nav-sec"))
     return Div(*secs, cls="ws-left")
+
+
+def _chat_center(lang: str):
+    if not copilot_available():
+        return Div(Div("Copilot", cls="cp-who"),
+                   P("Set XAI_API_KEY to enable the copilot.", cls="chat-disabled"),
+                   cls="chat")
+    hero = Div(Span("✨", cls="spark"),
+               H2(t("cp_hero_title", lang)),
+               P(t("cp_hero_sub", lang)),
+               id="chat-hero", cls="chat-hero")
+    cards = [Span(t(k, lang), cls="chat-card", onclick=f"cpAsk('{t(k, lang)}')") for k in _SUGGESTIONS]
+    return Div(
+        Div(hero, id="cp-msgs", cls="chat-msgs"),
+        Div(*cards, cls="chat-cards"),
+        Form(Textarea("", id="cp-input", cls="chat-input", rows="1",
+                      placeholder=t("cp_placeholder", lang), autocomplete="off",
+                      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cpSend();}"),
+             Button(t("cp_send", lang), cls="chat-send", type="submit"),
+             cls="chat-form", onsubmit="return cpSend(event)"),
+        cls="chat")
+
+
+def _head(title: str, lang: str):
+    return [
+        Meta(charset="utf-8"), Meta(name="viewport", content="width=device-width, initial-scale=1"),
+        Title(f"{title} · {SITE_NAME}"),
+        Link(rel="preconnect", href="https://fonts.googleapis.com"),
+        Link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"),
+        Script(src="https://cdn.tailwindcss.com"), Script(NotStr(TAILWIND_CONFIG)),
+        Script(src="https://unpkg.com/htmx.org@2.0.3"),
+        Script(src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"),
+        Link(rel="stylesheet", href="/static/site.css"),
+        Style(SHELL_CSS),
+    ]
 
 
 def _lang_pill(lang: str):
@@ -174,43 +222,57 @@ def _lang_pill(lang: str):
         cls="relative")
 
 
-def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFAULT_LANG,
-              investor=None, investors=None, role: str = "investor", subrole: str = "ops"):
-    from app_routes._shared import _role_switcher, _investor_switcher, list_investors
-    investors = investors if investors is not None else list_investors()
-    active = _ACTIVE_BY_PATH.get(current_path, "")
-    right = _role_switcher(role, subrole, lang) if role != "investor" else _investor_switcher(investor, investors, lang)
-    head = [
-        Meta(charset="utf-8"), Meta(name="viewport", content="width=device-width, initial-scale=1"),
-        Title(f"{title} · {SITE_NAME}"),
-        Link(rel="preconnect", href="https://fonts.googleapis.com"),
-        Link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"),
-        Script(src="https://cdn.tailwindcss.com"), Script(NotStr(TAILWIND_CONFIG)),
-        Script(src="https://unpkg.com/htmx.org@2.0.3"),
-        Script(src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"),
-        Link(rel="stylesheet", href="/static/site.css"),
-        Style(SHELL_CSS),
-    ]
-    topbar = Div(
+def _topbar(lang: str, role: str, investor, investors):
+    from app_routes._shared import _role_switcher, _investor_switcher
+    right = _investor_switcher(investor, investors, lang) if role == "investor" else Span("", cls="hidden")
+    return Div(
         A(Span(NotStr("&#9670;"), cls="text-accent mr-2"), Span(SITE_NAME, cls="font-medium tracking-tight text-ink"),
           href="/", cls="flex items-center text-base no-underline"),
         Div(A(t("nav_signin", lang), href="/login", cls="text-xs text-ink-muted hover:text-ink no-underline"),
             Span("/", cls="text-ink-dim text-xs"),
             A(t("nav_signout", lang), href="/logout", cls="text-xs text-ink-muted hover:text-ink no-underline mr-2"),
-            right, _lang_pill(lang),
-            Button(NotStr("&#9776;"), onclick="wsToggleRail()", type="button",
-                   cls="text-ink-dim text-lg bg-transparent border-0 cursor-pointer", title="Toggle copilot"),
+            _role_switcher(role, lang), right, _lang_pill(lang),
             cls="flex items-center gap-3"),
         cls="ws-top")
+
+
+def _lang_of(lang: str) -> str:
+    return {"en": "en", "uz": "uz", "ru": "ru", "es": "es", "fr": "fr"}.get(lang, "en")
+
+
+def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFAULT_LANG,
+              investor=None, investors=None, role: str = "investor", subrole: str = "ops"):
+    """Render a Tool page inside the Agents+Tools cockpit (content in the center)."""
+    from app_routes._shared import list_investors
+    investors = investors if investors is not None else list_investors()
     return Html(
-        Head(*head),
-        Body(Div(topbar, _left_nav(active, lang),
-                 Div(*content, cls="ws-center"), _copilot_pane(lang),
+        Head(*_head(title, lang)),
+        Body(Div(_topbar(lang, role, investor, investors),
+                 _left_nav(role, current_path, lang),
+                 Div(*content, cls="ws-center"),
                  cls="ws", id="ws"),
              Script(NotStr(SHELL_JS)),
              cls="bg-bg text-ink font-sans antialiased"),
-        lang={"en": "en", "uz": "uz", "ru": "ru", "es": "es", "fr": "fr"}.get(lang, "en"),
-    )
+        lang=_lang_of(lang))
+
+
+@rt("/app")
+def app_home(req):
+    """Agents view — the central Copilot chat (default landing)."""
+    from app_routes._shared import current_role, list_investors, current_investor
+    lang = get_lang(req)
+    role = current_role(req)
+    investors = list_investors()
+    investor = current_investor(req, investors) if role == "investor" else None
+    return Html(
+        Head(*_head("Copilot", lang)),
+        Body(Div(_topbar(lang, role, investor, investors),
+                 _left_nav(role, "/app", lang),
+                 Div(_chat_center(lang), cls="ws-center"),
+                 cls="ws", id="ws"),
+             Script(NotStr(SHELL_JS)),
+             cls="bg-bg text-ink font-sans antialiased"),
+        lang=_lang_of(lang))
 
 
 # ── Copilot streaming endpoint (hand-rolled SSE) ──────────────────────────

@@ -24,7 +24,7 @@ from app import rt
 from utils.i18n import get_lang
 from utils.money import fmt_money
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, list_investors, current_investor
+from app_routes._shared import app_page, list_investors, current_investor, current_role
 
 try:
     from db import fetch_all, fetch_one, execute
@@ -131,7 +131,7 @@ def auctions(req):
         Section_(_tabs("auction"),
                  Div(*cards, cls="grid sm:grid-cols-2 lg:grid-cols-3 gap-4") if cards else empty,
                  cls="border-t border-line"),
-        current_path="/app/marketplace/auctions", lang=lang, investor=investor, investors=investors,
+        current_path="/app/marketplace/auctions", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 
@@ -227,7 +227,7 @@ def secondary(req):
                  Div(P(f"Your positions ({investor['username'] if investor else '—'})",
                        cls="text-sm font-medium text-ink mb-3"), pos_tbl),
                  cls="border-t border-line"),
-        current_path="/app/marketplace/secondary", lang=lang, investor=investor, investors=investors,
+        current_path="/app/marketplace/secondary", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 

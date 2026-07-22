@@ -14,7 +14,7 @@ from fasthtml.common import Div, P, Span, A, Article, NotStr
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor
+from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor, current_role
 from app_routes.portfolio import _load_positions, _compute, _f
 
 try:
@@ -103,7 +103,7 @@ def _activity_feed(notes: list[dict], lang: str):
     return Div(*items)
 
 
-@rt("/app")
+@rt("/app/dashboard")
 def dashboard(req):
     lang = get_lang(req)
     investors = list_investors()
@@ -169,5 +169,5 @@ def dashboard(req):
         ),
         Section_(kpis, Div(activity, cls="mt-4"), cls="border-t border-line"),
         Section_(platform, cls="border-t border-line"),
-        current_path="/app", lang=lang, investor=investor, investors=investors,
+        current_path="/app/dashboard", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )

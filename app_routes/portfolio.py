@@ -15,7 +15,7 @@ from app import rt
 from utils.i18n import t, get_lang
 from landing.components import page, Eyebrow, Heading, Section_
 from app_routes._shared import (
-    app_page, fmt_uzs, list_investors, current_investor,
+    app_page, fmt_uzs, list_investors, current_investor, current_role,
     aging_bucket_key, days_late, AGING_BUCKETS,
 )
 
@@ -313,7 +313,7 @@ def portfolio(req):
             Section_(Eyebrow(t("port_eyebrow", lang)),
                      Heading(1, t("port_h1", lang), cls="mt-4 max-w-4xl"), cls="border-t border-line"),
             Section_(hero, empty, cls="border-t border-line"),
-            current_path="/app/portfolio", lang=lang, investor=investor, investors=investors,
+            current_path="/app/portfolio", lang=lang, role=current_role(req), investor=investor, investors=investors,
         )
 
     return app_page(
@@ -328,5 +328,5 @@ def portfolio(req):
             _positions_table(positions, lang),
             cls="border-t border-line",
         ),
-        current_path="/app/portfolio", lang=lang, investor=investor, investors=investors,
+        current_path="/app/portfolio", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )

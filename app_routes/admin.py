@@ -430,8 +430,8 @@ def admin_audit(req):
 
 # ── Seller & payer landings (role-scoped) ───────────────────────────────
 
-@rt("/app/seller")
-def seller_home(req):
+@rt("/app/supplier")
+def supplier_home(req):
     lang = get_lang(req)
     apps = _q("""
         SELECT i.invoice_number, i.debtor_name, i.amount, i.risk_grade, i.status
@@ -441,15 +441,15 @@ def seller_home(req):
                Td(fmt_uzs(a["amount"]), cls=_TDR), Td(a["risk_grade"], cls="py-3 px-4 text-center text-sm"),
                Td(a["status"], cls=_TD), cls="border-b border-line") for a in apps]
     return app_page(
-        t("nav_seller", lang),
-        Section_(Eyebrow(t("role_seller", lang)),
-                 Heading(1, t("nav_seller", lang), cls="mt-4"),
+        t("nav_supplier", lang),
+        Section_(Eyebrow(t("role_supplier", lang)),
+                 Heading(1, t("nav_supplier", lang), cls="mt-4"),
                  P(NotStr(t("ai_triage_lede", lang) + ' &nbsp; '),
                    A(t("nav_triage", lang) + " →", href="/app/triage", cls="text-accent"),
                    cls="mt-4 text-ink-muted text-lg max-w-3xl"),
                  cls="border-t border-line"),
         Section_(_table(["Invoice", "Debtor", "Amount", "Grade", "Status"], rows), cls="border-t border-line"),
-        current_path="/app/seller", lang=lang, role="seller",
+        current_path="/app/supplier", lang=lang, role="supplier",
     )
 
 

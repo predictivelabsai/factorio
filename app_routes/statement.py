@@ -19,7 +19,7 @@ from starlette.responses import Response
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor
+from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor, current_role
 
 try:
     from db import fetch_all
@@ -189,7 +189,7 @@ def statement(req):
         Section_(Eyebrow(t("stmt_eyebrow", lang)),
                  Heading(1, t("stmt_h1", lang), cls="mt-4 max-w-4xl"), cls="border-t border-line"),
         Section_(_filter_form(fl, lang), _ledger_table(rows, lang), cls="border-t border-line"),
-        current_path="/app/statement", lang=lang, investor=investor, investors=investors,
+        current_path="/app/statement", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 

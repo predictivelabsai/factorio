@@ -14,7 +14,7 @@ from fasthtml.common import (
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, list_investors, current_investor
+from app_routes._shared import app_page, list_investors, current_investor, current_role
 
 try:
     from db import fetch_all
@@ -230,7 +230,7 @@ def marketplace(req):
             cls="border-t border-line",
         ),
         Section_(_filter_form(fl, _sectors(), lang), grid or empty, cls="border-t border-line"),
-        current_path="/app/marketplace", lang=lang, investor=investor, investors=investors,
+        current_path="/app/marketplace", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 
@@ -242,7 +242,7 @@ def marketplace_detail(req, funding_id: int):
     if not _HAS_DB:
         return app_page("Not found", Section_(P("Database not configured.")),
                         current_path="/app/marketplace", lang=lang,
-                        investor=investor, investors=investors)
+                        role=current_role(req), investor=investor, investors=investors)
 
     try:
         row = fetch_all("""
@@ -264,7 +264,7 @@ def marketplace_detail(req, funding_id: int):
     if not row:
         return app_page("Not found", Section_(
             Heading(1, "Invoice not found.", cls="mt-4"),
-        ), current_path="/app/marketplace", lang=lang, investor=investor, investors=investors)
+        ), current_path="/app/marketplace", lang=lang, role=current_role(req), investor=investor, investors=investors)
 
     r = row[0]
     pct = _progress_pct(float(r["amount_raised"]), float(r["funding_goal"]))
@@ -330,5 +330,5 @@ def marketplace_detail(req, funding_id: int):
             ),
             cls="border-t border-line",
         ),
-        current_path="/app/marketplace", lang=lang, investor=investor, investors=investors,
+        current_path="/app/marketplace", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )

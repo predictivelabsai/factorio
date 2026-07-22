@@ -463,6 +463,16 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
     "app_viewing_as":       {"en": "Viewing as",         "uz": "Ko'rilmoqda",          "ru": "Просмотр как"},
 
     # ── Left-nav cockpit: section headers, back-office + workspace nav ──
+    # ── Agents + Tools cockpit ──────────────────────────────────────
+    "nav_sec_agents":       {"en": "Agents",             "uz": "Agentlar",             "ru": "Агенты"},
+    "nav_sec_tools":        {"en": "Tools",              "uz": "Vositalar",            "ru": "Инструменты"},
+    "nav_copilot":          {"en": "Copilot",            "uz": "Kopilot",              "ru": "Копайлот"},
+    "nav_supplier":         {"en": "My applications",    "uz": "Mening arizalarim",    "ru": "Мои заявки"},
+    "role_supplier":        {"en": "Supplier",           "uz": "Ta'minotchi",          "ru": "Поставщик"},
+    "cp_hero_title":        {"en": "How can I help?",    "uz": "Qanday yordam bera olaman?", "ru": "Чем помочь?"},
+    "cp_hero_sub":          {"en": "Ask the Copilot about funding, exposure, your portfolio or the pipeline.",
+                             "uz": "Kopilotdan moliyalashtirish, ekspozitsiya, portfel yoki voronka haqida so'rang.",
+                             "ru": "Спросите Копайлот о финансировании, экспозиции, портфеле или воронке."},
     "grp_backoffice":       {"en": "Back office",        "uz": "Bek-ofis",             "ru": "Бэк-офис"},
     "sec_factoring":        {"en": "Factoring",          "uz": "Faktoring",            "ru": "Факторинг"},
     "sec_sales":            {"en": "Sales",              "uz": "Sotuv",                "ru": "Продажи"},

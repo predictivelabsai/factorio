@@ -24,7 +24,7 @@ from fasthtml.common import (
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, list_investors, current_investor
+from app_routes._shared import app_page, list_investors, current_investor, current_role
 from app_routes.portfolio import _load_positions, _compute
 from utils import ai
 
@@ -136,7 +136,7 @@ def triage(req):
             cls="border-t border-line",
         ),
         Section_(_chat_panel("triage", _greeting("triage", lang), lang), cls="border-t border-line pt-0"),
-        current_path="/app/triage", lang=lang, investor=investor, investors=investors,
+        current_path="/app/triage", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 
@@ -169,7 +169,7 @@ def assistant(req):
             cls="border-t border-line",
         ),
         Section_(_chat_panel("assistant", _greeting("assistant", lang), lang), cls="border-t border-line pt-0"),
-        current_path="/app/assistant", lang=lang, investor=investor, investors=investors,
+        current_path="/app/assistant", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 

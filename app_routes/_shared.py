@@ -75,35 +75,38 @@ def set_investor(req, investor_id: int = 0):
 
 # ── Roles / RBAC (demo-grade: cookie-based role switcher, no password) ─────
 
-ROLES = ("investor", "seller", "payer", "admin")
-ADMIN_SUBROLES = ("ops", "credit", "collections", "finance", "compliance", "exec", "super")
+ROLES = ("investor", "supplier", "payer", "admin")
+# Segregation of duties is collapsed: Admin is a single full-access role. The old
+# admin subroles are gone; current_subrole always returns "super" so any legacy
+# CAN_* gate (which all include "super") passes for Admin.
+ADMIN_SUBROLES = ("super",)
+
+
+def _norm_role(r: str | None) -> str:
+    if r == "seller":          # legacy alias
+        return "supplier"
+    return r if r in ROLES else "investor"
 
 
 def current_role(req) -> str:
     # A real logged-in session wins; otherwise fall back to the demo cookie switcher.
     s = getattr(req, "session", None) if req is not None else None
     if s and s.get("role"):
-        return s["role"] if s["role"] in ROLES else "investor"
-    r = req.cookies.get("role", "investor") if req is not None else "investor"
-    return r if r in ROLES else "investor"
+        return _norm_role(s["role"])
+    return _norm_role(req.cookies.get("role", "investor") if req is not None else "investor")
 
 
 def current_subrole(req) -> str:
-    s = getattr(req, "session", None) if req is not None else None
-    if s and s.get("uid") and s.get("subrole"):
-        return s["subrole"] if s["subrole"] in ADMIN_SUBROLES else "ops"
-    r = req.cookies.get("admin_role", "ops") if req is not None else "ops"
-    return r if r in ADMIN_SUBROLES else "ops"
+    # SoD collapsed — Admin has full access.
+    return "super"
 
 
 @rt("/app/set-role")
-def set_role(req, role: str = "investor", admin_role: str = ""):
+def set_role(req, role: str = "investor"):
     referer = req.headers.get("referer", "/app")
     resp = RedirectResponse(referer, status_code=303)
-    if role in ROLES:
-        resp.set_cookie("role", role, max_age=365 * 24 * 3600, httponly=False, samesite="lax")
-    if admin_role in ADMIN_SUBROLES:
-        resp.set_cookie("admin_role", admin_role, max_age=365 * 24 * 3600, httponly=False, samesite="lax")
+    role = _norm_role(role)
+    resp.set_cookie("role", role, max_age=365 * 24 * 3600, httponly=False, samesite="lax")
     return resp
 
 
@@ -198,28 +201,19 @@ def _investor_switcher(investor: dict | None, investors: list[dict], lang: str):
     )
 
 
-def _role_switcher(role: str, subrole: str, lang: str):
+def _role_switcher(role: str, lang: str):
     role_opts = [Option(t(f"role_{r}", lang), value=r, selected=(r == role)) for r in ROLES]
-    home = {"admin": "/app/admin", "seller": "/app/seller", "payer": "/app/payer"}
-    # switching role sets the cookie and jumps to that role's home
+    # switching role sets the cookie and jumps to the Copilot chat (the default view)
     role_sel = Select(
         *role_opts,
         onchange=("document.cookie='role='+this.value+';path=/;max-age=31536000;samesite=lax';"
-                  "var h={'admin':'/app/admin','seller':'/app/seller','payer':'/app/payer'};"
-                  "location.href=h[this.value]||'/app';"),
+                  "location.href='/app';"),
         cls=_sel_cls(),
     )
-    els = [Span(t("app_role_label", lang),
-                cls="text-[11px] font-mono uppercase tracking-widest text-ink-dim hidden sm:inline"),
-           role_sel]
-    if role == "admin":
-        sub_opts = [Option(t(f"subrole_{s}", lang), value=s, selected=(s == subrole)) for s in ADMIN_SUBROLES]
-        els.append(Select(
-            *sub_opts,
-            onchange=("document.cookie='admin_role='+this.value+"
-                      "';path=/;max-age=31536000;samesite=lax';location.reload();"),
-            cls=_sel_cls()))
-    return Div(*els, cls="flex items-center gap-2")
+    return Div(
+        Span(t("app_role_label", lang),
+             cls="text-[11px] font-mono uppercase tracking-widest text-ink-dim hidden sm:inline"),
+        role_sel, cls="flex items-center gap-2")
 
 
 def app_subnav(current_path: str, lang: str,

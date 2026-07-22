@@ -38,8 +38,7 @@ DEMO_USERS = [
     ("compliance@factorio.co.uk", "Compliance Officer", "admin", "compliance"),
     ("collections@factorio.co.uk", "Collections Agent", "admin", "collections"),
     ("investor@factorio.co.uk", "Investor", "investor", "ops"),
-    ("supplier@factorio.co.uk", "Supplier", "seller", "ops"),
-    ("seller@factorio.co.uk", "Supplier", "seller", "ops"),
+    ("supplier@factorio.co.uk", "Supplier", "supplier", "ops"),
     ("payer@factorio.co.uk", "Payer", "payer", "ops"),
 ]
 DEMO_PASSWORD = "demo1234"
@@ -48,7 +47,7 @@ DEMO_PASSWORD = "demo1234"
 # Factorio's own user/role model. (email, name, role, subrole)
 DEMO_SESSION = {
     "investor": ("investor@factorio.co.uk", "Investor", "investor", "ops"),
-    "supplier": ("supplier@factorio.co.uk", "Supplier", "seller", "ops"),
+    "supplier": ("supplier@factorio.co.uk", "Supplier", "supplier", "ops"),
     "payer":    ("payer@factorio.co.uk",    "Payer",    "payer",    "ops"),
     "admin":    ("admin@factorio.co.uk",    "Super Admin", "admin", "super"),
 }
@@ -212,7 +211,7 @@ def login_post(req, email: str = "", password: str = ""):
         return _login_page("Invalid email or password.", email)
     s = req.session
     s["uid"] = u["email"]; s["name"] = u["name"]; s["role"] = u["role"]; s["subrole"] = u["subrole"]
-    dest = {"admin": "/app/admin", "seller": "/app/seller", "payer": "/app/payer"}.get(u["role"], "/app")
+    dest = "/app"
     return RedirectResponse(dest, status_code=303)
 
 
@@ -226,7 +225,7 @@ def login_demo(req, who: str = ""):
     email, name, role, subrole = choice
     s = req.session
     s["uid"] = email; s["name"] = name; s["role"] = role; s["subrole"] = subrole
-    dest = {"admin": "/app/admin", "seller": "/app/seller", "payer": "/app/payer"}.get(role, "/app")
+    dest = "/app"
     return RedirectResponse(dest, status_code=303)
 
 

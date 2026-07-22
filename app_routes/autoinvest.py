@@ -16,7 +16,7 @@ from starlette.responses import RedirectResponse
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, list_investors, current_investor
+from app_routes._shared import app_page, list_investors, current_investor, current_role
 
 try:
     from db import fetch_one, execute
@@ -139,7 +139,7 @@ def auto_invest(req):
             cls="border-t border-line",
         ),
         Section_(_form(rule, lang, saved), cls="border-t border-line"),
-        current_path="/app/auto-invest", lang=lang, investor=investor, investors=investors,
+        current_path="/app/auto-invest", lang=lang, role=current_role(req), investor=investor, investors=investors,
     )
 
 
