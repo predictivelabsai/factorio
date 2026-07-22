@@ -87,9 +87,27 @@ SHELL_CSS = """
 .ws { display:grid; grid-template-columns:262px 1fr; grid-template-rows:56px 1fr;
   grid-template-areas:"top top" "left center"; height:100vh; overflow:hidden; }
 .ws-top { grid-area:top; display:flex; align-items:center; justify-content:space-between;
-  padding:0 16px; background:#FFFFFF; border-bottom:1px solid #E3DFD2; }
+  padding:0 16px; background:#FFFFFF; border-bottom:1px solid #E3DFD2; gap:8px; }
 .ws-left { grid-area:left; background:#FFFFFF; border-right:1px solid #E3DFD2; overflow-y:auto; padding:10px 0; }
 .ws-center { grid-area:center; overflow-y:auto; background:#F7F6F1; }
+.ws-burger { display:none; background:none; border:0; font-size:22px; line-height:1; color:#14231B;
+  cursor:pointer; padding:4px 8px; margin-right:2px; }
+.ws-backdrop { display:none; position:fixed; inset:56px 0 0 0; background:rgba(0,0,0,.35); z-index:40; }
+
+/* ── Mobile: left nav becomes a slide-in drawer; PDF pane goes full-width ── */
+@media (max-width: 860px) {
+  .ws { grid-template-columns:1fr; grid-template-areas:"top" "center"; }
+  .ws-burger { display:block; }
+  .ws-left { position:fixed; top:56px; bottom:0; left:-280px; width:264px; z-index:50;
+    box-shadow:2px 0 18px rgba(0,0,0,.18); transition:left .2s ease; }
+  .ws.nav-open .ws-left { left:0; }
+  .ws.nav-open .ws-backdrop { display:block; }
+  .ws-top { padding:0 8px; }
+  .pdf-pane { width:100% !important; right:-100%; }
+  .pdf-pane.wide { width:100% !important; }
+  .ws-center section:first-of-type { padding:10px 14px !important; }
+  .chat-form, .chat-cards { padding-left:14px; padding-right:14px; }
+}
 
 /* Compact page header: turn the first section into a slim sticky title bar so
    content fills the pane (liquidround / pehero pattern) — no wasted real estate. */
@@ -218,6 +236,7 @@ async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
   var m=document.getElementById('cp-msgs'); m.scrollTop=m.scrollHeight; _cpBusy=false; return false;
 }
 function cpAsk(q){ var i=document.getElementById('cp-input'); i.value=q; cpSend(); }
+function wsToggleNav(){ document.getElementById('ws').classList.toggle('nav-open'); }
 
 /* ── Invoice PDF right pane ─────────────────────────────────────────── */
 function fcShowPdf(num, search){ var f=document.getElementById('fc-pdf-frame');
@@ -308,11 +327,15 @@ def _topbar(lang: str, role: str, investor, investors):
     from app_routes._shared import _role_switcher, _investor_switcher
     right = _investor_switcher(investor, investors, lang) if role == "investor" else Span("", cls="hidden")
     return Div(
-        A(Span(NotStr("&#9670;"), cls="text-accent mr-2"), Span(SITE_NAME, cls="font-medium tracking-tight text-ink"),
-          href="/", cls="flex items-center text-base no-underline"),
-        Div(A(t("nav_signin", lang), href="/login", cls="text-xs text-ink-muted hover:text-ink no-underline"),
-            Span("/", cls="text-ink-dim text-xs"),
-            A(t("nav_signout", lang), href="/logout", cls="text-xs text-ink-muted hover:text-ink no-underline mr-2"),
+        Div(
+            Button(NotStr("&#9776;"), onclick="wsToggleNav()", type="button",
+                   cls="ws-burger", title="Menu"),
+            A(Span(NotStr("&#9670;"), cls="text-accent mr-2"), Span(SITE_NAME, cls="font-medium tracking-tight text-ink"),
+              href="/", cls="flex items-center text-base no-underline"),
+            cls="flex items-center"),
+        Div(A(t("nav_signin", lang), href="/login", cls="hidden sm:inline text-xs text-ink-muted hover:text-ink no-underline"),
+            Span("/", cls="hidden sm:inline text-ink-dim text-xs"),
+            A(t("nav_signout", lang), href="/logout", cls="hidden sm:inline text-xs text-ink-muted hover:text-ink no-underline mr-2"),
             _role_switcher(role, lang), right, _lang_pill(lang),
             cls="flex items-center gap-3"),
         cls="ws-top")
@@ -343,6 +366,7 @@ def app_shell(title: str, *content, current_path: str = "/app", lang: str = DEFA
         Body(Div(_topbar(lang, role, investor, investors),
                  _left_nav(role, current_path, lang),
                  Div(*content, cls="ws-center"),
+                 Div(cls="ws-backdrop", onclick="wsToggleNav()"),
                  cls="ws", id="ws"),
              _pdf_pane(),
              Script(NotStr(SHELL_JS)),
@@ -363,6 +387,7 @@ def app_home(req):
         Body(Div(_topbar(lang, role, investor, investors),
                  _left_nav(role, "/app", lang),
                  Div(_chat_center(lang), cls="ws-center"),
+                 Div(cls="ws-backdrop", onclick="wsToggleNav()"),
                  cls="ws", id="ws"),
              _pdf_pane(),
              Script(NotStr(SHELL_JS)),
