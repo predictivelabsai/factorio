@@ -16,9 +16,15 @@ starts on its own page with a coloured separator.
 | Part | Persona | Sign in as | What you do |
 |---|---|---|---|
 | **1** | **Investor** | Investor | Fund verified invoices; track a portfolio of short-term, asset-backed returns |
-| **2** | **Supplier** | Seller | Sell / discount unpaid invoices for cash in 24–48 hours |
+| **2** | **Supplier** | Supplier | Sell / discount unpaid invoices for cash in 24–48 hours |
 | **3** | **Payer** | Payer | Confirm invoices you owe; run supplier early-payment programmes |
 | **4** | **Admin** | Admin | Operate the factoring business — onboarding, risk, funding, collections, compliance |
+
+Every signed-in view is the same **cockpit**: a left rail with two sections —
+**Agents** (the **Copilot** chat, which opens in the centre) and **Tools** (your
+screens). The Copilot answers questions grounded in live data; the Tools list is
+**role-scoped**, so you only ever see what belongs to your role. There are four
+roles — Investor, Supplier, Payer and Admin — switchable from the top bar.
 
 <div class="persona">
 <p class="kicker">Part 1 of 4 · Sign in as “Investor”</p>
@@ -26,9 +32,16 @@ starts on its own page with a coloured separator.
 <p class="sub">Put capital into verified invoices for short-term, asset-backed returns.</p>
 </div>
 
-**For investors / funders.** The app is a left-nav cockpit with an AI **copilot**
-on the right for questions about your portfolio and the market. Amounts are shown
-in USD (multi-currency supported).
+**For investors / funders.** The app opens on the **Copilot** — a central AI chat
+(the Agents view) — with your Tools in the left rail. Amounts are shown in USD
+(multi-currency supported).
+
+## Copilot (Agents)
+The landing view: a central chat that answers questions grounded in **your own
+live positions** — net return, exposure by sector or debtor, overdue positions,
+upcoming settlements. Suggestion cards sit at the bottom to get you started.
+
+![Copilot chat](img/role-investor-chat.png)
 
 ## Dashboard
 Your personalised overview: **portfolio value, net annual return, earned to date
@@ -77,13 +90,13 @@ data, never invented figures.
 ![AI reports](img/role-investor-reports.png)
 
 <div class="persona">
-<p class="kicker">Part 2 of 4 · Sign in as “Seller”</p>
+<p class="kicker">Part 2 of 4 · Sign in as “Supplier”</p>
 <h1>Supplier</h1>
 <p class="sub">Sell or discount your unpaid invoices for cash today instead of waiting 30–90 days.</p>
 </div>
 
 **For suppliers / clients.** Factoring, not a loan — no new debt on your balance
-sheet; funding scales with your sales. Sign in with the **Seller** role.
+sheet; funding scales with your sales. Sign in with the **Supplier** role.
 
 ## My applications
 Your submitted invoices with debtor, amount, risk grade and status
@@ -100,7 +113,7 @@ Everything is indicative, subject to verification.
 
 ![AI triage](img/role-supplier-triage.png)
 
-## The seller journey
+## The supplier journey
 1. **Sign up** (bank KYC).
 2. **Submit / import** an invoice (SoliqOnline-verified, buyer-confirmed).
 3. **Triage** in chat → indicative terms.
@@ -137,20 +150,19 @@ gap.
 <p class="sub">Operate the factoring business: onboarding, risk, funding, collections, accounting and compliance — under role-based access control with full audit logging.</p>
 </div>
 
-**For internal users: operations, credit, collections, finance, compliance,
-executives.** Reached at **`/app/admin`**. The workspace is a three-pane cockpit:
-left navigation (Factoring · Sales · Workspace), the center content, and a
-right-hand **copilot**. The **Role** switcher (top-right) changes persona; the
-sub-role (Operations / Credit / Collections / Finance / Compliance / Executive /
-Super-admin) scopes what actions you can take (**segregation of duties**).
+**For internal back-office users.** Reached from the **Console** tool (or
+`/app/admin`). Admin is a single **full-access** role — it sees every Tool in the
+left rail (onboarding, processing, risk, credit scoring, funding, collections,
+accounting, compliance, integrations, reports, audit — plus the Sales pipeline
+and Workspace) and the **Copilot** for data questions. Every state-changing
+action is written to the audit log. The **Role** switcher (top-right) moves
+between the four roles.
 
 ![Admin console](img/role-admin-console.png)
 
 ## 1 · Client & debtor onboarding / management
 **Screen: Onboarding.** KYC/AML status per client and debtor, sector, country,
-annual turnover, and a derived **facility limit** (advance rates 70–90%). Only
-**Credit / Compliance / Super** may set limits — other roles see the data
-read-only.
+annual turnover, and a derived **facility limit** (advance rates 70–90%). Admin sets the facility limit; the value is derived from turnover and grade.
 
 ![Onboarding](img/role-admin-onboarding.png)
 
@@ -161,16 +173,14 @@ status; holdback/reserve is the difference between face value and advance.
 
 ## 3 · Funding & disbursements
 **Screen: Funding.** The funding pipeline lists verified/funding invoices with
-amount, grade, computed advance and status. **Approve & release** is gated to
-**Finance / Super** — a credit officer cannot release funds. Every approval is
-written to the audit log.
+amount, grade, computed advance and status. **Approve & release** disburses the advance; every approval is written to the audit log.
 
 ![Funding & collections](img/role-admin-funding.png)
 
 ## 4 · Collections & credit management
 Same screen: an **overdue / collections** table with a dunning stage per invoice.
-Reminders escalate; disputes and write-offs are handled here (write-off is
-Finance/Compliance-gated).
+Reminders escalate; disputes and write-offs (with bad-debt provisioning) are
+handled here.
 
 ## 5 · Risk management & underwriting
 **Screen: Risk.** Risk-grade distribution (A–D), **exposure by sector**, **debtor
@@ -182,8 +192,7 @@ concentration**, and a **duplicate-invoice fraud check**.
 observed payment/default history, concentration and sector risk with credit-bureau
 and open-banking cash-flow signals. It produces a **score (0–100), grade (A–D),
 indicative advance rate and price**, plus plain-language **adverse-action reasons**.
-The model sets the numbers; a human approves. Scoped to Credit / Compliance /
-Executive / Super.
+The model sets the numbers; a human approves.
 
 ![Credit scoring](img/role-admin-scoring.png)
 
@@ -197,8 +206,7 @@ can be re-tuned.
 **Screen: Accounting.** A **production double-entry general ledger**, derived
 deterministically from the factoring events (advances, settlements, fees,
 write-offs) so it always ties out. Includes a **trial balance**, a **journal**,
-per-account **ledger drill-down**, and **bank reconciliation** (matched vs
-unmatched). Scoped to Finance / Compliance / Executive / Super.
+per-account **ledger drill-down**, and **bank reconciliation** (matched vs unmatched).
 
 ![Trial balance](img/role-admin-accounting.png)
 ![Journal](img/role-admin-journal.png)
@@ -235,14 +243,16 @@ reporting and dispute evidence.
 ![Docs](img/role-admin-docs.png)
 ![Mail](img/role-admin-mail.png)
 
-## RBAC & segregation of duties (summary)
-| Action | Who may act |
+## Roles & access (summary)
+Four roles, switchable from the top bar. Tools are role-scoped; Admin has full
+back-office access, and every privileged action is captured in the audit log.
+
+| Role | Sees |
 |---|---|
-| Set facility limits | Credit · Compliance · Super |
-| Approve / release funding | Finance · Super |
-| Run collections / dunning | Collections · Super |
-| Write-off / provision | Finance · Compliance · Super |
-| View audit log | Compliance · Executive · Super |
+| **Investor** | Copilot · Dashboard · Marketplace · Auctions · Secondary · Portfolio · Statement · Auto-invest · AI Triage · AI Reports |
+| **Supplier** | Copilot · My applications · AI Triage · Marketplace |
+| **Payer** | Copilot · Invoices to confirm |
+| **Admin** | Copilot · the full back office + Sales pipeline + Workspace |
 
 ---
 

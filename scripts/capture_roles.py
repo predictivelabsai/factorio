@@ -28,14 +28,14 @@ _PREFIX = "role-" if LANG == "en" else f"role-{LANG}-"
 PLANS = {
     "investor": (
         {"role": "investor", "investor": INVESTOR},
-        [("dashboard", "/app"), ("marketplace", "/app/marketplace"),
+        [("chat", "/app"), ("dashboard", "/app/dashboard"), ("marketplace", "/app/marketplace"),
          ("detail", None), ("portfolio", "/app/portfolio"),
          ("statement", "/app/statement"), ("autoinvest", "/app/auto-invest"),
          ("reports", "/app/assistant")],
     ),
     "supplier": (
-        {"role": "seller"},
-        [("applications", "/app/seller"), ("triage", "/app/triage")],
+        {"role": "supplier"},
+        [("applications", "/app/supplier"), ("triage", "/app/triage")],
     ),
     "payer": (
         {"role": "payer"},
@@ -43,7 +43,7 @@ PLANS = {
     ),
     "admin": (
         {"role": "admin", "admin_role": "super", "investor": INVESTOR},
-        [("console", "/app/admin"), ("onboarding", "/app/admin/onboarding"),
+        [("chat", "/app"), ("console", "/app/admin"), ("onboarding", "/app/admin/onboarding"),
          ("risk", "/app/admin/risk"),
          ("scoring", "/app/admin/scoring"),
          ("calibration", "/app/admin/scoring/calibration"), ("funding", "/app/admin/funding"),
