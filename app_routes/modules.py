@@ -127,13 +127,37 @@ def _usd(v):
 
 # ── CRM ────────────────────────────────────────────────────────────────────
 
-def pipeline_summary(deals) -> str:
+# Per-stage accent colour + win-probability (for weighted pipeline value).
+STAGE_COLORS = {"Qualification": "#9AA98F", "Demo": "#C89B5B", "Proposal": "#5B8FB0",
+                "Negotiation": "#C87F5B", "Ready to close": "#1F5D43"}
+STAGE_PROB = {"Qualification": 0.10, "Demo": 0.25, "Proposal": 0.50,
+              "Negotiation": 0.70, "Ready to close": 0.90}
+
+
+def pipeline_summary() -> str:
+    """One-line pipeline summary for the AI Assistant's sales_pipeline tool."""
+    deals = _q("SELECT stage, value FROM factorio.crm_deals")
+    if not deals:
+        return "The sales pipeline has no deals yet."
     by = {}
     for d in deals:
         s = by.setdefault(d["stage"], [0, 0]); s[0] += 1; s[1] += float(d["value"])
     total = sum(v for _, v in by.values())
+    weighted = sum(float(d["value"]) * STAGE_PROB.get(d["stage"], 0.3) for d in deals)
     parts = [f"{st}: {by[st][0]} deals / ${by[st][1]:,.0f}" for st in DEAL_STAGES if st in by]
-    return f"Open pipeline ${total:,.0f} across {len(deals)} deals — " + "; ".join(parts)
+    return (f"Open pipeline ${total:,.0f} across {len(deals)} deals "
+            f"(${weighted:,.0f} weighted) — " + "; ".join(parts))
+
+
+def _heat(value: float) -> str:
+    return "#B83A3A" if value >= 200_000 else "#C89B5B" if value >= 100_000 else "#7A9E88"
+
+
+def _kpi(label, value, sub=""):
+    return Div(P(label, cls="text-[11px] font-mono tracking-widest uppercase text-ink-dim mb-2"),
+              P(value, cls="text-2xl font-medium tracking-tight text-ink"),
+              P(sub, cls="text-ink-muted text-xs mt-0.5") if sub else None,
+              cls="p-5 rounded-2xl bg-bg-elevated border border-line")
 
 
 @rt("/app/crm")
@@ -145,37 +169,58 @@ def crm(req):
         pass
     deals = _q("SELECT id,client,description,stage,value,owner FROM factorio.crm_deals ORDER BY value DESC")
     can_edit = current_role(req) == "admin"
+
+    total_val = sum(float(d["value"]) for d in deals)
+    weighted = sum(float(d["value"]) * STAGE_PROB.get(d["stage"], 0.3) for d in deals)
+    ready = [d for d in deals if d["stage"] == "Ready to close"]
+    summary = Div(
+        _kpi("Open pipeline", _usd(total_val), f"{len(deals)} deals"),
+        _kpi("Weighted value", _usd(weighted), "probability-adjusted"),
+        _kpi("Ready to close", _usd(sum(float(d['value']) for d in ready)), f"{len(ready)} deals"),
+        _kpi("Avg deal size", _usd(total_val / len(deals)) if deals else "$0", "across pipeline"),
+        cls="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8")
+
     cols = []
     for stage in DEAL_STAGES:
         col_deals = [d for d in deals if d["stage"] == stage]
         total = sum(float(d["value"]) for d in col_deals)
         next_stage = DEAL_STAGES[DEAL_STAGES.index(stage) + 1] if stage != DEAL_STAGES[-1] else None
+        color = STAGE_COLORS.get(stage, "#CFC8B4")
         cards = []
         for d in col_deals:
+            v = float(d["value"])
             advance = None
             if can_edit and next_stage:
                 advance = A(NotStr(f"→ {next_stage}"), href=f"/app/crm/advance?deal_id={d['id']}",
                             cls="text-[11px] text-accent hover:underline mt-2 inline-block")
-            cards.append(Div(P(d["client"], cls="text-sm font-medium text-ink"),
-                             P(d["description"], cls="text-xs text-ink-muted mt-0.5"),
-                             Div(Span(_usd(d["value"]), cls="text-sm font-medium text-accent"),
-                                 Span(d["owner"], cls="text-[11px] text-ink-dim"),
-                                 cls="flex items-center justify-between mt-2"),
-                             advance,
-                             cls="p-3 rounded-xl bg-bg-elevated border border-line mb-2"))
+            cards.append(Div(
+                Div(Span("", cls="inline-block w-2 h-2 rounded-full mr-2 align-middle",
+                         style=f"background:{_heat(v)}"),
+                    Span(d["client"], cls="text-sm font-medium text-ink align-middle"),
+                    cls="mb-1"),
+                P(d["description"], cls="text-xs text-ink-muted"),
+                Div(Span(_usd(v), cls="text-sm font-semibold text-accent"),
+                    Span(d["owner"], cls="text-[11px] text-ink-dim"),
+                    cls="flex items-center justify-between mt-2"),
+                advance,
+                cls="p-3 rounded-xl bg-bg-elevated border border-line mb-2"))
         cols.append(Div(
-            Div(Span(stage, cls="text-xs font-mono uppercase tracking-wider text-ink-dim"),
+            Div(Span(stage, cls="text-xs font-mono uppercase tracking-wider text-ink"),
                 Span(f"{len(col_deals)} · {_usd(total)}", cls="text-[11px] text-ink-muted"),
-                cls="flex items-center justify-between mb-3 px-1"),
+                cls="flex items-center justify-between mb-3 pb-2 px-1",
+                style=f"border-bottom:2px solid {color}"),
             *cards,
-            cls="min-w-[220px] flex-1 p-2 rounded-2xl bg-bg-raised/40"))
+            cls="min-w-[228px] flex-1 p-2 rounded-2xl bg-bg-raised/40"))
     return app_page(
         "Sales pipeline",
         Section_(Eyebrow("Sales · CRM"),
                  Heading(1, "Sales pipeline", cls="mt-4"),
-                 P(NotStr(pipeline_summary(deals)), cls="mt-3 text-ink-muted max-w-3xl"),
+                 P(f"{len(deals)} open deals worth {_usd(total_val)} — {_usd(weighted)} weighted by stage.",
+                   cls="mt-3 text-ink-muted max-w-3xl"),
                  cls="border-t border-line"),
-        Section_(Div(*cols, cls="flex gap-3 overflow-x-auto pb-4"), cls="border-t border-line"),
+        Section_(summary,
+                 Div(*cols, cls="flex gap-3 overflow-x-auto pb-4"),
+                 cls="border-t border-line"),
         current_path="/app/crm", lang=lang, role=current_role(req), subrole=current_subrole(req),
     )
 
