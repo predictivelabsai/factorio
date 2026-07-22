@@ -14,7 +14,7 @@ from fasthtml.common import Div, P, Span, A, Article, NotStr
 from app import rt
 from utils.i18n import t, get_lang
 from landing.components import Eyebrow, Heading, Section_
-from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor, current_role
+from app_routes._shared import app_page, fmt_uzs, list_investors, current_investor, current_role, display_name
 from app_routes.portfolio import _load_positions, _compute, _f
 
 try:
@@ -112,7 +112,7 @@ def dashboard(req):
     m = _compute(positions)
     nxt = _next_settlement(positions)
     notes = _notifications(investor["id"]) if investor else []
-    name = investor["username"] if investor else ""
+    name = display_name(investor["username"]) if investor else ""
 
     kpis = Div(
         _stat_card(t("dash_portfolio_value", lang), fmt_uzs(m["account_value"])),

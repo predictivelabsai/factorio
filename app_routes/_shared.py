@@ -36,6 +36,19 @@ def fmt_uzs(amount) -> str:
 
 # ── Investor identity (no-password switcher) ────────────────────────────
 
+import re as _re
+
+
+def display_name(username: str | None) -> str:
+    """Friendly display for synthetic usernames: investor1 -> Investor,
+    investor2 -> Investor 2."""
+    m = _re.match(r"^investor0*(\d+)$", (username or ""), _re.I)
+    if m:
+        n = m.group(1)
+        return "Investor" if n == "1" else f"Investor {n}"
+    return username or ""
+
+
 def list_investors() -> list[dict]:
     if not _HAS_DB:
         return []
@@ -186,7 +199,7 @@ def _investor_switcher(investor: dict | None, investors: list[dict], lang: str):
     if not investors:
         return Span("", cls="hidden")
     opts = [
-        Option(inv["username"], value=str(inv["id"]),
+        Option(display_name(inv["username"]), value=str(inv["id"]),
                selected=bool(investor and inv["id"] == investor["id"]))
         for inv in investors
     ]

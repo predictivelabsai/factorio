@@ -97,6 +97,12 @@ SHELL_CSS = """
 .nav-item:hover { background:#EFEDE4; color:#14231B; }
 .nav-item.active { background:#CFE5DA; color:#0F3226; border-left-color:#1F5D43; font-weight:600; }
 .nav-ic { width:18px; text-align:center; }
+.nav-newchat { color:#1F5D43; font-weight:600; }
+.nav-history { display:flex; flex-direction:column; }
+.nav-hist { font-size:12.5px; color:#5b6b62; padding:6px 16px 6px 43px; white-space:nowrap; overflow:hidden;
+  text-overflow:ellipsis; border-left:3px solid transparent; }
+.nav-hist:hover { background:#EFEDE4; color:#14231B; }
+.nav-hist.active { background:#EFEDE4; color:#0F3226; border-left-color:#CFC8B4; }
 
 /* Central Copilot chat */
 .chat { display:flex; flex-direction:column; height:100%; max-width:860px; width:100%; margin:0 auto; }
@@ -127,11 +133,34 @@ SHELL_JS = """
 function cpAdd(role, html){ var m=document.getElementById('cp-msgs');
   var h=document.getElementById('chat-hero'); if(h) h.remove();
   var wrap=document.createElement('div'); wrap.className='cp-msg '+role;
-  if(role==='assistant'){ var w=document.createElement('div'); w.className='cp-who'; w.textContent='Copilot'; wrap.appendChild(w);
+  if(role==='assistant'){ var w=document.createElement('div'); w.className='cp-who'; w.textContent='AI Assistant'; wrap.appendChild(w);
     var body=document.createElement('div'); body.innerHTML=html; wrap.appendChild(body); m.appendChild(wrap); m.scrollTop=m.scrollHeight; return body; }
   wrap.innerHTML=html; m.appendChild(wrap); m.scrollTop=m.scrollHeight; return wrap; }
 function cpMd(t){ try{ return window.marked ? marked.parse(t) : t.replace(/\\n/g,'<br>'); }catch(e){ return t; } }
 function cpEsc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* ── Chat history (per-browser, localStorage) ─────────────────────── */
+function fcChats(){ try{ return JSON.parse(localStorage.getItem('fc_chats')||'[]'); }catch(e){ return []; } }
+function fcSaveAll(c){ try{ localStorage.setItem('fc_chats', JSON.stringify(c.slice(0,40))); }catch(e){} }
+function fcActive(){ return localStorage.getItem('fc_active')||''; }
+function fcSetActive(id){ if(id) localStorage.setItem('fc_active', id); else localStorage.removeItem('fc_active'); }
+function fcGet(id){ return fcChats().filter(function(c){return c.id===id;})[0]; }
+function fcUpsert(chat){ var all=fcChats(); var i=all.map(function(c){return c.id;}).indexOf(chat.id);
+  if(i>=0) all.splice(i,1); all.unshift(chat); fcSaveAll(all); }
+function fcRenderHistory(){ var el=document.getElementById('chat-history'); if(!el) return;
+  var chats=fcChats(), act=fcActive(); el.innerHTML='';
+  chats.forEach(function(c){ var a=document.createElement('a'); a.href='#';
+    a.className='nav-item nav-hist'+(c.id===act?' active':'');
+    a.textContent=(c.title||'New chat').slice(0,34);
+    a.onclick=function(){ fcSetActive(c.id);
+      if(location.pathname==='/app'){ fcLoad(c.id); fcRenderHistory(); } else { location.href='/app'; }
+      return false; };
+    el.appendChild(a); }); }
+function fcLoad(id){ var c=fcGet(id); var m=document.getElementById('cp-msgs'); if(!m) return;
+  m.innerHTML=''; if(!c){ return; }
+  (c.msgs||[]).forEach(function(x){ cpAdd(x.role, x.role==='assistant'?cpMd(x.content):cpEsc(x.content)); }); }
+function fcNewChat(){ fcSetActive(''); if(location.pathname==='/app'){ location.reload(); } else { location.href='/app'; } }
+
 var _cpBusy=false;
 async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
   if(_cpBusy) return false;
@@ -152,9 +181,17 @@ async function cpSend(ev){ if(ev&&ev.preventDefault) ev.preventDefault();
     }
     if(acc==='' && think) think.innerHTML='<span class=cp-tool>(no response)</span>';
   }catch(e){ if(think) think.innerHTML='<span class=cp-tool>connection error</span>'; }
+  /* persist to history */
+  try{ var id=fcActive(); var chat=id?fcGet(id):null;
+    if(!chat){ id=''+Date.now(); chat={id:id, title:msg.slice(0,40), msgs:[]}; fcSetActive(id); }
+    chat.msgs.push({role:'user',content:msg}); chat.msgs.push({role:'assistant',content:acc});
+    if(!chat.title) chat.title=msg.slice(0,40); fcUpsert(chat); fcRenderHistory();
+  }catch(e){}
   var m=document.getElementById('cp-msgs'); m.scrollTop=m.scrollHeight; _cpBusy=false; return false;
 }
 function cpAsk(q){ var i=document.getElementById('cp-input'); i.value=q; cpSend(); }
+document.addEventListener('DOMContentLoaded', function(){ fcRenderHistory();
+  if(location.pathname==='/app'){ var a=fcActive(); if(a && fcGet(a)) fcLoad(a); } });
 """
 
 _SUGGESTIONS = ["cp_chip1", "cp_chip2", "cp_chip3", "cp_chip4"]
@@ -169,13 +206,18 @@ def _left_nav(role: str, current_path: str, lang: str):
               href=href, cls="nav-item active" if active == key else "nav-item")
             for key, i18n_key, icon, href in items
         ]
-        secs.append(Div(Div(t(section_key, lang), cls="nav-head"), *links, cls="nav-sec"))
+        block = [Div(t(section_key, lang), cls="nav-head"), *links]
+        if section_key == "nav_sec_agents":
+            block.append(A(Span("＋", cls="nav-ic"), Span(t("cp_new_chat", lang)),
+                           href="#", onclick="fcNewChat();return false;", cls="nav-item nav-newchat"))
+            block.append(Div(id="chat-history", cls="nav-history"))
+        secs.append(Div(*block, cls="nav-sec"))
     return Div(*secs, cls="ws-left")
 
 
 def _chat_center(lang: str):
     if not copilot_available():
-        return Div(Div("Copilot", cls="cp-who"),
+        return Div(Div("AI Assistant", cls="cp-who"),
                    P("Set XAI_API_KEY to enable the copilot.", cls="chat-disabled"),
                    cls="chat")
     hero = Div(Span("✨", cls="spark"),
@@ -185,12 +227,12 @@ def _chat_center(lang: str):
     cards = [Span(t(k, lang), cls="chat-card", onclick=f"cpAsk('{t(k, lang)}')") for k in _SUGGESTIONS]
     return Div(
         Div(hero, id="cp-msgs", cls="chat-msgs"),
-        Div(*cards, cls="chat-cards"),
         Form(Textarea("", id="cp-input", cls="chat-input", rows="1",
                       placeholder=t("cp_placeholder", lang), autocomplete="off",
                       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cpSend();}"),
              Button(t("cp_send", lang), cls="chat-send", type="submit"),
              cls="chat-form", onsubmit="return cpSend(event)"),
+        Div(*cards, cls="chat-cards"),
         cls="chat")
 
 
