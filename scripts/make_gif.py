@@ -35,16 +35,16 @@ FRAMES = [
 # (docs/img/role-*.png), curated into a product story: investor journey →
 # AI → back office.
 HOME_FRAMES = [
-    ("role-investor-chat.png",        2900),   # central Copilot chat (Agents)
-    ("role-investor-dashboard.png",   2600),
-    ("role-investor-marketplace.png", 2800),
-    ("role-investor-detail.png",      2600),
-    ("role-investor-portfolio.png",   2800),
-    ("role-supplier-triage.png",      2900),
-    ("role-admin-console.png",        2700),
-    ("role-admin-scoring.png",        2700),
-    ("role-admin-accounting.png",     2600),
-    ("role-admin-reports.png",        2600),
+    ("role-investor-chat.png",        2900),   # AI Assistant central chat (Agents)
+    ("role-investor-dashboard.png",   2500),   # investor
+    ("role-investor-marketplace.png", 2600),
+    ("role-investor-portfolio.png",   2600),
+    ("role-supplier-pdf.png",         2900),   # supplier + invoice PDF viewer
+    ("role-payer-pdf.png",            2900),   # payer + invoice PDF viewer
+    ("role-admin-console.png",        2500),   # admin back office
+    ("role-admin-crm.png",            2700),   # sales pipeline
+    ("role-admin-scoring.png",        2600),
+    ("role-admin-accounting.png",     2500),
 ]
 
 TARGET_W = 1200

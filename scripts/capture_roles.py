@@ -35,11 +35,12 @@ PLANS = {
     ),
     "supplier": (
         {"role": "supplier"},
-        [("applications", "/app/supplier"), ("triage", "/app/triage")],
+        [("applications", "/app/supplier"), ("triage", "/app/triage"),
+         ("pdf", "/app/supplier", "a.pdf-view-btn")],
     ),
     "payer": (
         {"role": "payer"},
-        [("confirm", "/app/payer")],
+        [("confirm", "/app/payer"), ("pdf", "/app/payer", "a.pdf-view-btn")],
     ),
     "admin": (
         {"role": "admin", "admin_role": "super", "investor": INVESTOR},
@@ -66,7 +67,9 @@ def main() -> None:
             cookie_map = {**cookies, "lang": LANG}
             ctx.add_cookies([{"name": k, "value": v, "url": BASE} for k, v in cookie_map.items()])
             pg = ctx.new_page()
-            for name, path in screens:
+            for screen in screens:
+                name, path = screen[0], screen[1]
+                click_sel = screen[2] if len(screen) > 2 else None
                 if path is None:
                     pg.goto(BASE + "/app/marketplace", wait_until="networkidle", timeout=30_000)
                     href = pg.evaluate("() => { const a=document.querySelector('a[href*=\"/app/marketplace/\"]'); return a?a.getAttribute('href'):null; }")
@@ -78,6 +81,12 @@ def main() -> None:
                 except Exception:
                     pg.goto(BASE + path, wait_until="load", timeout=30_000)
                 pg.wait_for_timeout(400)
+                if click_sel:
+                    try:
+                        pg.click(click_sel, timeout=5_000)
+                        pg.wait_for_timeout(3500)  # let pdf.js render + highlight
+                    except Exception as e:
+                        print(f"  click {click_sel} failed: {e}")
                 out = IMG / f"{_PREFIX}{role}-{name}.png"
                 pg.screenshot(path=str(out), full_page=False)
                 print(f"[{LANG}·{role}] {out.relative_to(ROOT)}")

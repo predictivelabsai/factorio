@@ -21,8 +21,8 @@ starts on its own page with a coloured separator.
 | **4** | **Admin** | Admin | Operate the factoring business — onboarding, risk, funding, collections, compliance |
 
 Every signed-in view is the same **cockpit**: a left rail with two sections —
-**Agents** (the **Copilot** chat, which opens in the centre) and **Tools** (your
-screens). The Copilot answers questions grounded in live data; the Tools list is
+**Agents** (the **AI Assistant** chat, which opens in the centre — with a
+**New chat** button and your recent chats beneath it) and **Tools** (your screens). The Copilot answers questions grounded in live data; the Tools list is
 **role-scoped**, so you only ever see what belongs to your role. There are four
 roles — Investor, Supplier, Payer and Admin — switchable from the top bar.
 
@@ -36,10 +36,10 @@ roles — Investor, Supplier, Payer and Admin — switchable from the top bar.
 (the Agents view) — with your Tools in the left rail. Amounts are shown in USD
 (multi-currency supported).
 
-## Copilot (Agents)
+## AI Assistant (Agents)
 The landing view: a central chat that answers questions grounded in **your own
 live positions** — net return, exposure by sector or debtor, overdue positions,
-upcoming settlements. Suggestion cards sit at the bottom to get you started.
+upcoming settlements. Suggestion cards sit below the input; past conversations live in the left rail (New chat + history).
 
 ![Copilot chat](img/role-investor-chat.png)
 
@@ -105,6 +105,11 @@ advance.
 
 ![My applications](img/role-supplier-applications.png)
 
+Each row has a **View** button that opens the invoice as a PDF in a right-hand
+pane, with the debtor name highlighted — review the document without leaving the page.
+
+![Invoice PDF viewer](img/role-supplier-pdf.png)
+
 ## AI triage — get an indicative offer in a chat
 Describe an invoice and debtor in plain language; the assistant collects only
 what's missing, then returns an **indicative risk band (A–D)**, an **advance rate**
@@ -137,6 +142,11 @@ The invoices where you are named as the debtor, with amount, due date and status
 draw an advance; on the SoliqOnline rails this confirmation is on official record.
 
 ![Invoices to confirm](img/role-payer-confirm.png)
+
+**View** opens the invoice PDF in a right-hand pane (debtor highlighted) so you can
+check the obligation before confirming.
+
+![Invoice PDF viewer](img/role-payer-pdf.png)
 
 ## Reverse factoring (supply-chain finance)
 As a large buyer you can run a **reverse-factoring programme**: approve early
