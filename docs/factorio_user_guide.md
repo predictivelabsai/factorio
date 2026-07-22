@@ -63,6 +63,18 @@ turnover).
 
 ![Invoice detail](img/role-investor-detail.png)
 
+## Auctions (reverse auction)
+Compete to fund an invoice by bidding the fee **down** and the advance **up** —
+the best bid wins. A live price-discovery layer on top of fixed-price listings.
+
+![Reverse auction](img/role-investor-auctions.png)
+
+## Secondary market
+Exit early: list a confirmed position for another investor to buy, or buy a
+listed position — ownership transfers on purchase.
+
+![Secondary market](img/role-investor-secondary.png)
+
 ## Portfolio
 The reporting cockpit: **net annual return** and **account value** panels, an
 **aging table** (days to / past due), a **payment-habits table** (how settled
@@ -178,8 +190,11 @@ annual turnover, and a derived **facility limit** (advance rates 70–90%). Admi
 
 ## 2 · Invoice processing & verification
 Invoices arrive verified against SoliqOnline (buyer-confirmed), assigned, and
-risk-graded. The pipeline and detail views show amount, advance rate, grade and
-status; holdback/reserve is the difference between face value and advance.
+risk-graded. The pipeline shows amount, advance rate, grade and status;
+holdback/reserve is the difference between face value and advance. A **View**
+button opens each invoice as a PDF in the right pane.
+
+![Processing](img/role-admin-processing.png)
 
 ## 3 · Funding & disbursements
 **Screen: Funding.** The funding pipeline lists verified/funding invoices with
@@ -188,9 +203,10 @@ amount, grade, computed advance and status. **Approve & release** disburses the 
 ![Funding & collections](img/role-admin-funding.png)
 
 ## 4 · Collections & credit management
-Same screen: an **overdue / collections** table with a dunning stage per invoice.
-Reminders escalate; disputes and write-offs (with bad-debt provisioning) are
-handled here.
+An **overdue / collections** table with a dunning stage per invoice. Reminders
+escalate; disputes and write-offs (with bad-debt provisioning) are handled here.
+
+![Collections](img/role-admin-collections.png)
 
 ## 5 · Risk management & underwriting
 **Screen: Risk.** Risk-grade distribution (A–D), **exposure by sector**, **debtor
@@ -230,11 +246,22 @@ and get grounded, real-number answers.
 ![Reports](img/role-admin-reports.png)
 
 ## 8 · Compliance, legal & audit
+**Screen: Compliance.** AML/KYC coverage, an audit-action summary, the
+data-retention schedule and a regulatory checklist — exportable as CSV.
+
+![Compliance](img/role-admin-compliance.png)
+
 **Screen: Audit log.** Every state-changing action — who (actor + role), what
-action, which entity, when — is recorded immutably. This underpins SoD, regulatory
+action, which entity, when — is recorded immutably. This underpins regulatory
 reporting and dispute evidence.
 
 ![Audit log](img/role-admin-audit.png)
+
+## Integrations
+Connectors for accounting, open banking, credit bureau, e-signature, collections
+and e-invoice — connect/disconnect toggles plus a live inbound invoice webhook.
+
+![Integrations](img/role-admin-integrations.png)
 
 ## Workspace modules (back-office tooling)
 
